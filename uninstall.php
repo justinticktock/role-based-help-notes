@@ -38,8 +38,10 @@ function rbhn_remove_caps() {
 		// gets the author role
 		$role = get_role( $role_key );
 		$capability_type = "help_{$role_key}_note";
+        echo     $role;
+        echo     $capability_type;
 		
-		//http://stackoverflow.com/questions/8198038/wordpress-capabilities-for-custom-post-type
+        /*
 		$role->remove_cap( "edit_{$capability_type}" );
 		$role->remove_cap( "read_{$capability_type}" );
 		$role->remove_cap( "delete_{$capability_type}" );
@@ -53,7 +55,7 @@ function rbhn_remove_caps() {
         $role->remove_cap( "delete_others_{$capability_type}s" );
         $role->remove_cap( "edit_private_{$capability_type}s" );
         $role->remove_cap( "edit_published_{$capability_type}s" );
-				
+			*/	
 	}
 
 }

@@ -20,6 +20,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+
 // Define constants
 
 define( 'HELP_PLUGIN_VERSION', '1.0' );
@@ -39,7 +40,7 @@ add_action( 'admin_menu', 'register_my_custom_help_menu_page' );
 
 function register_my_custom_help_menu_page(){
     // give the help notes menu the same required access capability ('read') as used by the 'profile' and 'dashboard' menu items
-    add_menu_page( 'Help menu title', 'Help Notes', 'read', 'helpmenu', '', plugins_url( 'help/images/help.png' ), '5.9996' ); 
+    add_menu_page( 'Help menu title', 'Help Notes', 'read', 'helpmenu', '', plugins_url( 'role-based-help-notes/images/help.png' ), '5.9996' ); 
 }
 
 // Create a second level settings page
@@ -139,8 +140,6 @@ function help_note_post_types_section_callback() {
 
 } // end help_note_post_types_section_callback  
 
-
-
 /**
  * Renders settings field for Help Notes Post Types
  */
@@ -154,13 +153,9 @@ function settings_field_help_notes_post_types() {
 	
 	$roles = $wp_roles->get_names();
 
-	
-	
 	// First, we read the option collection  
 	$options = get_option('help_note_option');  
 	  
-
-	
 	//ksort($roles);
 	foreach($roles as $role_key=>$role_name)
 	{
@@ -180,10 +175,7 @@ function settings_field_help_notes_post_types() {
 		<?php echo " $role_name<br />";		
 
 	}
-		
-
 }
-
 
 /**
  * Renders settings field for Help Notes Post Types
@@ -210,30 +202,24 @@ function sanitize_help_note_option( $settings ) {
 	// set the transient to acted as a flag to flush the Permalink rules on save of the settings.
 	set_transient('help_note_settings_saved');
 	
-
 	// option must be safe
 	$settings['help_note_post_types'] = isset( $settings['help_note_post_types'] ) ? (array) $settings['help_note_post_types'] : array();
 
-	
 	return $settings;
 	
 }
-
-
-
 
 add_action( 'init', 'help_register_multiple_posttypes' );
 
 function help_register_multiple_posttypes() {
 
-	   //  loop through the site roles and create a custom post for each
+	//  loop through the site roles and create a custom post for each
 	global $wp_roles;
 	
 	if ( ! isset( $wp_roles ) )
-	$wp_roles = new WP_Roles();
+		$wp_roles = new WP_Roles();
 	
 	$roles = $wp_roles->get_names();
-	//var_dump($roles);
 	
 	do_action( 'register_posttype_help', "general", "General");  // generate a genetic help note post type
 	
@@ -245,16 +231,12 @@ function help_register_multiple_posttypes() {
 		{
 			
 			if (array_key_exists ($role_selected, $roles)) {
-				//echo $role_selected ;
-				//echo var_dump($roles[$role_selected]) ;
-				//echo $roles[$role_selected] ;
 				do_action( 'register_posttype_help', $role_selected, $roles[$role_selected]); // do_action( 'register_posttype_help', {for the key}, {role name});
 			} 
 			
 		}
 	}
 }
-
 
 // Adds custom post type for help
 add_action( 'register_posttype_help', 'help_register_posttype', 10, 2 );
@@ -294,31 +276,27 @@ function help_register_posttype($role_key, $role_name) {
 	
 	};
 	
-   // $help_public =  if ( current_user_can("read__".$help_capabilitytype) ) {
     if ( current_user_can("read_".$help_capabilitytype)  ) {
+	
          $help_public = true ;
-        // echo "read_".$help_capabilitytype." = ". $help_public. " </Br>";
+		 
     } else {                        
+	
          $help_public = false ;
-        // echo "read_".$help_capabilitytype." = ". $help_public. " </Br>";
+		 
     };
                         
-
-
 	$help_args = array(
 
 		'labels'              => $help_labels,
-        
 		'public'              => $help_public,  // true implies the members 'content permissions'
 										        // meta box is available.
 		'publicly_queryable'  => $help_public,
 		'exclude_from_search' => false,
 		'show_ui'             => true,
 		'show_in_menu'        => 'helpmenu', // toplevel_page_helpmenu',
-        //'show_in_menu'        => true,   // this doesn't show the second level menus either.??
         'show_in_admin_bar'   => true,
 		'capability_type'     => $help_capabilitytype,
-		//'capabilities'        => $help_capabilities,
 		'map_meta_cap'        => $help_mapmetacap,
 		'hierarchical'        => true,
 		'supports'            => array( 'title', 'editor', 'comments', 'thumbnail', 'page-attributes' , 'revisions', 'author' ),
@@ -329,7 +307,6 @@ function help_register_posttype($role_key, $role_name) {
 		'show_in_nav_menus'   => false
 	
 	);
-	//echo 	var_dump($help_args);
 
 	// limit to 20 characters length for the WP limitation of custom post type names
 	$post_type_name = 'h_' . substr($role_key , -18);
@@ -338,37 +315,7 @@ function help_register_posttype($role_key, $role_name) {
 
 }
 
-
-
-/**
- * Register new taxonomies for use with the 'help_note' custom post type
- */
- 
-/*
-function help_note_create_taxonomies(){
-	register_taxonomy('help-category',array ('help_note', ), array( 
-		'hierarchical' => true, 
-		'label' => 'Help Categories',
-		'show_ui' => true,
-		'query_var' => true,
-		'rewrite' => array('slug' => 'help-category'),
-		'singular_label' => 'Help Category') );
-
-
-	
-}
-
-// limit to after init()
-
-add_action( 'init', 'help_note_create_taxonomies', 0 );
-*/
-
-
-
 // Add New Capabilities ..
-
-// todo .... add new capabilties on selecting a new role and saving.
-
 function my_help_add_role_caps() {
 
 	global $wp_roles;
@@ -377,22 +324,19 @@ function my_help_add_role_caps() {
 	$wp_roles = new WP_Roles();
 
 	$roles = $wp_roles->get_names();
-	
-	//ksort($roles);
-	
 
+    // option collection  
+	$settings_options = get_option('help_note_option');  
+    
+    if (  ! empty($settings_options ) ) {
 
-
-    if (  ! empty($settings_options ) ) {	
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
         {
-            
-    
+          
     		// gets the author role
     		$role = get_role( $role_selected );
     		$capability_type = "help_{$role_selected}_note";
-
-
+			
     		$role->add_cap( "edit_{$capability_type}" );
     		$role->add_cap( "read_{$capability_type}" );
     		$role->add_cap( "delete_{$capability_type}" );
@@ -406,7 +350,7 @@ function my_help_add_role_caps() {
             $role->add_cap( "delete_others_{$capability_type}s" );
             $role->add_cap( "edit_private_{$capability_type}s" );
             $role->add_cap( "edit_published_{$capability_type}s" );
-    		
+
     	}
 	}    
 }
@@ -419,13 +363,50 @@ function help_do_on_activation() {
 		update_option('help_note_option', array()); 
 	} 
 
-    // Add the selected role capaabilities for use with the role help notes
+    //Add the selected role capaabilities for use with the role help notes
 	my_help_add_role_caps();
 
 	// ATTENTION: This is *only* done during plugin activation hook in this example!
 	// You should *NEVER EVER* do this on every page load!!
 	flush_rewrite_rules();
+    
+
 }
 register_activation_hook( HELP_MYPLUGINNAME_PATH.'role-based-help-notes.php', 'help_do_on_activation' );
+
+// remove capabilities on uninstall.
+function rbhn_capability_clean_up() {
+
+    global $wp_roles;
+ 
+	if ( ! isset( $wp_roles ) )
+	    $wp_roles = new WP_Roles();
+            
+	$roles = $wp_roles->get_names();
+
+	foreach($roles as $role_key=>$role_name)
+	{
+        
+    	// $role is used in the next foreach loop
+		$role = get_role( $role_key );
+		$capability_type = "help_{$role_key}_note";
+
+        $role->remove_cap( "edit_{$capability_type}" );
+		$role->remove_cap( "read_{$capability_type}" );
+		$role->remove_cap( "delete_{$capability_type}" );
+		$role->remove_cap( "edit_{$capability_type}s" );
+		$role->remove_cap( "edit_others_{$capability_type}s" );
+		$role->remove_cap( "publish_{$capability_type}s" );
+		$role->remove_cap( "read_private_{$capability_type}s" );
+        $role->remove_cap( "delete_{$capability_type}s" );
+        $role->remove_cap( "delete_private_{$capability_type}s" );
+        $role->remove_cap( "delete_published_{$capability_type}s" );
+        $role->remove_cap( "delete_others_{$capability_type}s" );
+        $role->remove_cap( "edit_private_{$capability_type}s" );
+        $role->remove_cap( "edit_published_{$capability_type}s" );
+        
+    }
+
+}
 
 ?>
