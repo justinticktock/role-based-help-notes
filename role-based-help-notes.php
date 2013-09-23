@@ -365,7 +365,7 @@ function help_do_on_activation() {
 
     //Add the selected role capaabilities for use with the role help notes
 	my_help_add_role_caps();
-
+    
 	// ATTENTION: This is *only* done during plugin activation hook in this example!
 	// You should *NEVER EVER* do this on every page load!!
 	flush_rewrite_rules();
