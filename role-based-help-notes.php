@@ -20,16 +20,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-
 // Define constants
 
 define( 'HELP_PLUGIN_VERSION', '1.0' );
 define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
 define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
-
-/* Load debug code. */
-//require_once( HELP_MYPLUGINNAME_PATH . 'includes/debug.php' );
 
 
 // if selected install the plugings and force activation
@@ -92,7 +87,7 @@ function help_note_plugin_intialize_options() {
 
 	if (delete_transient('help_note_settings_saved')) {
 	
-        flush_rewrite_rules();
+        help_do_on_activation();
 		
 	}
 
@@ -284,95 +279,21 @@ function help_register_posttype($role_key, $role_name) {
 		'menu_name'          =>  $role_name,
 
 	);
-	//echo 	var_dump($help_labels);
 	
-	if ( function_exists( 'members_get_capabilities' ) ) {
+	if ($role_key != "general" ) {
 	
-		
-		//$help_capabilitytype = 'help_note'; 		// can be an array e.g. array('story', 'stories')  << this will use the second for the capabilitiy pulural version 
-													//e.g. 'stories' not the default auto generated version 'storys'
 		$help_capabilitytype = "help_{$role_key}_note";
 		
-		$help_mapmetacap = false;
+		$help_mapmetacap = true;
 		
-        /*
-		$help_capabilities = array(
-	
-			'edit_post'          => "help_{$role_key}_edit_note",
-			'edit_posts'         => "help_{$role_key}_edit_notes",
-			'edit_others_posts'  => "help_{$role_key}_edit_others_notes",
-			'publish_posts'      => "help_{$role_key}_publish_notes",
-			'read_post'          => "help_{$role_key}_read_note",
-			'read_private_posts' => "help_{$role_key}_read_private_notes",
-			'delete_post'        => "help_{$role_key}_delete_note"
-		
-		);
-        
-        
-        
-        
-
-
-        $role->add_cap( "edit_{$capability_type}" );
-		$role->add_cap( "read_{$capability_type}" );
-		$role->add_cap( "delete_{$capability_type}" );
-		$role->add_cap( "edit_{$capability_type}s" );
-		$role->add_cap( "edit_others_{$capability_type}s" );
-		$role->add_cap( "publish_{$capability_type}s" );
-		$role->add_cap( "read_private_{$capability_type}s" );
-        $role->add_cap( "delete_{$capability_type}s" );
-        $role->add_cap( "delete_private_{$capability_type}s" );
-        $role->add_cap( "delete_published_{$capability_type}s" );
-        $role->add_cap( "delete_others_{$capability_type}s" );
-        $role->add_cap( "edit_private_{$capability_type}s" );
-        $role->add_cap( "edit_published_{$capability_type}s" );
-        
-    		'capability_type'			=> array( 'ai1ec_event', 'ai1ec_events' ),
-			'capabilities'        => array(
-				'read_post'               => 'read_ai1ec_event',
-				'edit_post'               => 'edit_ai1ec_event',
-				'edit_posts'              => 'edit_ai1ec_events',
-				'edit_others_posts'       => 'edit_others_ai1ec_events',
-				'edit_private_posts'      => 'edit_private_ai1ec_events',
-				'edit_published_posts'    => 'edit_published_ai1ec_events',
-				'delete_post'             => 'delete_ai1ec_event',
-				'delete_posts'            => 'delete_ai1ec_events',
-				'delete_others_posts'     => 'delete_others_ai1ec_events',
-				'delete_published_posts'  => 'delete_published_ai1ec_events',
-				'delete_private_posts'    => 'delete_private_ai1ec_events',
-				'publish_posts'           => 'publish_ai1ec_events',
-				'read_private_posts'      => 'read_private_ai1ec_events' ), 
-                
-                
-                
-		*/    
-	
 	} else {
 	
 		$help_capabilitytype = 'post';
 		
 		$help_mapmetacap = true;
-		
-		/*
-		$help_capabilities = array(
-	
-			'edit_post'          => 'edit_post',
-			'edit_posts'         => 'edit_posts',
-			'edit_others_posts'  => 'edit_others_posts',
-			'publish_posts'      => 'publish_posts',
-			'read_post'          => 'read_post',
-			'read_private_posts' => 'read_private_posts',
-			'delete_post'        => 'delete_post'
-
-        
-		);
-		*/
-		
 	
 	};
 	
-    
-
    // $help_public =  if ( current_user_can("read__".$help_capabilitytype) ) {
     if ( current_user_can("read_".$help_capabilitytype)  ) {
          $help_public = true ;
@@ -418,10 +339,12 @@ function help_register_posttype($role_key, $role_name) {
 }
 
 
+
 /**
  * Register new taxonomies for use with the 'help_note' custom post type
  */
  
+/*
 function help_note_create_taxonomies(){
 	register_taxonomy('help-category',array ('help_note', ), array( 
 		'hierarchical' => true, 
@@ -438,11 +361,13 @@ function help_note_create_taxonomies(){
 // limit to after init()
 
 add_action( 'init', 'help_note_create_taxonomies', 0 );
-
+*/
 
 
 
 // Add New Capabilities ..
+
+// todo .... add new capabilties on selecting a new role and saving.
 
 function my_help_add_role_caps() {
 
@@ -466,8 +391,8 @@ function my_help_add_role_caps() {
     		// gets the author role
     		$role = get_role( $role_selected );
     		$capability_type = "help_{$role_selected}_note";
-    		
-    		//http://stackoverflow.com/questions/8198038/wordpress-capabilities-for-custom-post-type
+
+
     		$role->add_cap( "edit_{$capability_type}" );
     		$role->add_cap( "read_{$capability_type}" );
     		$role->add_cap( "delete_{$capability_type}" );
@@ -482,50 +407,9 @@ function my_help_add_role_caps() {
             $role->add_cap( "edit_private_{$capability_type}s" );
             $role->add_cap( "edit_published_{$capability_type}s" );
     		
-    		/*
-    		$role->add_cap( "help_{$role_key}_edit_note" ); 
-    		$role->add_cap( "help_{$role_key}_edit_notes" ); 
-    		$role->add_cap( "help_{$role_key}_edit_others_notes" ); 
-    		$role->add_cap( "help_{$role_key}_publish_notes" ); 
-    		$role->add_cap( "help_{$role_key}_read_note" ); 
-    		$role->add_cap( "help_{$role_key}_read_private_notes" ); 
-    		$role->add_cap( "help_{$role_key}_delete_note" ); 
-    		*/	
-    
-    		
     	}
-	}
-    
-    
-    
-    
-
-
-    // Now add the generic capabilitiy for the default Help Notes..
-    /*
-	$role->add_cap( "help_note_edit_note" ); 
-	$role->add_cap( "help_note_edit_notes" ); 
-	$role->add_cap( "help_note_edit_others_notes" ); 
-	$role->add_cap( "help_note_publish_notes" ); 
-	$role->add_cap( "help_note_read_note" ); 
-	$role->add_cap( "help_note_read_private_notes" ); 
-	$role->add_cap( "help_note_delete_note" ); 
-	*/
-
-	// temp removal code....
-    $role->remove_cap( "help_note_edit_note" ); 
-	$role->remove_cap( "help_note_edit_notes" ); 
-	$role->remove_cap( "help_note_edit_others_notes" ); 
-	$role->remove_cap( "help_note_publish_notes" ); 
-	$role->remove_cap( "help_note_read_note" ); 
-	$role->remove_cap("help_note_read_private_notes" ); 
-	$role->remove_cap( "help_note_delete_note" ); 
+	}    
 }
-
-//add_action( 'admin_init', 'my_help_add_role_caps' );
-// ^^^^ remove this default overhead it has been moved to execute the 
-// addition of capabilities for plugin activation.
-		
 		
 /* Add capabilities and Flush your rewrite rules for plugin activation */
 function help_do_on_activation() {
@@ -535,16 +419,13 @@ function help_do_on_activation() {
 		update_option('help_note_option', array()); 
 	} 
 
-	// First, we "add" the custom post type via the above written function.
-	// Note: "add" is written with quotes, as CPTs don't get added to the DB,
-	// They are only referenced in the post_type column with a post entry, 
-	// when you add a post of this CPT.
+    // Add the selected role capaabilities for use with the role help notes
 	my_help_add_role_caps();
 
 	// ATTENTION: This is *only* done during plugin activation hook in this example!
 	// You should *NEVER EVER* do this on every page load!!
 	flush_rewrite_rules();
 }
-register_activation_hook( HELP_MYPLUGINNAME_PATH.'help.php', 'help_do_on_activation' );
+register_activation_hook( HELP_MYPLUGINNAME_PATH.'role-based-help-notes.php', 'help_do_on_activation' );
 
 ?>
