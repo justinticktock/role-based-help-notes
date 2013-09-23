@@ -42,11 +42,18 @@ function my_debug(){
 	//Paste anywhere on a theme template file outside the loop.
 
     
-	global $wp_post_types;
-	
+    global $wp_post_types;
+    
     $debug_text = "<br /><br /><h3>Post Types</h3>";
-    $debug_text .= "<br /> <br />";
-    $debug_text .= "<pre>" . $wp_post_types ."</pre>" ;
+    $debug_text .= "<br /> <br /> " ;
+    $debug_text =  "<pre> " ;
+    $debug_text .= print_r($wp_post_types, true);
+    $debug_text .=  "</pre>";
+    
+    
+   // dump_wp_post_types() ;
+    
+    
     //$debug_text .=  '<li>' . implode( '</li><li>', $wp_post_types ) . '</li>' ;
 
 
