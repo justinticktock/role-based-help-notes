@@ -31,7 +31,7 @@ define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
 // if selected install the plugings and force activation
 $options = get_option('help_note_option');  
 if ( $options['help_note_menu_plugin'] ) {
-	// install the plugins addition module
+    // install the plugins addition module
 	require_once( HELP_MYPLUGINNAME_PATH . 'includes/install-plugins.php' );	
 }
 		
@@ -373,40 +373,5 @@ function help_do_on_activation() {
 
 }
 register_activation_hook( HELP_MYPLUGINNAME_PATH.'role-based-help-notes.php', 'help_do_on_activation' );
-
-// remove capabilities on uninstall.
-function rbhn_capability_clean_up() {
-
-    global $wp_roles;
- 
-	if ( ! isset( $wp_roles ) )
-	    $wp_roles = new WP_Roles();
-            
-	$roles = $wp_roles->get_names();
-
-	foreach($roles as $role_key=>$role_name)
-	{
-        
-    	// $role is used in the next foreach loop
-		$role = get_role( $role_key );
-		$capability_type = "help_{$role_key}_note";
-
-        $role->remove_cap( "edit_{$capability_type}" );
-		$role->remove_cap( "read_{$capability_type}" );
-		$role->remove_cap( "delete_{$capability_type}" );
-		$role->remove_cap( "edit_{$capability_type}s" );
-		$role->remove_cap( "edit_others_{$capability_type}s" );
-		$role->remove_cap( "publish_{$capability_type}s" );
-		$role->remove_cap( "read_private_{$capability_type}s" );
-        $role->remove_cap( "delete_{$capability_type}s" );
-        $role->remove_cap( "delete_private_{$capability_type}s" );
-        $role->remove_cap( "delete_published_{$capability_type}s" );
-        $role->remove_cap( "delete_others_{$capability_type}s" );
-        $role->remove_cap( "edit_private_{$capability_type}s" );
-        $role->remove_cap( "edit_published_{$capability_type}s" );
-        
-    }
-
-}
 
 ?>
