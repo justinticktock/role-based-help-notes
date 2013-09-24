@@ -28,12 +28,25 @@ define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
 define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
 
 
-// if selected install the plugings and force activation
-$options = get_option('help_note_option');  
-if ( $options['help_note_menu_plugin'] ) {
-    // install the plugins addition module
-	require_once( HELP_MYPLUGINNAME_PATH . 'includes/install-plugins.php' );	
+add_action( 'init', 'rbhn_load_includes' );
+
+function rbhn_load_includes() {
+    // if selected install the plugings and force activation
+    $options = get_option('help_note_option'); 
+
+    //echo var_dump($options);
+    
+    if (isset($options['help_note_menu_plugin']) ) {
+        if ( $options['help_note_menu_plugin'] ) {
+            // install the plugins addition module
+            require_once( HELP_MYPLUGINNAME_PATH . 'includes/install-plugins.php' );    
+    
+        }  
+        
+    }
+
 }
+
 		
 // Create the Help Top Level Menu Page
 add_action( 'admin_menu', 'register_my_custom_help_menu_page' );
@@ -86,11 +99,12 @@ function notes_settings_page_callback( $args = '' ) {
  */   
 function help_note_plugin_intialize_options() {  
 
-	if (delete_transient('help_note_settings_saved')) {
-	
-        help_do_on_activation();
-		
-	}
+    if ( get_option( 'rbhn_update_request' )) {
+        
+    	    update_option( 'rbhn_update_request', '' );
+            help_do_on_activation();
+            
+    }
 
 
 	
@@ -187,9 +201,10 @@ function settings_field_help_notes_install_menu_plugin() {
 	// Render the output  
 	?> 
 	<input 
-		type='checkbox'  
-		name="help_note_option[help_note_menu_plugin]"  
-		value="1"<?php checked( isset( $options['help_note_menu_plugin'] ) ); ?> </Br>
+		type='checkbox' 
+		name="help_note_option[help_note_menu_plugin]" 
+        id="help_note_option_select_menu_plugin]" 
+		value="1"<?php checked( $options['help_note_menu_plugin'], 1 ); ?> </Br>
 		</Br> Selecting this will prompt you through the installation of plugin 'Post type archive in menu'.  The plugin will be forced active while this is selected.
 		</Br> To install follow the prompts or goto the [Plugins Menu]..[Install Plugins], once installed go to [Appearance]...[Menus] and locate the "Archives" metabox for use in your theme's menus.
 		</Br> (unselecting will not remove the plugin, you will need to manually uninstall 'Post type archive in menu').
@@ -199,9 +214,10 @@ function settings_field_help_notes_install_menu_plugin() {
 
 function sanitize_help_note_option( $settings ) {  
 
-	// set the transient to acted as a flag to flush the Permalink rules on save of the settings.
-	set_transient('help_note_settings_saved');
-	
+	// set the flag to flush the Permalink rules on save of the settings.
+	update_option( 'rbhn_update_request', '1' );
+
+    
 	// option must be safe
 	$settings['help_note_post_types'] = isset( $settings['help_note_post_types'] ) ? (array) $settings['help_note_post_types'] : array();
 
@@ -215,14 +231,15 @@ function help_register_multiple_posttypes() {
 
 	//  loop through the site roles and create a custom post for each
 	global $wp_roles;
-	
+     return ;	
 	if ( ! isset( $wp_roles ) )
 		$wp_roles = new WP_Roles();
 	
 	$roles = $wp_roles->get_names();
-	
+
+
 	do_action( 'register_posttype_help', "general", "General");  // generate a genetic help note post type
-	
+
 	// option collection  
 	$settings_options = get_option('help_note_option');  
 	
@@ -239,12 +256,12 @@ function help_register_multiple_posttypes() {
 }
 
 // Adds custom post type for help
-add_action( 'register_posttype_help', 'help_register_posttype', 10, 2 );
+add_action( 'register_posttype_help', 'help_register_posttype', 20, 2 );
 
 function help_register_posttype($role_key, $role_name) {
 
     $role_name = (strcasecmp("note", $role_name) ?  $role_name . ' ' : '' );
-    
+
 	$help_labels = array(
 
 		'name'               => $role_name . 'Notes',
@@ -262,6 +279,7 @@ function help_register_posttype($role_key, $role_name) {
 
 	);
 	
+
 	if ($role_key != "general" ) {
 	
 		$help_capabilitytype = "help_{$role_key}_note";
@@ -285,7 +303,7 @@ function help_register_posttype($role_key, $role_name) {
          $help_public = false ;
 		 
     };
-                        
+                 
 	$help_args = array(
 
 		'labels'              => $help_labels,
@@ -318,8 +336,9 @@ function help_register_posttype($role_key, $role_name) {
 // Add New Capabilities ..
 function my_help_add_role_caps() {
 
+    
 	global $wp_roles;
-	
+
 	if ( ! isset( $wp_roles ) )
 	$wp_roles = new WP_Roles();
 
@@ -333,6 +352,7 @@ function my_help_add_role_caps() {
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
         {
           
+        
     		// gets the author role
     		$role = get_role( $role_selected );
     		$capability_type = "help_{$role_selected}_note";
@@ -358,10 +378,17 @@ function my_help_add_role_caps() {
 /* Add capabilities and Flush your rewrite rules for plugin activation */
 function help_do_on_activation() {
 
-	// Save the option on plugin intialisation 
-	if( ! get_option( 'help_note_option' ) ) { 
-		update_option('help_note_option', array()); 
-	} 
+    echo "activating";
+    $defaults = array(
+      'help_note_post_types' => array(),
+      'help_note_menu_plugin' => false,
+    );
+    
+    $options = wp_parse_args(get_option('help_note_option'), $defaults);
+    
+	// create the option on plugin intialisation 
+    update_option('help_note_option', $options); 
+
 
     //Add the selected role capaabilities for use with the role help notes
 	my_help_add_role_caps();
