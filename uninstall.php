@@ -11,13 +11,15 @@ if (is_multisite()) {
         foreach($blogs as $blog) {
             switch_to_blog($blog['blog_id']);
             delete_option('help_note_option');
+            delete_option('rbhn_update_request');
             rbhn_capability_clean_up();
         }
         restore_current_blog();
     }
 } else {
-    do_action( 'rbhn_remove_caps');  // clear out capabilities
-    rbhn_capability_clean_up();
+		delete_option('help_note_option');
+		delete_option('rbhn_update_request');
+		rbhn_capability_clean_up();
 }
 
 
@@ -54,7 +56,8 @@ function rbhn_capability_clean_up() {
                 "delete_published_{$capability_type}s",
                 "delete_others_{$capability_type}s",
                 "edit_private_{$capability_type}s",
-                "edit_published_{$capability_type}s"
+                "edit_published_{$capability_type}s",
+                "create_{$capability_type}s"
                 );
 
 

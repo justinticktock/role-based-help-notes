@@ -20,7 +20,8 @@
 /**
  * Include the TGM_Plugin_Activation class.
  */
-require_once dirname( __FILE__ ) . '/class-tgm-plugin-activation.php';
+ 
+require_once(dirname( __FILE__ ) . '/class-tgm-plugin-activation.php');
 
 add_action( 'tgmpa_register', 'help_note_register_required_plugins' );
 
@@ -37,7 +38,7 @@ add_action( 'tgmpa_register', 'help_note_register_required_plugins' );
  * TGM_Plugin_Activation class constructor.
  */
 function help_note_register_required_plugins() {
-
+echo "";
 	/**
 	 * Array of plugin arrays. Required keys are name and slug.
 	 * If the source is NOT from the .org repo, then source is also required.

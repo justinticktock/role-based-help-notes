@@ -27,24 +27,28 @@ define( 'HELP_PLUGIN_VERSION', '1.0' );
 define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
 define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
 
+/*
+Include assets..
+*/
 
-add_action( 'init', 'rbhn_load_includes' );
+require_once( HELP_MYPLUGINNAME_PATH . 'includes/capabilities.php' );   // <<< commented out for default meta_capabilities to take precedence.
 
-function rbhn_load_includes() {
-    // if selected install the plugings and force activation
-    $options = get_option('help_note_option'); 
+// if selected install the plugings and force activation
+$options = get_option('help_note_option'); 
 
-    //echo var_dump($options);
-    
-    if (isset($options['help_note_menu_plugin']) ) {
-        if ( $options['help_note_menu_plugin'] ) {
-            // install the plugins addition module
-            require_once( HELP_MYPLUGINNAME_PATH . 'includes/install-plugins.php' );    
-    
-        }  
+if (isset($options['help_note_menu_plugin']) ) {
+
+    // if option is ticked (true)
+    if ( $options['help_note_menu_plugin'] ) {
         
-    }
+        //include the TGM-Plugin-Activation CLASS
+        require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-tgm-plugin-activation.php');
+        
+        // install the plugins addition module
+       require_once( HELP_MYPLUGINNAME_PATH . 'includes/install-plugins.php' );    
 
+    }  
+    
 }
 
 		
@@ -78,9 +82,7 @@ function notes_settings_page_callback( $args = '' ) {
 
 			<form method="post" action="options.php">
 				<?php
-					//settings_fields( $options_group );
 					settings_fields( 'help_note_option_group' );
-					//do_settings_sections( $options_key );
 					do_settings_sections( 'notes-settings' );
 					submit_button();
 				?>
@@ -97,6 +99,10 @@ function notes_settings_page_callback( $args = '' ) {
  * 
  * This function is registered with the 'admin_init' hook. 
  */   
+ 
+add_action('admin_init', 'help_note_plugin_intialize_options' );  
+
+
 function help_note_plugin_intialize_options() {  
 
     if ( get_option( 'rbhn_update_request' )) {
@@ -144,8 +150,6 @@ function help_note_plugin_intialize_options() {
 
 } // end help_note_plugin_intialize_options  
 
-add_action('admin_init', 'help_note_plugin_intialize_options' );  
-
 
 
 function help_note_post_types_section_callback() {  
@@ -174,8 +178,6 @@ function settings_field_help_notes_post_types() {
 	foreach($roles as $role_key=>$role_name)
 	{
 			$id = sanitize_key( $role_key );
-
-		//echo $id ; 
 		
 		// Render the output  
 		?> 
@@ -224,40 +226,36 @@ function sanitize_help_note_option( $settings ) {
 	return $settings;
 	
 }
-
+// set_current_user
 add_action( 'init', 'help_register_multiple_posttypes' );
 
 function help_register_multiple_posttypes() {
 
 	//  loop through the site roles and create a custom post for each
 	global $wp_roles;
-     return ;	
+    
+    // Load roles if not set
 	if ( ! isset( $wp_roles ) )
 		$wp_roles = new WP_Roles();
-	
+
 	$roles = $wp_roles->get_names();
 
-
-	do_action( 'register_posttype_help', "general", "General");  // generate a genetic help note post type
-
+	call_user_func_array( 'help_register_posttype', array("general", "General") );  // generate a genetic help note post type
+	
 	// option collection  
 	$settings_options = get_option('help_note_option');  
 	
 	if (  ! empty($settings_options ) ) {	
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
 		{
-			
 			if (array_key_exists ($role_selected, $roles)) {
-				do_action( 'register_posttype_help', $role_selected, $roles[$role_selected]); // do_action( 'register_posttype_help', {for the key}, {role name});
+				call_user_func_array( 'help_register_posttype', array($role_selected, $roles[$role_selected]) ); 
 			} 
-			
 		}
 	}
 }
 
 // Adds custom post type for help
-add_action( 'register_posttype_help', 'help_register_posttype', 20, 2 );
-
 function help_register_posttype($role_key, $role_name) {
 
     $role_name = (strcasecmp("note", $role_name) ?  $role_name . ' ' : '' );
@@ -293,7 +291,8 @@ function help_register_posttype($role_key, $role_name) {
 		$help_mapmetacap = true;
 	
 	};
-	
+
+	/*	 
     if ( current_user_can("read_".$help_capabilitytype)  ) {
 	
          $help_public = true ;
@@ -303,7 +302,30 @@ function help_register_posttype($role_key, $role_name) {
          $help_public = false ;
 		 
     };
-                 
+
+    
+     $help_capabilties = array (
+            'edit_post'            		=> 'edit_help_author_note',
+            'read_post'         		=> 'read_help_author_note',
+            'delete_post'       		=> 'delete_help_author_note',
+            'edit_posts'        		=> 'edit_help_author_notes',
+            'edit_others_posts' 		=> 'edit_others_help_author_notes',
+            'publish_posts'     		=> 'publish_help_author_notes',
+            'read_private_posts'		=> 'read_private_help_author_notes',
+            'read'						=> 'read',
+            'delete_posts'          	=> 'delete_help_author_notes',
+            'delete_private_posts'      => 'delete_private_help_author_notes',
+            'delete_published_posts'    => 'delete_published_help_author_notes',
+            'delete_others_posts'       => 'delete_others_help_author_notes',
+            'edit_private_posts'        => 'edit_private_help_author_notes',
+            'edit_published_posts'      => 'edit_published_help_author_notes',
+            'create_posts'              => 'edit_help_author_notes',    
+         );
+    
+    */
+        
+	$help_public = true;
+	        
 	$help_args = array(
 
 		'labels'              => $help_labels,
@@ -315,6 +337,7 @@ function help_register_posttype($role_key, $role_name) {
 		'show_in_menu'        => 'helpmenu', // toplevel_page_helpmenu',
         'show_in_admin_bar'   => true,
 		'capability_type'     => $help_capabilitytype,
+    //    'capabilities'        => $help_capabilties,
 		'map_meta_cap'        => $help_mapmetacap,
 		'hierarchical'        => true,
 		'supports'            => array( 'title', 'editor', 'comments', 'thumbnail', 'page-attributes' , 'revisions', 'author' ),
@@ -339,6 +362,7 @@ function my_help_add_role_caps() {
     
 	global $wp_roles;
 
+    // Load Roles if not set
 	if ( ! isset( $wp_roles ) )
 	$wp_roles = new WP_Roles();
 
@@ -351,15 +375,27 @@ function my_help_add_role_caps() {
 
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
         {
-          
+			// http://justintadlock.com/archives/2010/07/10/meta-capabilities-for-custom-post-types
+			// Meta capability assigned by WordPress. Do not give to any role.
+			// edit_{$capability_type}, delete_{$capability_type} or read_{$capability_type}
         
+		
+		
+		
+			// helpful blog by blurback (http://blurback.com/post/1479456356/permissions-with-wordpress-custom-post-types)
+			//Primitive capabilities are flags, always set to yes or no. 
+			//Meta capabilities require some context, like Is the user the author of this post? (edit_post, read_post, and delete_post - These three are meta capabilities)
+			
     		// gets the author role
     		$role = get_role( $role_selected );
     		$capability_type = "help_{$role_selected}_note";
 			
-    		$role->add_cap( "edit_{$capability_type}" );
-    		$role->add_cap( "read_{$capability_type}" );
-    		$role->add_cap( "delete_{$capability_type}" );
+			// don't allocate any of the three primitive capabilities to a users role
+        	//  $role->add_cap( "edit_{$capability_type}" );
+        	//	$role->add_cap( "read_{$capability_type}" );
+        	//	$role->add_cap( "delete_{$capability_type}" );
+    			
+			
     		$role->add_cap( "edit_{$capability_type}s" );
     		$role->add_cap( "edit_others_{$capability_type}s" );
     		$role->add_cap( "publish_{$capability_type}s" );
@@ -370,7 +406,7 @@ function my_help_add_role_caps() {
             $role->add_cap( "delete_others_{$capability_type}s" );
             $role->add_cap( "edit_private_{$capability_type}s" );
             $role->add_cap( "edit_published_{$capability_type}s" );
-
+            //$role->add_cap( "create_{$capability_type}s" );
     	}
 	}    
 }
@@ -378,7 +414,6 @@ function my_help_add_role_caps() {
 /* Add capabilities and Flush your rewrite rules for plugin activation */
 function help_do_on_activation() {
 
-    echo "activating";
     $defaults = array(
       'help_note_post_types' => array(),
       'help_note_menu_plugin' => false,
