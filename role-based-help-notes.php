@@ -28,7 +28,7 @@ define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
 define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
 
 /*
-Include assets..
+Includes...
 */
 
 require_once( HELP_MYPLUGINNAME_PATH . 'includes/capabilities.php' );   // <<< commented out for default meta_capabilities to take precedence.
@@ -282,47 +282,12 @@ function help_register_posttype($role_key, $role_name) {
 	
 		$help_capabilitytype = "help_{$role_key}_note";
 		
-		$help_mapmetacap = true;
-		
 	} else {
 	
 		$help_capabilitytype = 'post';
-		
-		$help_mapmetacap = true;
+
 	
 	};
-
-	/*	 
-    if ( current_user_can("read_".$help_capabilitytype)  ) {
-	
-         $help_public = true ;
-		 
-    } else {                        
-	
-         $help_public = false ;
-		 
-    };
-
-    
-     $help_capabilties = array (
-            'edit_post'            		=> 'edit_help_author_note',
-            'read_post'         		=> 'read_help_author_note',
-            'delete_post'       		=> 'delete_help_author_note',
-            'edit_posts'        		=> 'edit_help_author_notes',
-            'edit_others_posts' 		=> 'edit_others_help_author_notes',
-            'publish_posts'     		=> 'publish_help_author_notes',
-            'read_private_posts'		=> 'read_private_help_author_notes',
-            'read'						=> 'read',
-            'delete_posts'          	=> 'delete_help_author_notes',
-            'delete_private_posts'      => 'delete_private_help_author_notes',
-            'delete_published_posts'    => 'delete_published_help_author_notes',
-            'delete_others_posts'       => 'delete_others_help_author_notes',
-            'edit_private_posts'        => 'edit_private_help_author_notes',
-            'edit_published_posts'      => 'edit_published_help_author_notes',
-            'create_posts'              => 'edit_help_author_notes',    
-         );
-    
-    */
         
 	$help_public = true;
 	        
@@ -337,8 +302,7 @@ function help_register_posttype($role_key, $role_name) {
 		'show_in_menu'        => 'helpmenu', // toplevel_page_helpmenu',
         'show_in_admin_bar'   => true,
 		'capability_type'     => $help_capabilitytype,
-    //    'capabilities'        => $help_capabilties,
-		'map_meta_cap'        => $help_mapmetacap,
+		'map_meta_cap'        => true,
 		'hierarchical'        => true,
 		'supports'            => array( 'title', 'editor', 'comments', 'thumbnail', 'page-attributes' , 'revisions', 'author' ),
 		'has_archive'         => true,
@@ -375,17 +339,7 @@ function my_help_add_role_caps() {
 
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
         {
-			// http://justintadlock.com/archives/2010/07/10/meta-capabilities-for-custom-post-types
-			// Meta capability assigned by WordPress. Do not give to any role.
-			// edit_{$capability_type}, delete_{$capability_type} or read_{$capability_type}
-        
-		
-		
-		
-			// helpful blog by blurback (http://blurback.com/post/1479456356/permissions-with-wordpress-custom-post-types)
-			//Primitive capabilities are flags, always set to yes or no. 
-			//Meta capabilities require some context, like Is the user the author of this post? (edit_post, read_post, and delete_post - These three are meta capabilities)
-			
+
     		// gets the author role
     		$role = get_role( $role_selected );
     		$capability_type = "help_{$role_selected}_note";
