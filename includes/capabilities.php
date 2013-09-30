@@ -11,11 +11,11 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
        return $caps;
         }
     */
-
+    
     global $wp_roles;
 
     // Load Roles if not set
-	if ( ! isset( $wp_roles ) )
+    if ( ! isset( $wp_roles ) )
 	$wp_roles = new WP_Roles();
 
 	$roles = $wp_roles->get_names();
@@ -33,10 +33,17 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 
             
             switch ( $cap ) {
-        
+
         		case "delete_{$capability_type}":
                     
-                    /* If deleting an event, assign the required capability. */
+                    /* If deleting a helpnote, assign the required capability. */
+
+					$post = get_post( $args[0] );
+					$post_type = get_post_type_object( $post->post_type );
+
+					/* Set an empty array for the caps. */
+					$caps = array();
+
                 	if( $user_id == $post->post_author )
             			$caps[] = $post_type->cap->delete_posts;
             		else
@@ -46,8 +53,14 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 
         		case "edit_{$capability_type}":
 
-                    /* If editing a help note, assign the required capability. */
-            
+                    /* If editing a helpnote, assign the required capability. */
+
+					$post = get_post( $args[0] );
+					$post_type = get_post_type_object( $post->post_type );
+
+					/* Set an empty array for the caps. */
+					$caps = array();
+					
             		if( $user_id == $post->post_author )
             			$caps[] = $post_type->cap->edit_posts;
             		else
@@ -57,7 +70,14 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
         
         		case "read_{$capability_type}":	
 
-                    /* If reading a private event, assign the required capability. */
+                    /* If reading a private helpnote, assign the required capability. */
+					
+					$post = get_post( $args[0] );
+					$post_type = get_post_type_object( $post->post_type );
+
+					/* Set an empty array for the caps. */
+					$caps = array();
+
             		if( 'private' != $post->post_status )
             			$caps[] = 'read';
             		elseif ( $user_id == $post->post_author )

@@ -277,18 +277,35 @@ function help_register_posttype($role_key, $role_name) {
 
 	);
 	
-
 	if ($role_key != "general" ) {
 	
-		$help_capabilitytype = "help_{$role_key}_note";
-		
+		$help_capabilitytype    = "help_{$role_key}_note";
+        $help_mapmetacap        = true;
+        		
 	} else {
 	
-		$help_capabilitytype = 'post';
+		$help_capabilitytype    = 'post';
+        $help_mapmetacap        = true;
 
-	
 	};
-        
+    
+    $capability = array(
+            'edit_post'		        => 'edit_{$help_capabilitytype}',
+            'read_post'		        => 'read_{$help_capabilitytype}',
+            'delete_post'		    => 'delete_{$help_capabilitytype}',
+            'edit_posts'		    => 'edit_{$help_capabilitytype}s',
+            'edit_others_posts'	    => 'edit_others_{$help_capabilitytype}s',
+            'publish_posts'		     => 'publish_{$help_capabilitytype}s',
+            'read_private_posts'	 => 'read_private_{$help_capabilitytype}s',
+            'delete_posts'           => 'delete_{$help_capabilitytype}s',
+            'delete_private_posts'   => 'delete_private_{$help_capabilitytype}s',
+            'delete_published_posts' => 'delete_published_{$help_capabilitytype}s',
+            'delete_others_posts'    => 'delete_others_{$help_capabilitytype}s',
+            'edit_private_posts'     => 'edit_private_{$help_capabilitytype}s',
+            'edit_published_posts'   => 'edit_published_{$help_capabilitytype}s',
+            );
+            
+    
 	$help_public = true;
 	        
 	$help_args = array(
@@ -301,8 +318,9 @@ function help_register_posttype($role_key, $role_name) {
 		'show_ui'             => true,
 		'show_in_menu'        => 'helpmenu', // toplevel_page_helpmenu',
         'show_in_admin_bar'   => true,
+    //    'capabililty'         => $capability,
 		'capability_type'     => $help_capabilitytype,
-		'map_meta_cap'        => true,
+		'map_meta_cap'        => $help_mapmetacap,
 		'hierarchical'        => true,
 		'supports'            => array( 'title', 'editor', 'comments', 'thumbnail', 'page-attributes' , 'revisions', 'author' ),
 		'has_archive'         => true,
@@ -320,6 +338,7 @@ function help_register_posttype($role_key, $role_name) {
 
 }
 
+
 // Add New Capabilities ..
 function my_help_add_role_caps() {
 
@@ -330,8 +349,9 @@ function my_help_add_role_caps() {
 	if ( ! isset( $wp_roles ) )
 	$wp_roles = new WP_Roles();
 
-	$roles = $wp_roles->get_names();
-
+	$roles              = $wp_roles->get_names();
+    $administrator      = get_role('administrator');
+    
     // option collection  
 	$settings_options = get_option('help_note_option');  
     
@@ -343,12 +363,7 @@ function my_help_add_role_caps() {
     		// gets the author role
     		$role = get_role( $role_selected );
     		$capability_type = "help_{$role_selected}_note";
-			
-			// don't allocate any of the three primitive capabilities to a users role
-        	//  $role->add_cap( "edit_{$capability_type}" );
-        	//	$role->add_cap( "read_{$capability_type}" );
-        	//	$role->add_cap( "delete_{$capability_type}" );
-    			
+
 			
     		$role->add_cap( "edit_{$capability_type}s" );
     		$role->add_cap( "edit_others_{$capability_type}s" );
@@ -360,8 +375,16 @@ function my_help_add_role_caps() {
             $role->add_cap( "delete_others_{$capability_type}s" );
             $role->add_cap( "edit_private_{$capability_type}s" );
             $role->add_cap( "edit_published_{$capability_type}s" );
-            //$role->add_cap( "create_{$capability_type}s" );
+                    
+            // add admininstrator roles
+            // don't allocate any of the three primitive capabilities to a users role
+            $administrator->add_cap( "edit_{$capability_type}" );
+            $administrator->add_cap( "read_{$capability_type}" );
+            $administrator->add_cap( "delete_{$capability_type}" );
+            $administrator->add_cap( "create_{$capability_type}" );
+                
     	}
+  
 	}    
 }
 		
@@ -379,7 +402,7 @@ function help_do_on_activation() {
     update_option('help_note_option', $options); 
 
 
-    //Add the selected role capaabilities for use with the role help notes
+    //Add the selected role capabilities for use with the role help notes
 	my_help_add_role_caps();
     
 	// ATTENTION: This is *only* done during plugin activation hook in this example!
