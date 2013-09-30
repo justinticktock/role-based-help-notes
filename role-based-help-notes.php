@@ -374,15 +374,27 @@ function my_help_add_role_caps() {
             $role->add_cap( "delete_published_{$capability_type}s" );
             $role->add_cap( "delete_others_{$capability_type}s" );
             $role->add_cap( "edit_private_{$capability_type}s" );
-            $role->add_cap( "edit_published_{$capability_type}s" );
+            $role->add_cap( "edit_published_{$capability_type}s" );     
+            $role->add_cap( "create_{$capability_type}s" );  
                     
             // add admininstrator roles
             // don't allocate any of the three primitive capabilities to a users role
             $administrator->add_cap( "edit_{$capability_type}" );
             $administrator->add_cap( "read_{$capability_type}" );
             $administrator->add_cap( "delete_{$capability_type}" );
-            $administrator->add_cap( "create_{$capability_type}" );
-                
+            $administrator->add_cap( "create_{$capability_type}s" );
+			
+			// add admininstrator roles
+    		$administrator->add_cap( "edit_{$capability_type}s" );
+    		$administrator->add_cap( "edit_others_{$capability_type}s" );
+    		$administrator->add_cap( "publish_{$capability_type}s" );
+    		$administrator->add_cap( "read_private_{$capability_type}s" );
+            $administrator->add_cap( "delete_{$capability_type}s" );
+            $administrator->add_cap( "delete_private_{$capability_type}s" );
+            $administrator->add_cap( "delete_published_{$capability_type}s" );
+            $administrator->add_cap( "delete_others_{$capability_type}s" );
+            $administrator->add_cap( "edit_private_{$capability_type}s" );
+            $administrator->add_cap( "edit_published_{$capability_type}s" );
     	}
   
 	}    
