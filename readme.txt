@@ -48,3 +48,9 @@ Help notes now at the top admin level, this is a workround to the non-admins not
 
 = 1.0 =
 Release into the wild.
+
+
+== Upgrade Notice ==
+
+= 1.01 =
+uninstall 1.0 completely to clean up capabilities before installing 1.01.
