@@ -51,20 +51,11 @@ if (isset($options['help_note_menu_plugin']) ) {
     
 }
 
-		
-// Create the Help Top Level Menu Page
-add_action( 'admin_menu', 'register_my_custom_help_menu_page' );
-
-function register_my_custom_help_menu_page(){
-    // give the help notes menu the same required access capability ('read') as used by the 'profile' and 'dashboard' menu items
-    add_menu_page( 'Help menu title', 'Help Notes', 'read', 'helpmenu', '', plugins_url( 'role-based-help-notes/images/help.png' ), '5.9996' ); 
-}
-
 // Create a second level settings page
 add_action('admin_menu', 'register_my_custom_submenu_page');
 
 function register_my_custom_submenu_page() {
-    add_submenu_page( 'helpmenu', 'Notes', 'Settings', 'manage_options', 'notes-settings', 'notes_settings_page_callback' ); 
+    add_submenu_page( 'options-general.php', 'Notes', 'Help Notes', 'manage_options', 'notes-settings', 'notes_settings_page_callback' ); 
 }
 
 
@@ -258,6 +249,9 @@ function help_register_multiple_posttypes() {
 // Adds custom post type for help
 function help_register_posttype($role_key, $role_name) {
 
+	// limit to 20 characters length for the WP limitation of custom post type names
+	$post_type_name = 'h_' . substr($role_key , -18);
+	
     $role_name = (strcasecmp("note", $role_name) ?  $role_name . ' ' : '' );
 
 	$help_labels = array(
@@ -277,34 +271,11 @@ function help_register_posttype($role_key, $role_name) {
 
 	);
 	
-	if ($role_key != "general" ) {
-	
-		$help_capabilitytype    = "help_{$role_key}_note";
-        $help_mapmetacap        = true;
-        		
+	if ($role_key == "general" ) {
+		$help_capabilitytype    = 'post';	
 	} else {
-	
-		$help_capabilitytype    = 'post';
-        $help_mapmetacap        = true;
-
+		$help_capabilitytype    = sanitize_key($post_type_name);
 	};
-    
-    $capability = array(
-            'edit_post'		        => 'edit_{$help_capabilitytype}',
-            'read_post'		        => 'read_{$help_capabilitytype}',
-            'delete_post'		    => 'delete_{$help_capabilitytype}',
-            'edit_posts'		    => 'edit_{$help_capabilitytype}s',
-            'edit_others_posts'	    => 'edit_others_{$help_capabilitytype}s',
-            'publish_posts'		     => 'publish_{$help_capabilitytype}s',
-            'read_private_posts'	 => 'read_private_{$help_capabilitytype}s',
-            'delete_posts'           => 'delete_{$help_capabilitytype}s',
-            'delete_private_posts'   => 'delete_private_{$help_capabilitytype}s',
-            'delete_published_posts' => 'delete_published_{$help_capabilitytype}s',
-            'delete_others_posts'    => 'delete_others_{$help_capabilitytype}s',
-            'edit_private_posts'     => 'edit_private_{$help_capabilitytype}s',
-            'edit_published_posts'   => 'edit_published_{$help_capabilitytype}s',
-            );
-            
     
 	$help_public = true;
 	        
@@ -316,23 +287,19 @@ function help_register_posttype($role_key, $role_name) {
 		'publicly_queryable'  => $help_public,
 		'exclude_from_search' => false,
 		'show_ui'             => true,
-		'show_in_menu'        => 'helpmenu', // toplevel_page_helpmenu',
+		'show_in_menu'        => true,
         'show_in_admin_bar'   => true,
-    //    'capabililty'         => $capability,
 		'capability_type'     => $help_capabilitytype,
-		'map_meta_cap'        => $help_mapmetacap,
+		'map_meta_cap'        => true,
 		'hierarchical'        => true,
 		'supports'            => array( 'title', 'editor', 'comments', 'thumbnail', 'page-attributes' , 'revisions', 'author' ),
 		'has_archive'         => true,
 		'rewrite'             => true,
 		'query_var'           => true,
 		'can_export'          => true,
-		'show_in_nav_menus'   => false
-	
+		'show_in_nav_menus'   => false,
+		'menu_icon'			  => plugins_url( 'role-based-help-notes/images/help.png' ),
 	);
-
-	// limit to 20 characters length for the WP limitation of custom post type names
-	$post_type_name = 'h_' . substr($role_key , -18);
 
 	register_post_type( $post_type_name, $help_args );
 
@@ -359,10 +326,12 @@ function my_help_add_role_caps() {
 
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
         {
+			// limit to 20 characters length for the WP limitation of custom post type names
+			$post_type_name = 'h_' . substr($role_selected , -18);
 
     		// gets the author role
     		$role = get_role( $role_selected );
-    		$capability_type = "help_{$role_selected}_note";
+    		$capability_type = sanitize_key($post_type_name);
 
 			
     		$role->add_cap( "edit_{$capability_type}s" );
