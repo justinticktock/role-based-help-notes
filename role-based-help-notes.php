@@ -165,7 +165,7 @@ function settings_field_help_notes_post_types() {
 	// First, we read the option collection  
 	$options = get_option('help_note_option');  
 	  
-	//ksort($roles);
+	ksort($roles);
 	foreach($roles as $role_key=>$role_name)
 	{
 			$id = sanitize_key( $role_key );
