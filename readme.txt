@@ -41,6 +41,9 @@ You will need to use another plugin to manage roles and capabilities such as the
 
 == Changelog ==
 
+= 1.0.2 =
+Sorted role settings listing.
+
 = 1.01 =
 Added Capabilities for Administrator.
 capability naming now match post_type name
