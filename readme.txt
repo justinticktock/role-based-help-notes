@@ -48,6 +48,7 @@ You will need to use another plugin to manage roles and capabilities such as the
 Added new setting to select a page for a Help Notes Contents to be listed.
 Added the Plugin Extension for Simple FootNotes by [Andrew Nacin](http://profiles.wordpress.org/nacin/)
 Fixed settings listing order to alphanumeric.
+Fixed php warnings.
 
 = 1.01 =
 Added Capabilities for Administrator.
