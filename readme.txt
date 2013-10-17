@@ -19,13 +19,16 @@ To add new roles to the basic wordpress roles (Administrator, Editor, Subscriber
 
 Extensions:
 
-If you select the option it also takes advantage of the [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin (by lpeharda) to add 'Help Notes' archives to your menus.
+If you select the options for extending functionality through other plugings the following are selectable for ease of installing..
+
+1. [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref]
+2. [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
 
 == Installation ==
 
 1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-2. Goto the "Settings" Menu and "Help Notes" sub menu, select which roles are to have Help Notes.
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Goto the "Settings" Menu and "Help Notes" sub menu, select which roles are to have Help Notes.
 
 == Frequently Asked Questions ==
 
@@ -42,7 +45,9 @@ You will need to use another plugin to manage roles and capabilities such as the
 == Changelog ==
 
 = 1.0.2 =
-Sorted role settings listing.
+Added new setting to select a page for a Help Notes Contents to be listed.
+Added the Plugin Extension for Simple FootNotes by [Andrew Nacin](http://profiles.wordpress.org/nacin/)
+Fixed settings listing order to alphanumeric.
 
 = 1.01 =
 Added Capabilities for Administrator.

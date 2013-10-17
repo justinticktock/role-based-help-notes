@@ -23,39 +23,52 @@
  
 require_once(dirname( __FILE__ ) . '/class-tgm-plugin-activation.php');
 
-add_action( 'tgmpa_register', 'help_note_register_required_plugins' );
 
-/**
- * Register the required plugins for this theme.
- *
- * In this example, we register two plugins - one included with the TGMPA library
- * and one from the .org repo.
- *
- * The variable passed to tgmpa_register_plugins() should be an array of plugin
- * arrays.
- *
- * This function is hooked into tgmpa_init, which is fired within the
- * TGM_Plugin_Activation class constructor.
- */
 function help_note_register_required_plugins() {
+
+    // First, we read the option collection  
+	$options = get_option('help_note_option');  
+
+    $plugins = array();
+
+        
+    if ( $options['help_note_menu_plugin'] ) {
+        $plugins[] = array(
+                        'name'          		=> 'Post type archive in menu',
+                        'slug'      			=> 'post-type-archive-in-menu',
+                        'required'              => false, // If false, the plugin is only 'recommended' instead of required
+            			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
+                        'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
+                        );
+	}   
+	                             
+
+    if ( $options['help_note_simple_footnotes_plugin'] ) {
+        $plugins[] = array(
+                        'name'              	=> 'Simple Footnotes',
+                        'slug'      			=> 'simple-footnotes',
+                        'required'              => false, // If false, the plugin is only 'recommended' instead of required
+            			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
+                        'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
+                        );
+	}   
+	
+                        
+        
+    return $plugins;
+}
+
+
+add_action( 'tgmpa_register', 'help_note_tgmpa_register' );
+
+function help_note_tgmpa_register() {
 echo "";
 	/**
 	 * Array of plugin arrays. Required keys are name and slug.
 	 * If the source is NOT from the .org repo, then source is also required.
 	 */
-	$plugins = array(
+	$plugins = help_note_register_required_plugins();
 
-	    // include plugin from the WordPress Plugin Repository
-        array(
-            'name'      			=> 'Post type archive in menu',
-            'slug'      			=> 'post-type-archive-in-menu',
-            'required'              => true, // If false, the plugin is only 'recommended' instead of required
-			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
-            'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
-        ),
-
-        
-	);
 
 	// Change this to your theme text domain, used for internationalising strings
 	$theme_text_domain = 'tgmpa';

@@ -28,7 +28,7 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 			$post_type_name = 'h_' . substr($role_selected , -18);
 			$capability_type    = sanitize_key($post_type_name);
             
-			if ( "edit_{$capability_type}" == $cap || "delete_{$capability_type}" == $cap || "read_{$capability_type}" == $cap ) {
+			if ( isset($capability_type) && ("edit_{$capability_type}" == $cap || "delete_{$capability_type}" == $cap || "read_{$capability_type}" == $cap )) {
 
 					$post_type = get_post_type_object( $post->post_type );
 
@@ -48,7 +48,7 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 
 
 	/* If editing a testimonial, assign the required capability. */
-	if ( "edit_{$capability_type}" == $cap ) {
+	if ( isset($capability_type) && ("edit_{$capability_type}" == $cap )) {
 					
             		if( $user_id == $post->post_author )
             			$caps[] = $post_type->cap->edit_posts;
@@ -57,7 +57,7 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 	}
             
 	/* If deleting a testimonial, assign the required capability. */
-	else if( "delete_{$capability_type}" == $cap ) {
+	else if( isset($capability_type) && ("delete_{$capability_type}" == $cap )) {
         
 		if( isset($post->post_author ) && $user_id == $post->post_author  && isset($post_type->cap->delete_posts) )
 			$caps[] = $post_type->cap->delete_posts;
@@ -66,7 +66,7 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 	}
 
 	/* If reading a private testimonial, assign the required capability. */
-	elseif( "read_{$capability_type}" == $cap ) {
+	elseif( isset($capability_type) && ("read_{$capability_type}" == $cap )) {
 
             		if( 'private' != $post->post_status )
             			$caps[] = 'read';
