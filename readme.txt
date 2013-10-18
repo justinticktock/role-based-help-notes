@@ -1,6 +1,6 @@
 === Plugin Name ===
 Contributors: justinticktock
-Tags: multisite, roles, user, help, notes, cms, documents, groups, teams
+Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration
 Requires at least: 3.5
 Tested up to: 3.6.1
 Stable tag: 1.1.0
