@@ -25,12 +25,11 @@ require_once(dirname( __FILE__ ) . '/class-tgm-plugin-activation.php');
 
 
 function help_note_register_required_plugins() {
-
-    // First, we read the option collection  
-	$options = get_option('help_note_option');  
-
+    
     $plugins = array();
-
+    
+    // First, we read the option collection  
+	$options = get_option('help_note_option'); 
         
     if ( $options['help_note_menu_plugin'] ) {
         $plugins[] = array(
