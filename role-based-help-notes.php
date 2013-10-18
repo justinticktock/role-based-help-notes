@@ -160,7 +160,7 @@ function help_note_post_types_section_callback() {
 
 function help_note_extensions_section_callback() {  
     
-    ?><p>Select the extension plugins that you wish to use.  Selection of a plugin will prompt you through the installation and the plugin will be forced active while this is selected.'
+    ?><p>Select the extension plugins that you wish to use.  Selection of a plugin will prompt you through the installation and the plugin will be forced active while this is selected.
 	To install follow the prompts or goto the [Plugins Menu]..[Install Plugins], (unselecting will not remove the plugin, you will need to manually uninstall Post-type-archive-in-menu).</p><?php
 
 } // end help_note_extensions_section_callback  
@@ -251,7 +251,7 @@ function settings_field_help_notes_contents_page() {
     
     <form action="<?php bloginfo('url'); ?>" method="get">
 	<?php wp_dropdown_pages(array( 
-                                'show_option_none' => __( '— Select —' ), 
+                                'show_option_none' => __( '— None —' ), 
                                 'option_none_value' => '0', 
                                 'sort_order'   => 'ASC',
                 				'sort_column'  => 'post_title',
@@ -295,7 +295,8 @@ function rbhn_active_posttypes() {
 	$roles = $wp_roles->get_names();
 
 	call_user_func_array( 'help_register_posttype', array("general", "General") );  // generate a genetic help note post type
-	
+	$active_posttypes[] = "general"; 
+    
 	// option collection  
 	$settings_options = get_option('help_note_option');  
 	
@@ -519,9 +520,10 @@ function my_help_add_role_caps() {
 function help_do_on_activation() {
 
     $defaults = array(
-      'help_note_post_types'    => array(),
-      'help_note_menu_plugin'   => false,
-      'help_note_contents_page' => false,
+      'help_note_post_types'                => array(),
+      'help_note_menu_plugin'               => false,
+      'help_note_simple_footnotes_plugin'   => false,
+      'help_note_contents_page'             => false,
     );
     
     $options = wp_parse_args(get_option('help_note_option'), $defaults);
