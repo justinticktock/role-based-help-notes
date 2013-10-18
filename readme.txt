@@ -3,7 +3,7 @@ Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams
 Requires at least: 3.5
 Tested up to: 3.6.1
-Stable tag: 1.01
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,7 +44,7 @@ You will need to use another plugin to manage roles and capabilities such as the
 
 == Changelog ==
 
-= 1.0.2 =
+= 1.1.0 =
 Added new setting to select a page for a Help Notes Contents to be listed.
 Added the Plugin Extension for Simple FootNotes by [Andrew Nacin](http://profiles.wordpress.org/nacin/)
 Fixed settings listing order to alphanumeric.
