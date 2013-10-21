@@ -51,8 +51,6 @@ function notes_settings_page_callback( $args = '' ) {
 		<div id="<?php echo $options_key; ?>" class="wrap">
 			<?php screen_icon( 'options-general' ); ?>
 			<h2><?php echo esc_html( $title ); ?></h2>
-			<?php settings_errors(); ?>
-
 			<form method="post" action="options.php">
 				<?php
 					settings_fields( 'help_note_option_group' );
@@ -295,7 +293,7 @@ function rbhn_active_posttypes() {
 	$roles = $wp_roles->get_names();
 
 	call_user_func_array( 'help_register_posttype', array("general", "General") );  // generate a genetic help note post type
-	$active_posttypes[] = "general"; 
+	$active_posttypes[] = "h_general"; 
     
 	// option collection  
 	$settings_options = get_option('help_note_option');  

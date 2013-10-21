@@ -31,7 +31,7 @@ function help_note_register_required_plugins() {
     // First, we read the option collection  
 	$options = get_option('help_note_option'); 
         
-    if ( $options['help_note_menu_plugin'] ) {
+    if ( isset($options['help_note_menu_plugin']) && $options['help_note_menu_plugin'] ) {
         $plugins[] = array(
                         'name'          		=> 'Post type archive in menu',
                         'slug'      			=> 'post-type-archive-in-menu',
@@ -42,7 +42,7 @@ function help_note_register_required_plugins() {
 	}   
 	                             
 
-    if ( $options['help_note_simple_footnotes_plugin'] ) {
+    if ( isset($options['help_note_simple_footnotes_plugin']) && $options['help_note_simple_footnotes_plugin'] ) {
         $plugins[] = array(
                         'name'              	=> 'Simple Footnotes',
                         'slug'      			=> 'simple-footnotes',
