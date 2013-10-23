@@ -7,7 +7,7 @@
  * It is expected that theme authors would copy and paste this code into their
  * functions.php file, and amend to suit.
  *
- * @package	   TGM-Plugin-Activation
+ * @package       TGM-Plugin-Activation
  * @subpackage Example
  * @version	   2.3.6
  * @author	   Thomas Griffin <thomas@thomasgriffinmedia.com>
@@ -52,8 +52,16 @@ function help_note_register_required_plugins() {
                         );
 	}   
 	
-                        
-        
+    if ( isset($options['help_note_simple_page_ordering']) && $options['help_note_simple_page_ordering'] ) {
+        $plugins[] = array(
+                        'name'              	=> 'Simple Page Ordering',
+                        'slug'      			=> 'simple-page-ordering',
+                        'required'              => false, // If false, the plugin is only 'recommended' instead of required
+            			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
+                        'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
+                        );
+	}   
+	                     
     return $plugins;
 }
 

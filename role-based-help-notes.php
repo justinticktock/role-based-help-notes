@@ -146,6 +146,19 @@ function help_note_plugin_intialize_options() {
 		'help_note_extensions'  							    // The section of the settings page in which to show the box
 	);       
     
+    add_settings_field(   
+    	'help_note_simple_page_ordering',                 	// String for use in the 'id' attribute of tags. 
+		'Simple Page Ordering:',             			    // Title of the field.   
+		'settings_field_help_notes_install_simple_page_ordering', 	// Function that fills the field with the desired inputs as part of the larger form. 
+															    // Passed a single argument, the $args array. Name and id of the input should match 
+															    // the $id given to this function. The function should echo its output. 
+		'notes-settings',   								    // The menu page on which to display this field. Should match $menu_slug
+		'help_note_extensions'  							    // The section of the settings page in which to show the box
+	);       
+    
+	
+	
+	
 } // end help_note_plugin_intialize_options  
 
 
@@ -200,7 +213,7 @@ function settings_field_help_notes_post_types() {
 }
 
 /**
- * Renders settings field for Help Notes Post Types
+ * Renders settings field for Help Notes menu_plugin
  */
 function settings_field_help_notes_install_menu_plugin() {
 	// First, we read the option collection  
@@ -221,7 +234,7 @@ function settings_field_help_notes_install_menu_plugin() {
 
 
 /**
- * Renders settings field for Help Notes Post Types
+ * Renders settings field for Help Notes simple_footnotes_plugin
  */
 function settings_field_help_notes_install_simple_footnotes() {
     // First, we read the option collection  
@@ -239,6 +252,31 @@ function settings_field_help_notes_install_simple_footnotes() {
     
 	<?php
 }
+
+
+
+/**
+ * Renders settings field for Help Notes simple_page_ordering
+ */
+function settings_field_help_notes_install_simple_page_ordering() {
+    // First, we read the option collection  
+	$options = get_option('help_note_option');  
+
+	// Render the output  
+	?> 
+	<input 
+		type='checkbox' 
+		name="help_note_option[help_note_simple_page_ordering]" 
+        id="help_note_option_select_menu_plugin" 
+		value="1"<?php checked( $options['help_note_simple_page_ordering'], 1 ); ?>
+        <p>&nbsp Once installed go you can drag pages up/down within the admin side to re-order Help Notes.</p>
+	</input>
+    
+	<?php
+}
+
+
+
 
 function settings_field_help_notes_contents_page() {
 	// First, we read the option collection  
@@ -521,6 +559,7 @@ function help_do_on_activation() {
       'help_note_post_types'                => array(),
       'help_note_menu_plugin'               => false,
       'help_note_simple_footnotes_plugin'   => false,
+      'help_note_simple_page_ordering'   	=> false,
       'help_note_contents_page'             => false,
     );
     
