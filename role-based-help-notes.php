@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.2.0
+Version: 1.1.0
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
@@ -46,8 +46,8 @@ function notes_settings_page_callback( $args = '' ) {
             'title'       => __( 'Help Notes Settings', 'help-notes' ),
             'options_group' => 'help_note_option_group',
             'options_key' => 'help_note_option'
-    	) ) );
-		?>
+        ) ) );
+        ?>
 		<div id="<?php echo $options_key; ?>" class="wrap">
 			<?php screen_icon( 'options-general' ); ?>
 			<h2><?php echo esc_html( $title ); ?></h2>
@@ -86,80 +86,89 @@ function help_note_plugin_intialize_options() {
 
 	
 	register_setting(  
-		'help_note_option_group',  		// A settings group name. Must exist prior to the register_setting call. 
-										// This must match the group name in settings_fields()
-		'help_note_option'   ,  		// The name of an option to sanitize and save. 
-		'sanitize_help_note_option'  	// A callback function that sanitizes the option's value. 
-	);  
-				
-	 add_settings_section(
-		'help_note_post_types',        			    // ID used to identify this section and with which to register option  
-		'Help Note Post Types',            		    // Title to be displayed on the administration page  
-		'help_note_post_types_section_callback',  	// Callback used to render the description of the section  
-		'notes-settings'      					    // Page on which to add this section of option  
+		'help_note_option_group',  		// A settings group 
+		'help_note_option'   ,  		 
+		'sanitize_help_note_option'  	
 	);  
 
-	add_settings_field(   
-		'help_note_post_types',                 // String for use in the 'id' attribute of tags. 
-		'Help Note Post Types:',                // Title of the field.   
-		'settings_field_help_notes_post_types', // Function that fills the field with the desired inputs as part of the larger form. 
-												// Passed a single argument, the $args array. Name and id of the input should match 
-												// the $id given to this function. The function should echo its output. 
-		'notes-settings',   					// The menu page on which to display this field. Should match $menu_slug
-		'help_note_post_types'  				// The section of the settings page in which to show the box
+
+    // General Settings..
+    
+     add_settings_section(
+		'help_note_general',        			    
+		'General',            	                  
+		'help_note_general_section_callback',  	   
+		'notes-settings'      					  
 	);  
-	    
-	add_settings_field(   
-		'help_note_contents_page',                 			// String for use in the 'id' attribute of tags. 
-		'Contents Page:',             						// Title of the field.   
-		'settings_field_help_notes_contents_page', 			// Function that fills the field with the desired inputs as part of the larger form. 
-															// Passed a single argument, the $args array. Name and id of the input should match 
-															// the $id given to this function. The function should echo its output. 
-		'notes-settings',   								// The menu page on which to display this field. Should match $menu_slug
-		'help_note_post_types'  							// The section of the settings page in which to show the box
+    
+    add_settings_field(     
+        'help_note_general_enabled',                         
+		'General Help Notes:',             			         
+		'settings_field_help_notes_general_type_enable',
+		'notes-settings',   								 
+		'help_note_general'  							     
+	);       
+
+    add_settings_field(   
+		'help_note_contents_page',                 	
+		'Contents Page:',             				
+		'settings_field_help_notes_contents_page', 
+		'notes-settings',   						
+		'help_note_general'  						
 	); 
 
+    // Role Settings..
+    
 	 add_settings_section(
-		'help_note_extensions',        			    // ID used to identify this section and with which to register option  
-		'Plugin Extensions',            		    // Title to be displayed on the administration page  
-		'help_note_extensions_section_callback',  	// Callback used to render the description of the section  
-		'notes-settings'      					    // Page on which to add this section of option  
+		'help_note_post_types',        			 
+		'Role Based Settings',            		 
+		'help_note_post_types_section_callback', 
+		'notes-settings'      					 
+	);  
+
+	add_settings_field(   
+		'help_note_post_types',                 
+		'Help Note Post Types:',                
+		'settings_field_help_notes_post_types', 
+		'notes-settings',   					
+		'help_note_post_types'  				
+	);      
+    
+    // Extensions Settings..
+	    
+	 add_settings_section(
+		'help_note_extensions',        			    
+		'Plugin Extensions',            		    
+		'help_note_extensions_section_callback',  	
+		'notes-settings'      					    
 	);  
     
     add_settings_field(   
-		'help_note_menu_plugin',                 			// String for use in the 'id' attribute of tags. 
-		'Post type archive in menu:',             			// Title of the field.   
-		'settings_field_help_notes_install_menu_plugin', 	// Function that fills the field with the desired inputs as part of the larger form. 
-															// Passed a single argument, the $args array. Name and id of the input should match 
-															// the $id given to this function. The function should echo its output. 
-		'notes-settings',   								// The menu page on which to display this field. Should match $menu_slug
-		'help_note_extensions'  							// The section of the settings page in which to show the box
-	);       
+		'help_note_menu_plugin',                 			
+		'Post type archive in menu:',             			
+		'settings_field_help_notes_install_menu_plugin', 	 
+		'notes-settings',   								
+		'help_note_extensions'  							
+	);      
 
     add_settings_field(   
-    	'help_note_simple_footnotes_plugin',                 			// String for use in the 'id' attribute of tags. 
-		'Simple Footnotes:',             			    // Title of the field.   
-		'settings_field_help_notes_install_simple_footnotes', 	// Function that fills the field with the desired inputs as part of the larger form. 
-															    // Passed a single argument, the $args array. Name and id of the input should match 
-															    // the $id given to this function. The function should echo its output. 
-		'notes-settings',   								    // The menu page on which to display this field. Should match $menu_slug
-		'help_note_extensions'  							    // The section of the settings page in which to show the box
+    	'help_note_simple_footnotes_plugin',                 
+		'Simple Footnotes:',             			           
+		'settings_field_help_notes_install_simple_footnotes',															   
+		'notes-settings',   								   
+		'help_note_extensions'  							   
 	);       
     
     add_settings_field(   
-    	'help_note_simple_page_ordering',                 	// String for use in the 'id' attribute of tags. 
-		'Simple Page Ordering:',             			    // Title of the field.   
-		'settings_field_help_notes_install_simple_page_ordering', 	// Function that fills the field with the desired inputs as part of the larger form. 
-															    // Passed a single argument, the $args array. Name and id of the input should match 
-															    // the $id given to this function. The function should echo its output. 
-		'notes-settings',   								    // The menu page on which to display this field. Should match $menu_slug
-		'help_note_extensions'  							    // The section of the settings page in which to show the box
+    	'help_note_simple_page_ordering',                 	      
+		'Simple Page Ordering:',             			          
+		'settings_field_help_notes_install_simple_page_ordering', 
+		'notes-settings',   								      
+		'help_note_extensions'  							      
 	);       
     
-	
-	
-	
-} // end help_note_plugin_intialize_options  
+
+} // end help_note_plugin_intialize_options()
 
 
 
@@ -175,6 +184,29 @@ function help_note_extensions_section_callback() {
 	To install follow the prompts or goto the [Plugins Menu]..[Install Plugins], (unselecting will not remove the plugin, you will need to manually uninstall Post-type-archive-in-menu).</p><?php
 
 } // end help_note_extensions_section_callback  
+
+
+
+/**
+ * Renders settings field for Help Notes general type enable check box
+ */
+function settings_field_help_notes_general_type_enable() {
+    // First, we read the option collection  
+    $options = get_option('help_note_option');  
+
+    // Render the output  
+	?> 
+	<input 
+		type='checkbox' 
+		name="help_note_option[help_note_general_enabled]" 
+        id="help_note_general_enabled" 
+		value="1"<?php checked( $options['help_note_general_enabled'], 1 ); ?>
+        <p>&nbsp Select to enable the 'General' Help Notes post type.  (General Help Notes are global and not limited 
+        to any one role, and follow the capabilities of the 'post' post type.)</p>
+	</input>
+    
+	<?php
+}
 
 
 /**
@@ -224,7 +256,7 @@ function settings_field_help_notes_install_menu_plugin() {
 	<input 
 		type='checkbox' 
 		name="help_note_option[help_note_menu_plugin]" 
-        id="help_note_option_select_menu_plugin" 
+        id="help_note_menu_plugin" 
 		value="1"<?php checked( $options['help_note_menu_plugin'], 1 ); ?> 
         <p>&nbsp Once installed go to [Appearance]...[Menus] and locate the 'Archives' metabox for use in your theme menus.</p>
 	</input>
@@ -245,15 +277,13 @@ function settings_field_help_notes_install_simple_footnotes() {
 	<input 
 		type='checkbox' 
 		name="help_note_option[help_note_simple_footnotes_plugin]" 
-        id="help_note_option_select_menu_plugin" 
+        id="help_note_simple_footnotes_plugin" 
 		value="1"<?php checked( $options['help_note_simple_footnotes_plugin'], 1 ); ?>
         <p>&nbsp Once installed go you can use the 'ref' shortcode for example... [ref]Add footnote text here[/ref] within your posts.</p>
 	</input>
     
 	<?php
 }
-
-
 
 /**
  * Renders settings field for Help Notes simple_page_ordering
@@ -267,7 +297,7 @@ function settings_field_help_notes_install_simple_page_ordering() {
 	<input 
 		type='checkbox' 
 		name="help_note_option[help_note_simple_page_ordering]" 
-        id="help_note_option_select_menu_plugin" 
+        id="help_note_simple_page_ordering" 
 		value="1"<?php checked( $options['help_note_simple_page_ordering'], 1 ); ?>
         <p>&nbsp Once installed go you can drag pages up/down within the admin side to re-order Help Notes.</p>
 	</input>
@@ -330,18 +360,20 @@ function rbhn_active_posttypes() {
 
 	$roles = $wp_roles->get_names();
 
-	call_user_func_array( 'help_register_posttype', array("general", "General") );  // generate a genetic help note post type
-	$active_posttypes[] = "h_general"; 
-    
+
 	// option collection  
 	$settings_options = get_option('help_note_option');  
+    	
+   if ( isset( $settings_options['help_note_general_enabled'] ) && !empty( $settings_options['help_note_general_enabled'] ) ) {
+    
+		$active_posttypes[] = "h_general"; 
+	}
 	
 	if (  ! empty($settings_options ) ) {	
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
 		{
 			if (array_key_exists ($role_selected, $roles)) {
-                // limit to 20 characters length for the WP limitation of custom post type names
-	            $post_type_name = sanitize_key('h_' . substr($role_selected , -18));
+                $post_type_name = clean_post_type_name($role_selected);
                 if (current_user_can( $role_selected )) {
 				    $active_posttypes[] = $post_type_name; 
                 }
@@ -353,11 +385,20 @@ function rbhn_active_posttypes() {
 }
 
 
-// set_current_user
+
+// register post types
 add_action( 'init', 'help_register_multiple_posttypes' );
 
 function help_register_multiple_posttypes() {
+    
+    // option collection  
+	$settings_options = get_option('help_note_option'); 
 
+	if ( isset( $settings_options['help_note_general_enabled'] ) && ! empty( $settings_options['help_note_general_enabled'] ) ) {
+		call_user_func_array( 'help_register_posttype', array("general", "General") );  // generate a genetic help note post type
+	}
+	 
+    
 	//  loop through the site roles and create a custom post for each
 	global $wp_roles;
     
@@ -367,10 +408,6 @@ function help_register_multiple_posttypes() {
 
 	$roles = $wp_roles->get_names();
 
-	call_user_func_array( 'help_register_posttype', array("general", "General") );  // generate a genetic help note post type
-	
-	// option collection  
-	$settings_options = get_option('help_note_option');  
 	
 	if (  ! empty($settings_options ) ) {	
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
@@ -385,8 +422,7 @@ function help_register_multiple_posttypes() {
 // Adds custom post type for help
 function help_register_posttype($role_key, $role_name) {
 
-	// limit to 20 characters length for the WP limitation of custom post type names
-	$post_type_name = sanitize_key('h_' . substr($role_key , -18));
+    $post_type_name = clean_post_type_name($role_key);
 	
     $role_name = (strcasecmp("note", $role_name) ?  $role_name . ' ' : '' );
 
@@ -509,8 +545,7 @@ function my_help_add_role_caps() {
 
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
         {
-			// limit to 20 characters length for the WP limitation of custom post type names
-			$post_type_name = 'h_' . substr($role_selected , -18);
+			$post_type_name = clean_post_type_name($role_selected);
 
     		// gets the author role
     		$role = get_role( $role_selected );
@@ -561,6 +596,7 @@ function help_do_on_activation() {
       'help_note_simple_footnotes_plugin'   => false,
       'help_note_simple_page_ordering'   	=> false,
       'help_note_contents_page'             => false,
+      'help_note_general_enabled'           => false,
     );
     
     $options = wp_parse_args(get_option('help_note_option'), $defaults);
@@ -579,5 +615,13 @@ function help_do_on_activation() {
 
 }
 register_activation_hook( HELP_MYPLUGINNAME_PATH.'role-based-help-notes.php', 'help_do_on_activation' );
+
+
+function clean_post_type_name($post_type_name) {
+    // limit to 20 characters length for the WP limitation of custom post type names
+    $post_type_name = sanitize_key('h_' . substr($post_type_name , -18)); 
+    return $post_type_name;
+}
+
 
 ?>
