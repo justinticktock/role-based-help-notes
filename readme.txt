@@ -2,7 +2,7 @@
 Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration
 Requires at least: 3.5
-Tested up to: 3.6.1
+Tested up to: 3.7.1
 Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -52,7 +52,9 @@ You will need to use another plugin to manage roles and capabilities such as the
 == Changelog ==
 
 = 1.2.0 =
-* Added the Plugin Extension for Simple Page Ordering
+* 2013-11-04
+* Added new setting to enable/disable the 'General Help Notes'.
+* Added the Plugin Extension for Simple Page Ordering.
 
 = 1.1.0 =
 * 2013-10-21
