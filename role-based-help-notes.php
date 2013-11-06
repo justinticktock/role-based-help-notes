@@ -47,7 +47,7 @@ function notes_settings_page_callback( $args = '' ) {
             'options_key' => 'help_note_option'
         ) ) );
         ?>
-		<div id="<?php echo $options_key; ?>" class="wrap">
+    	<div id="<?php echo $options_key; ?>" class="wrap">
 			<?php screen_icon( 'options-general' ); ?>
 			<h2><?php echo esc_html( $title ); ?></h2>
 			<form method="post" action="options.php">
@@ -169,6 +169,11 @@ function help_note_plugin_intialize_options() {
 
 } // end help_note_plugin_intialize_options()
 
+function help_note_general_section_callback() {  
+
+	die(); 
+
+} // end help_note_post_types_section_callback  
 
 
 function help_note_post_types_section_callback() {  
