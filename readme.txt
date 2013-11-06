@@ -16,9 +16,9 @@ This plugin allows you to quickly create a custom post type for user roles.  Thi
 To add new roles to the basic wordpress roles (Administrator, Editor, Subscriber ..etc) you will need to use another plugin refer to [Roles_and_Capabilities](http://codex.wordpress.org/Roles_and_Capabilities) and Resources.. Plugins.  You can then use one of these plugins (e.g. [User Role Editor](http://wordpress.org/extend/plugins/user-role-editor/ "User Role Editor")) to allocate users to multiple roles.
 
 So if you want to quickly give a group a private area to share and post ideas/notes ..
-* Create a new role.
-* Add users to the role.
-* Enable the Help Notes from the settings.
+1. Create a new role.
+2. Add users to the role.
+3. Enable the Help Notes from the settings.
 
 A global 'General Help Notes' type is also available which is not tided to a specific role, this has the same access/capabilities as the standard 'post' type for read/write access.
 
