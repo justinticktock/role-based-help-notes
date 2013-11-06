@@ -205,8 +205,7 @@ function settings_field_help_notes_general_type_enable() {
 		name="help_note_option[help_note_general_enabled]" 
         id="help_note_general_enabled" 
 		value="1"<?php checked( $options['help_note_general_enabled'], 1 ); ?>
-        <p>&nbsp Select to enable the 'General' Help Notes post type.  (General Help Notes are global and not limited 
-        to any one role, and follow the capabilities of the 'post' post type.)</p>
+        <p>&nbsp Select to enable the 'General' Help Notes post type.  ('General Help Notes' are not tided to a specific role, this has the same access/capabilities as the standard wordpress 'post' type for read/write access.)</p>
 	</input>
     
 	<?php

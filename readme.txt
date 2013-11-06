@@ -20,7 +20,7 @@ So if you want to quickly give a group a private area to share and post ideas/no
 2. Add users to the role.
 3. Enable the Help Notes from the settings.
 
-A global 'General Help Notes' type is also available which is not tided to a specific role, this has the same access/capabilities as the standard 'post' type for read/write access.
+A global 'General Help Notes' type is also available which is not tided to a specific role, this has the same access/capabilities as the standard wordpress 'post' type for read/write access.
 
 Extensions:
 
@@ -52,6 +52,10 @@ You will need to use another plugin to manage roles and capabilities such as the
 
 
 == Changelog ==
+
+= 1.2.1 =
+* 2013-??-??
+* Grammatical corrections. 
 
 = 1.2.0 =
 * 2013-11-04
