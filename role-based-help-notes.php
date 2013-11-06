@@ -171,7 +171,7 @@ function help_note_plugin_intialize_options() {
 
 function help_note_general_section_callback() {  
 
-	die(); 
+	; 
 
 } // end help_note_post_types_section_callback  
 
@@ -321,7 +321,7 @@ function settings_field_help_notes_contents_page() {
     
     <form action="<?php bloginfo('url'); ?>" method="get">
 	<?php wp_dropdown_pages(array( 
-                                'show_option_none' => __( 'â€” None â€”' ), 
+                                'show_option_none' => __( '— None —' ), 
                                 'option_none_value' => '0', 
                                 'sort_order'   => 'ASC',
                 				'sort_column'  => 'post_title',
