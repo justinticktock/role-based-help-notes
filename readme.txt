@@ -20,8 +20,7 @@ So if you want to quickly give a group a private area to share and post ideas/no
 * Add users to the role.
 * Enable the Help Notes from the settings.
 
-Once the plugin is activated a 'General' default post type is enabled with the same access permissions as for the 'post' type, others can then be enabled by role as required from the settings page.
-
+A global 'General Help Notes' type is also available which is not tided to a specific role, this has the same access/capabilities as the standard 'post' type for read/write access.
 
 Extensions:
 
@@ -29,7 +28,10 @@ If you select the options for extending functionality through other plugings the
 
 1. [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
 2. [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref].
-2. [Simple Page Ordering](http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
+3. [Simple Page Ordering](http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
+
+
+[GitHub page](http://github.com/justinticktock/role-based-help-notes).
 
 == Installation ==
 
@@ -73,6 +75,9 @@ You will need to use another plugin to manage roles and capabilities such as the
 
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+The 'General Help Notes' are now selectable and initally not-selected, if you wish to continue to use the 'General Help Notes' go to settings and make the selection.
 
 = 1.01 =
 * uninstall 1.0 completely to clean up capabilities before installing 1.01.
