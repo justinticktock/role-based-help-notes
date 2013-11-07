@@ -24,7 +24,7 @@ A global 'General Help Notes' type is also available which is not tided to a spe
 
 Extensions:
 
-If you select the options for extending functionality through other plugings the following are selectable for ease of installing..
+If you select the options for extending functionality through other plugins the following are selectable for ease of installing..
 
 1. [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
 2. [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref].
