@@ -493,7 +493,7 @@ function rbhn_add_post_content($content) {
     $settings_options = get_option('help_note_option');  
     
     //http://pippinsplugins.com/playing-nice-with-the-content-filter/
-    if ( is_page($settings_options['help_note_contents_page'])  && is_main_query() ) {
+    if ( is_page($settings_options['help_note_contents_page'])  && is_main_query() && in_the_loop()) {
         
         $active_role_notes = rbhn_active_posttypes();
         
