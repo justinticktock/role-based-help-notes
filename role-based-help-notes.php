@@ -205,7 +205,8 @@ function settings_field_help_notes_general_type_enable() {
 		name="help_note_option[help_note_general_enabled]" 
         id="help_note_general_enabled" 
 		value="1"<?php checked( $options['help_note_general_enabled'], 1 ); ?>
-        <p>&nbsp Select to enable the 'General' Help Notes post type.  ('General Help Notes' are not tided to a specific role, this has the same access/capabilities as the standard wordpress 'post' type for read/write access.)</p>
+        <p>&nbsp Select to enable the 'General' Help Notes post type.  (General Help Notes are global and not limited 
+        to any one role, and follow the capabilities of the 'post' post type.)</p>
 	</input>
     
 	<?php
@@ -320,7 +321,7 @@ function settings_field_help_notes_contents_page() {
     
     <form action="<?php bloginfo('url'); ?>" method="get">
 	<?php wp_dropdown_pages(array( 
-                                'show_option_none' => __( '— None —' ), 
+                                'show_option_none' => __( "- None -" ), 
                                 'option_none_value' => '0', 
                                 'sort_order'   => 'ASC',
                 				'sort_column'  => 'post_title',
@@ -493,7 +494,7 @@ function rbhn_add_post_content($content) {
     $settings_options = get_option('help_note_option');  
     
     //http://pippinsplugins.com/playing-nice-with-the-content-filter/
-    if ( is_page($settings_options['help_note_contents_page'])  && is_main_query() && in_the_loop()) {
+    if ( ($settings_options['help_note_contents_page'] != "0") && is_page($settings_options['help_note_contents_page'])  && is_main_query() ) {
         
         $active_role_notes = rbhn_active_posttypes();
         
@@ -598,7 +599,7 @@ function help_do_on_activation() {
       'help_note_menu_plugin'               => false,
       'help_note_simple_footnotes_plugin'   => false,
       'help_note_simple_page_ordering'   	=> false,
-      'help_note_contents_page'             => false,
+      'help_note_contents_page'             => '0',
       'help_note_general_enabled'           => false,
     );
     
