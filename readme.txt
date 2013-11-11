@@ -3,7 +3,7 @@ Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration
 Requires at least: 3.5
 Tested up to: 3.7.1
-Stable tag: 1.2.0
+Stable tag: 1.2.01
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,8 +53,9 @@ You will need to use another plugin to manage roles and capabilities such as the
 
 == Changelog ==
 
-= 1.2.1 =
-* 2013-??-??
+= 1.2.01 =
+* 2013-11-11
+* Fix for where no Contents Page is defined (thanks to [Vernon Fowler](http://wordpress.org/support/profile/vernonfowler))
 * Grammatical corrections. 
 
 = 1.2.0 =
