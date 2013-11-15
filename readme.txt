@@ -53,6 +53,13 @@ You will need to use another plugin to manage roles and capabilities such as the
 
 == Changelog ==
 
+
+= 1.2.1 =
+* 2013-**-**
+* Added Settings link to the admin acitve plugin listing 
+* Added Widget to allow sidebars to list all users with access to read/edit a Help Note type.
+* Code refactoring
+
 = 1.2.01 =
 * 2013-11-11
 * Fix for where no Contents Page is defined (thanks to [Vernon Fowler](http://wordpress.org/support/profile/vernonfowler))
