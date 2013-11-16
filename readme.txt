@@ -22,6 +22,8 @@ So if you want to quickly give a group a private area to share and post ideas/no
 
 A global 'General Help Notes' type is also available which is not tided to a specific role, this has the same access/capabilities as the standard wordpress 'post' type for read/write access.
 
+There is a widget available to list all users with access to the current Help Note type on display. The user display_name is shown and can be selected by each user within their own profile.
+
 Extensions:
 
 If you select the options for extending functionality through other plugins the following are selectable for ease of installing..
