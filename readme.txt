@@ -59,6 +59,7 @@ You will need to use another plugin to manage roles and capabilities such as the
 * Added Settings link to the admin acitve plugin listing 
 * Added Widget to allow sidebars to list all users with access to read/edit a Help Note type.
 * Code refactoring
+* todo ....bring into wordpress coding standards.
 
 = 1.2.01 =
 * 2013-11-11

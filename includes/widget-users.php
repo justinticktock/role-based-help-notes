@@ -1,51 +1,18 @@
 <?php
 
-
-
-
-/* Remove Widget if not a Help Note Archive page or Single page */ 
-/* base on Plugin Name:    Widget Logic; Version:        0.56 */ 
-function rbhn_widget_logic_filter_sidebars_widgets($sidebars_widgets) {    
-
-    global $wp_reset_query_is_done;
-
-    // loop through every widget in every sidebar (barring 'wp_inactive_widgets') checking WL for each one
-    foreach($sidebars_widgets as $widget_area => $widget_list)
-    {    if ($widget_area=='wp_inactive_widgets' || empty($widget_list)) continue;
-
-        foreach($widget_list as $pos => $widget_id)
-        {   
-
-            if (false)
-                unset($sidebars_widgets[$widget_area][$pos]);
-        }
-    }
-    return $sidebars_widgets;
-}
-
-add_filter( 'sidebars_widgets', 'rbhn_widget_logic_filter_sidebars_widgets', 10);
-
-
-
-
 /* Add the Help Note Custom Post Type to the author post listing */ 
 function custom_post_author_archive( $query ) {
     
 
   if( ($query->is_author) && empty( $query->query_vars['suppress_filters'] ) ) {
-      
-    // include the possible author writen help notes based on the author roles h_*
-    // !!!!!!!!!! todo...
-    $include_post_types = array('post', 'h_ccc_member');
-    
-    // exclude the above if the current user can't access these with their allocated roles.
-    // !!!!!!!!!! todo...
-    $include_post_types = array('post', 'h_ccc_member');
-    
-    
+
+    // collect all Help Note post types active for the current user
+    $include_post_types = rbhn_active_posttypes();
+
     $query->set( 'post_type', $include_post_types);
-    remove_action( 'pre_get_posts', 'custom_post_author_archive' ); // run once!
-    //return $query;
+    
+    // remove the filter after running, run only once!
+    remove_action( 'pre_get_posts', 'custom_post_author_archive' ); 
       
     }
 }    
@@ -83,7 +50,16 @@ class Users_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
-    
+
+       // drop out if not a single Help Note page or Help Hote Archive page.
+       // or the General Help Note Type
+       $show_widget_help_notes = rbhn_active_posttypes();
+       $exclude_help_notes = array('h_general');
+       $show_widget_help_notes = array_diff($show_widget_help_notes, $exclude_help_notes);
+       
+        if ( ! in_array( get_post_type(),  $show_widget_help_notes ) )
+            return; 
+
 		$title = apply_filters( 'widget_title', $instance['title'] );
 
 		echo $args['before_widget'];

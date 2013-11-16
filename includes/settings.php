@@ -76,6 +76,14 @@ function help_note_plugin_intialize_options() {
 		'help_note_general'  							     
 	);       
 
+    add_settings_field(     
+        'user_widget_enabled',                         
+    	'Widget:',             			         
+		'settings_field_user_widget_enable',
+		HELP_SETTINGS_PAGE,   								 
+		'help_note_general'  							     
+	);       
+
     add_settings_field(   
 		'help_note_contents_page',                 	
 		'Contents Page:',             				
@@ -173,8 +181,31 @@ function settings_field_help_notes_general_type_enable() {
 		name="help_note_option[help_note_general_enabled]" 
         id="help_note_general_enabled" 
 		value="1"<?php checked( $options['help_note_general_enabled'], 1 ); ?>
-        <p>&nbsp Select to enable the 'General' Help Notes post type.  (General Help Notes are global and not limited 
+        <p>&nbsp Select to enable the 'General' Help Notes post type.  </BR>
+        (General Help Notes are global and not limited 
         to any one role, and follow the capabilities of the 'post' post type.)</p>
+	</input>
+    
+	<?php
+}
+
+
+/**
+ * Renders settings field for User Widget enable check box
+ */
+function settings_field_user_widget_enable() {
+    // First, we read the option collection  
+    $options = get_option('help_note_option');  
+
+    // Render the output  
+    ?> 
+	<input 
+		type='checkbox' 
+		name="help_note_option[user_widget_enabled]" 
+        id="user_widget_enabled" 
+		value="1"<?php checked( $options['user_widget_enabled'], 1 ); ?>
+        <p>&nbsp Select to enable the 'User Widget'. </BR> 
+        (This will enable you to place the Help Notes user widget into your sider bars, it will only be shown on Help Note post types.  The wdget lists all users that have access to the Help Notes for a particular role.)</p>
 	</input>
     
 	<?php

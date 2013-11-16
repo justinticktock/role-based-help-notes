@@ -10,6 +10,7 @@ function help_do_on_activation() {
       'help_note_simple_page_ordering'   	=> false,
       'help_note_contents_page'             => '0',
       'help_note_general_enabled'           => false,
+      'user_widget_enabled'                 => false,
     );
     
     $options = wp_parse_args(get_option('help_note_option'), $defaults);

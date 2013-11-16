@@ -20,7 +20,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 // Define constants
 define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
 define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
