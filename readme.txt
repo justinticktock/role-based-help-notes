@@ -3,7 +3,7 @@ Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration
 Requires at least: 3.5
 Tested up to: 3.7.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,11 @@ You will need to use another plugin to manage roles and capabilities such as the
 
 == Changelog ==
 
+
+= 1.2.2 =
+* 2013-??-??
+New feature: Added `rbhn_author_url` filter.
+New feature: BuddyPress Compatibility added to the 'user widget'; user links now go to the BP public user profile when `BP_ENABLE_ROOT_PROFILES` has been defined.
 
 = 1.2.1 =
 * 2013-11-18

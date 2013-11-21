@@ -2,7 +2,6 @@
 
 /* Add the Help Note Custom Post Type to the author post listing */ 
 function custom_post_author_archive( $query ) {
-    
 
   if( ($query->is_author) && empty( $query->query_vars['suppress_filters'] ) ) {
 
@@ -77,7 +76,9 @@ class Users_Widget extends WP_Widget {
 
 			/* Loop through each available user, creating a list item with a link to the user's archive. */
 			foreach ( $users as $user ) {
-				$url = get_author_posts_url( $user->ID, $user->user_nicename );
+
+				$user_id = $user->ID;
+				$url = apply_filters( 'rbhn_author_url', get_author_posts_url( $user_id, $user->user_nicename ) , $user_id);	
 
 				$class = "user-{$user->ID}";
 				if ( is_author( $user->ID ) )
