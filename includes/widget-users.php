@@ -1,25 +1,24 @@
 <?php
 
 /* Add the Help Note Custom Post Type to the author post listing */ 
-function custom_post_author_archive( $query ) {
-
-  if( ($query->is_author) && empty( $query->query_vars['suppress_filters'] ) ) {
-
-    // collect all Help Note post types active for the current user
-    $include_post_types = rbhn_active_posttypes();
-
-    $query->set( 'post_type', $include_post_types);
+function rbhn_custom_post_author_archive( $query ) {
     
-    // remove the filter after running, run only once!
-    remove_action( 'pre_get_posts', 'custom_post_author_archive' ); 
-      
-    }
+	if( !is_admin() && $query->is_main_query() && empty( $query->query_vars['suppress_filters'] ) ) {
+
+		// For author queries add Help Note post types
+		if ($query->is_author) {
+			$include_post_types = rbhn_active_posttypes() ;
+			$include_post_types[] = 'post';
+			$query->set( 'post_type', $include_post_types);
+		}
+
+		// remove the filter after running, run only once!
+		remove_action( 'pre_get_posts', 'rbhn_custom_post_author_archive' ); 
+
+	}
 }    
 
-add_filter( 'pre_get_posts', 'custom_post_author_archive' );
-
-
-
+add_filter( 'pre_get_posts', 'rbhn_custom_post_author_archive' );
 
 
 /**

@@ -1,6 +1,6 @@
 === Plugin Name ===
 Contributors: justinticktock
-Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration
+Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress
 Requires at least: 3.5
 Tested up to: 3.7.1
 Stable tag: 1.2.2
@@ -58,15 +58,17 @@ You will need to use another plugin to manage roles and capabilities such as the
 
 
 = 1.2.2 =
-* 2013-??-??
-New feature: Added `rbhn_author_url` filter.
-New feature: BuddyPress Compatibility added to the 'user widget'; user links now go to the BP public user profile when `BP_ENABLE_ROOT_PROFILES` has been defined.
+* 2013-11-22
+* New feature: Added `rbhn_author_url` filter.
+* New feature: BuddyPress & BuddyDrive Compatibility added to the 'user widget'; user links now go to the BP public user profile when `BP_ENABLE_ROOT_PROFILES` has been defined.
+* Fix for hijacking secondary queries for author.
+
 
 = 1.2.1 =
 * 2013-11-18
-* Added Settings link to the admin acitve plugin listing 
+* Added Settings link to the admin active plugin listing 
 * Added Widget to allow sidebars to list all users with access to read/edit a Help Note type.
-* Code refactoring
+* Code re-factoring
 
 = 1.2.01 =
 * 2013-11-11
