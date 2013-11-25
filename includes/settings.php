@@ -1,10 +1,9 @@
 <?php
 
-
 // Create a second level settings page
-add_action('admin_menu', 'register_my_custom_submenu_page');
+add_action('admin_menu', 'register_role_based_help_notes_settings_page');
 
-function register_my_custom_submenu_page() {
+function register_role_based_help_notes_settings_page() {
     add_submenu_page( 'options-general.php', 'Notes', 'Help Notes', 'manage_options', HELP_SETTINGS_PAGE, 'notes_settings_page_callback' ); 
 }
 
@@ -21,7 +20,7 @@ function notes_settings_page_callback( $args = '' ) {
 			<form method="post" action="options.php">
 				<?php
 					settings_fields( 'help_note_option_group' );
-					do_settings_sections( 'notes-settings' );
+					do_settings_sections( HELP_SETTINGS_PAGE );
 					submit_button();
 				?>
 			</form>
@@ -122,7 +121,7 @@ function help_note_plugin_intialize_options() {
 		'help_note_menu_plugin',                 			
 		'Post type archive in menu:',             			
 		'settings_field_help_notes_install_menu_plugin', 	 
-		'notes-settings',   								
+		HELP_SETTINGS_PAGE,   								
 		'help_note_extensions'  							
 	);      
 
