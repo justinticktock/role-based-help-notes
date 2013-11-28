@@ -47,6 +47,10 @@ If you select the options for extending functionality through other plugins the 
 
 You will need to use another plugin to manage roles and capabilities such as the [User Role Editor](http://wordpress.org/extend/plugins/user-role-editor/ "User Role Editor") plugin.
 
+= Is there a theme template I can modify in my child theme? =
+
+Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-can-modify-in-my-child-theme?replies=3#post-4929519)
+
 == Screenshots ==
 
 1. The Settings Screen.
