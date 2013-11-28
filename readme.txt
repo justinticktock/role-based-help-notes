@@ -33,6 +33,7 @@ If you select the options for extending functionality through other plugins the 
 3. [Simple Page Ordering](http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
 
 
+[Plugin site](http://justinandco.com/plugins/role-based-help-notes/).  	
 [GitHub page](http://github.com/justinticktock/role-based-help-notes).
 
 == Installation ==
