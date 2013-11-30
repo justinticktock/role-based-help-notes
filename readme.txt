@@ -7,7 +7,7 @@ Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Help Notes/Posts private and dedicated to user roles.
+Help Notes/Posts private to assigned users of a wordpress role.
 
 == Description ==
 
