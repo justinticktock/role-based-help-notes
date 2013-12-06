@@ -89,8 +89,7 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
         {
           
-			// limit to 20 characters length for the WP limitation of custom post type names
-			$post_type_name = 'h_' . substr($role_selected , -18);
+			$post_type_name = clean_post_type_name($role_selected);
 			$capability_type    = sanitize_key($post_type_name);
             
 			if ( isset($capability_type) && ("edit_{$capability_type}" == $cap || "delete_{$capability_type}" == $cap || "read_{$capability_type}" == $cap )) {
