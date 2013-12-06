@@ -111,7 +111,7 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 	}
 
 
-	/* If editing a testimonial, assign the required capability. */
+	/* If editing a help note, assign the required capability. */
 	if ( isset($capability_type) && ("edit_{$capability_type}" == $cap )) {
 					
             		if( $user_id == $post->post_author )
@@ -120,7 +120,7 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
             			$caps[] = $post_type->cap->edit_others_posts;
 	}
             
-	/* If deleting a testimonial, assign the required capability. */
+	/* If deleting a help note, assign the required capability. */
 	else if( isset($capability_type) && ("delete_{$capability_type}" == $cap )) {
         
 		if( isset($post->post_author ) && $user_id == $post->post_author  && isset($post_type->cap->delete_posts) )
@@ -129,7 +129,7 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 			$caps[] = $post_type->cap->delete_others_posts;
 	}
 
-	/* If reading a private testimonial, assign the required capability. */
+	/* If reading a private help note, assign the required capability. */
 	elseif( isset($capability_type) && ("read_{$capability_type}" == $cap )) {
 
             		if( 'private' != $post->post_status )
