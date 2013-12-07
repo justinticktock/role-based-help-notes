@@ -160,7 +160,7 @@ function help_note_post_types_section_callback() {
 function help_note_extensions_section_callback() {  
     
     ?><p>Select the extension plugins that you wish to use.  Selection of a plugin will prompt you through the installation and the plugin will be forced active while this is selected.
-	To install follow the prompts or goto the [Plugins Menu]..[Install Plugins], (unselecting will not remove the plugin, you will need to manually uninstall Post-type-archive-in-menu).</p><?php
+	To install follow the prompts or goto the [Plugins Menu]..[Install Plugins], (unselecting will not remove the plugin, you will need to manually uninstall).</p><?php
 
 } // end help_note_extensions_section_callback  
 
