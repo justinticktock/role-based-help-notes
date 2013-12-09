@@ -69,7 +69,7 @@ function help_note_register_required_plugins() {
 add_action( 'tgmpa_register', 'help_note_tgmpa_register' );
 
 function help_note_tgmpa_register() {
-echo "";
+
 	/**
 	 * Array of plugin arrays. Required keys are name and slug.
 	 * If the source is NOT from the .org repo, then source is also required.
@@ -117,7 +117,9 @@ echo "";
 			'nag_type'									=> 'updated' // Determines admin notice type - can only be 'updated' or 'error'
 		)
 	);
-
+	
 	tgmpa( $plugins, $config );
-
+	
+    // remove the action in-case other plugins/themes have also used tgmpa_register
+    remove_action( 'tgmpa_register', 'help_note_tgmpa_register' );
 }
