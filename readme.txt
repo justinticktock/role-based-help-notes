@@ -63,7 +63,10 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 == Changelog ==
 
-
+= 1.2.3 =
+* 2013-??-??
+* removed the 'tgmpa_register' hook after use in-case other plugins/themes have also used tgmpa_register.
+	
 = 1.2.2 =
 * 2013-11-22
 * New feature: Added `rbhn_author_url` filter.
