@@ -30,27 +30,6 @@ function help_note_register_required_plugins() {
     
     // First, we read the option collection  
 	$options = get_option('help_note_option'); 
-        
-    if ( isset($options['help_note_menu_plugin']) && $options['help_note_menu_plugin'] ) {
-        $plugins[] = array(
-                        'name'          		=> 'Post type archive in menu',
-                        'slug'      			=> 'post-type-archive-in-menu',
-                        'required'              => false, // If false, the plugin is only 'recommended' instead of required
-            			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
-                        'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
-                        );
-	}   
-	                             
-
-    if ( isset($options['help_note_simple_footnotes_plugin']) && $options['help_note_simple_footnotes_plugin'] ) {
-        $plugins[] = array(
-                        'name'              	=> 'Simple Footnotes',
-                        'slug'      			=> 'simple-footnotes',
-                        'required'              => false, // If false, the plugin is only 'recommended' instead of required
-            			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
-                        'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
-                        );
-	}   
 	
     if ( isset($options['help_note_simple_page_ordering']) && $options['help_note_simple_page_ordering'] ) {
         $plugins[] = array(
@@ -61,7 +40,27 @@ function help_note_register_required_plugins() {
                         'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
                         );
 	}   
-	                     
+       
+    if ( isset($options['help_note_simple_footnotes_plugin']) && $options['help_note_simple_footnotes_plugin'] ) {
+        $plugins[] = array(
+                        'name'              	=> 'Simple Footnotes',
+                        'slug'      			=> 'simple-footnotes',
+                        'required'              => false, // If false, the plugin is only 'recommended' instead of required
+            			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
+                        'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
+                        );
+	}   
+	 
+    if ( isset($options['help_note_menu_plugin']) && $options['help_note_menu_plugin'] ) {
+        $plugins[] = array(
+                        'name'          		=> 'Post type archive in menu',
+                        'slug'      			=> 'post-type-archive-in-menu',
+                        'required'              => false, // If false, the plugin is only 'recommended' instead of required
+            			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
+                        'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
+                        );
+	}                            
+                    
     return $plugins;
 }
 
