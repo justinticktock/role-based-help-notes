@@ -118,12 +118,12 @@ function help_note_plugin_intialize_options() {
 	);  
     
     add_settings_field(   
-		'help_note_menu_plugin',                 			
-		'Post type archive in menu:',             			
-		'settings_field_help_notes_install_menu_plugin', 	 
-		HELP_SETTINGS_PAGE,   								
-		'help_note_extensions'  							
-	);      
+    	'help_note_simple_page_ordering',                 	      
+		'Simple Page Ordering:',             			          
+		'settings_field_help_notes_install_simple_page_ordering', 
+		HELP_SETTINGS_PAGE,   								      
+		'help_note_extensions'  							      
+	);       
 
     add_settings_field(   
     	'help_note_simple_footnotes_plugin',                 
@@ -131,16 +131,23 @@ function help_note_plugin_intialize_options() {
 		'settings_field_help_notes_install_simple_footnotes',															   
 		HELP_SETTINGS_PAGE,   								   
 		'help_note_extensions'  							   
+	);      
+	
+    add_settings_field(   
+    	'help_note_email_post_changes_plugin',                 
+		'Email Post Changes:',             			           
+		'settings_field_help_notes_install_email_post_changes',															   
+		HELP_SETTINGS_PAGE,   								   
+		'help_note_extensions'  							   
 	);       
     
     add_settings_field(   
-    	'help_note_simple_page_ordering',                 	      
-		'Simple Page Ordering:',             			          
-		'settings_field_help_notes_install_simple_page_ordering', 
-		HELP_SETTINGS_PAGE,   								      
-		'help_note_extensions'  							      
-	);       
-    
+		'help_note_menu_plugin',                 			
+		'Post type archive in menu:',             			
+		'settings_field_help_notes_install_menu_plugin', 	 
+		HELP_SETTINGS_PAGE,   								
+		'help_note_extensions'  							
+	);      
 
 } // end help_note_plugin_intialize_options()
 
@@ -160,7 +167,7 @@ function help_note_post_types_section_callback() {
 function help_note_extensions_section_callback() {  
     
     ?><p>Select the extension plugins that you wish to use.  Selection of a plugin will prompt you through the installation and the plugin will be forced active while this is selected.
-	To install follow the prompts or goto the [Plugins Menu]..[Install Plugins], (unselecting will not remove the plugin, you will need to manually uninstall).</p><?php
+	To install follow the prompts or go to the [Plugins Menu]..[Install Plugins], (deselecting will not remove the plugin, you will need to manually uninstall).</p><?php
 
 } // end help_note_extensions_section_callback  
 
@@ -266,7 +273,6 @@ function settings_field_help_notes_install_menu_plugin() {
 	<?php
 }
 
-
 /**
  * Renders settings field for Help Notes simple_footnotes_plugin
  */
@@ -282,6 +288,26 @@ function settings_field_help_notes_install_simple_footnotes() {
         id="help_note_simple_footnotes_plugin" 
 		value="1"<?php checked( $options['help_note_simple_footnotes_plugin'], 1 ); ?>
         <p>&nbsp Once installed go you can use the 'ref' shortcode for example... [ref]Add footnote text here[/ref] within your posts.</p>
+	</input>
+    
+	<?php
+}
+
+/**
+ * Renders settings field for Help Notes simple_footnotes_plugin
+ */
+function settings_field_help_notes_install_email_post_changes() {
+    // First, we read the option collection  
+	$options = get_option('help_note_option');  
+
+	// Render the output  
+	?> 
+	<input 
+		type='checkbox' 
+		name="help_note_option[help_note_email_post_changes_plugin]" 
+        id="help_note_email_post_changes_plugin" 
+		value="1"<?php checked( $options['help_note_email_post_changes_plugin'], 1 ); ?>
+        <p>&nbsp Once installed go to [Settings]...[Email Post Changes] to use the plugin and notify specific users of changes to Help Notes by email.</p>
 	</input>
     
 	<?php

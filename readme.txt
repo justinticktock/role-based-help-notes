@@ -57,18 +57,20 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 == Screenshots ==
 
 1. The Settings Screen.
-2. The Help Notes for the enabled 'Proof Reader' role.
-3. The 'Appearance..Widgets' Admin screen using the 'Help Note Users' widget with the 'twenty thirteen' theme sidebar
-4. The 'twenty thirteen' theme showing the Contents page for a user with 'Proof Reader' role access.
+2. The Help Notes for the enabled 'Proof Reader' role - WordPress 3.7 or before
+3. Admin side Dashboard showing Help Notes at WordPress 3.8
+4. The 'Appearance..Widgets' Admin screen using the 'Help Note Users' widget with the 'twenty thirteen' theme sidebar
+5. The 'twenty thirteen' theme showing the Contents page for a user with 'Proof Reader' role access.
 
 == Changelog ==
 
 = 1.2.3 =
-* 2013-??-??
+* 2013-12-16
 * removed the 'tgmpa_register' hook after use in-case other plugins/themes have also used tgmpa_register.
 * Re-ordered the 'Plugin Extensions' in order of suggested value.
 * Cleaned code by use of 'clean_post_type_name()'
-* Added dashicon support for wordpress 3.8+
+* Added dashicon support for WordPress 3.8+
+* Added the suggested plugin extension ["email_post_changes"](http://wordpress.org/plugins/email-post-changes/)
 	
 = 1.2.2 =
 * 2013-11-22

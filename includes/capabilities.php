@@ -8,7 +8,7 @@ function my_help_add_role_caps() {
     global $wp_roles;
 
     // Load Roles if not set
-	if ( ! isset( $wp_roles ) )
+    if ( ! isset( $wp_roles ) )
 	$wp_roles = new WP_Roles();
 
 	$roles              = $wp_roles->get_names();
@@ -64,13 +64,12 @@ function my_help_add_role_caps() {
 }
 
 
-// Add Meta Capability Handling ..
+// Add Meta Capability Handling 
 add_filter( 'map_meta_cap', 'rbhn_map_meta_cap', 10, 4 );
 
 function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
     
-	// add loop break out for the right cpt
-	/* Set an empty array for the caps. */
+	/* Loops through the active Help notes to assigns the proper capability  */
     global $wp_roles;
 
     // Load Roles if not set
@@ -84,64 +83,58 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
     
     if (  ! empty($settings_options ) ) {
 
-		$help_note_found = false;
-		
 		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
         {
           
-			$post_type_name = clean_post_type_name($role_selected);
-			$capability_type    = sanitize_key($post_type_name);
-            
-			if ( isset($capability_type) && ("edit_{$capability_type}" == $cap || "delete_{$capability_type}" == $cap || "read_{$capability_type}" == $cap )) {
+			$capability_type 	= clean_post_type_name($role_selected);
 
-					$post_type = get_post_type_object( $post->post_type );
+			if ( isset($capability_type) && ("edit_{$capability_type}" == $cap || "delete_{$capability_type}" == $cap || "read_{$capability_type}" == $cap ) ) {
+					
+				$post = get_post( $args[0] );
+				$post_type = $capability_type;
+				
+				/* Set an empty array for the caps. */
+				$caps = array();
+			}
 
-					/* Set an empty array for the caps. */
-					$caps = array();
-				$help_note_found = true;
-				break;					
+			/* If editing a help note, assign the required capability. */
+			if ( isset($capability_type) && ("edit_{$capability_type}" == $cap )) {
+							
+				if( $user_id == $post->post_author )
+					$caps[] = $post_type->cap->edit_posts;
+				else
+					$caps[] = $post_type->cap->edit_others_posts;
+					
+				Break;  // Break out of the Help Notes foreach loop
+			}
+					
+			/* If deleting a help note, assign the required capability. */
+			else if( isset($capability_type) && ("delete_{$capability_type}" == $cap )) {
+				
+				if( isset($post->post_author ) && $user_id == $post->post_author  && isset($post_type->cap->delete_posts) )
+					$caps[] = $post_type->cap->delete_posts;
+				elseif (isset($post_type->cap->delete_others_posts))
+					$caps[] = $post_type->cap->delete_others_posts;
+					
+				Break;  // Break out of the Help Notes foreach loop
+			}
+
+			/* If reading a private help note, assign the required capability. */
+			elseif( isset($capability_type) && ("read_{$capability_type}" == $cap )) {
+
+				if( 'private' != $post->post_status )
+					$caps[] = 'read';
+				elseif ( $user_id == $post->post_author )
+					$caps[] = 'read';
+				else
+					$caps[] = $post_type->cap->read_private_posts;
+		
+				Break;  // Break out of the Help Notes foreach loop
 			}
 		}
-
-		if (! $help_note_found ) {
-        			
-			return $caps;
-
-		}	
 	}
-
-
-	/* If editing a help note, assign the required capability. */
-	if ( isset($capability_type) && ("edit_{$capability_type}" == $cap )) {
-					
-            		if( $user_id == $post->post_author )
-            			$caps[] = $post_type->cap->edit_posts;
-            		else
-            			$caps[] = $post_type->cap->edit_others_posts;
-	}
-            
-	/* If deleting a help note, assign the required capability. */
-	else if( isset($capability_type) && ("delete_{$capability_type}" == $cap )) {
-        
-		if( isset($post->post_author ) && $user_id == $post->post_author  && isset($post_type->cap->delete_posts) )
-			$caps[] = $post_type->cap->delete_posts;
-		elseif (isset($post_type->cap->delete_others_posts))
-			$caps[] = $post_type->cap->delete_others_posts;
-	}
-
-	/* If reading a private help note, assign the required capability. */
-	elseif( isset($capability_type) && ("read_{$capability_type}" == $cap )) {
-
-            		if( 'private' != $post->post_status )
-            			$caps[] = 'read';
-            		elseif ( $user_id == $post->post_author )
-            			$caps[] = 'read';
-            		else
-            			$caps[] = $post_type->cap->read_private_posts;
-        		}	
-
+	
 	/* Return the capabilities required by the user. */
-	return $caps;
-
+	return $caps;	
 }
 ?>
