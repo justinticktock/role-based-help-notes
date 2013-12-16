@@ -68,6 +68,7 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 * removed the 'tgmpa_register' hook after use in-case other plugins/themes have also used tgmpa_register.
 * Re-ordered the 'Plugin Extensions' in order of suggested value.
 * Cleaned code by use of 'clean_post_type_name()'
+* Added dashicon support for wordpress 3.8+
 	
 = 1.2.2 =
 * 2013-11-22
