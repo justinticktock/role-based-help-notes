@@ -50,7 +50,17 @@ function help_note_register_required_plugins() {
                         'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
                         );
 	}   
-	 
+	
+    if ( isset($options['help_note_email_post_changes_plugin']) && $options['help_note_email_post_changes_plugin'] ) {
+        $plugins[] = array(
+                        'name'          		=> 'Email Post Changes',
+                        'slug'      			=> 'email-post-changes',
+                        'required'              => false, // If false, the plugin is only 'recommended' instead of required
+            			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
+                        'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
+                        );
+	}                            
+             
     if ( isset($options['help_note_menu_plugin']) && $options['help_note_menu_plugin'] ) {
         $plugins[] = array(
                         'name'          		=> 'Post type archive in menu',

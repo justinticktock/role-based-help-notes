@@ -1,7 +1,7 @@
 <?php
 /**
 Plugin Name: Role Based Help Notes
-Plugin URI: http://justinandco.com/justinsblog/role-based-help-notes/
+Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
 Version: 1.2.2
 Author: Justin Fletcher
@@ -251,9 +251,9 @@ function rbhn_add_post_content($content) {
 	return $content;
 }
 
-function clean_post_type_name($post_type_name) {
+function clean_post_type_name($role_key) {
     // limit to 20 characters length for the WP limitation of custom post type names
-    $post_type_name = sanitize_key('h_' . substr($post_type_name , -18)); 
+    $post_type_name = sanitize_key('h_' . substr($role_key , -18)); 
     return $post_type_name;
 }
 

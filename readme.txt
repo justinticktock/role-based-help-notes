@@ -65,7 +65,7 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 == Changelog ==
 
 = 1.2.3 =
-* 2013-12-16
+* 2013-12-17
 * removed the 'tgmpa_register' hook after use in-case other plugins/themes have also used tgmpa_register.
 * Re-ordered the 'Plugin Extensions' in order of suggested value.
 * Cleaned code by use of 'clean_post_type_name()'
