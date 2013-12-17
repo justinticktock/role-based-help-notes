@@ -65,7 +65,7 @@ function my_help_add_role_caps() {
 
 
 // Add Meta Capability Handling 
-add_filter( 'map_meta_cap', 'rbhn_map_meta_cap', 9, 4 );
+add_filter( 'map_meta_cap', 'rbhn_map_meta_cap', 10, 4 );
 
 
 function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
