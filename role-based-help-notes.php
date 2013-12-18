@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
 define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
 define( 'HELP_SETTINGS_PAGE', 'notes-settings');
-define( 'HELP_NOTES_VERSION', '1.2.2' );
+define( 'HELP_NOTES_VERSION', '1.2.3' );
 
 
 /* Includes... */
