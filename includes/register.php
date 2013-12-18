@@ -12,6 +12,7 @@ function help_do_on_activation() {
       'help_note_contents_page'             => '0',
       'help_note_general_enabled'           => false,
       'user_widget_enabled'                 => false,
+	  'help_notes_version'					=> HELP_NOTES_VERSION,
     );
 
     $options = wp_parse_args(get_option('help_note_option'), $defaults);

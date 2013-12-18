@@ -41,8 +41,11 @@ function rbhn_capability_clean_up() {
         $role = get_role( $role_key );
         $caps = $role->capabilities;
         
-        $capability_type = clean_post_type_name($role_key);
-		
+		// limit to 20 characters length for the WP limitation of custom post type names
+		// (note we can't call the clean_post_type_name() function from within uninstall.php as it doesn't exist at this point.
+		$post_type_name = 'h_' . substr($role_key , -18);
+		$capability_type = sanitize_key($post_type_name);
+    
         $delete_caps = array(
                 "edit_{$capability_type}",
                 "read_{$capability_type}",

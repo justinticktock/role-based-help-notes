@@ -30,9 +30,10 @@ Extensions:
 
 If you select the options for extending functionality through other plugins the following are selectable for ease of installing..
 
-1. [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
-2. [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref].
-3. [Simple Page Ordering](http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
+* [Simple Page Ordering](http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
+* [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref].
+* [Email Post Changes](http://wordpress.org/plugins/email-post-changes/) for emailing out changes to a Help Note as they occur.
+* [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
 
 
 [Plugin site](http://justinandco.com/plugins/role-based-help-notes/).  	
@@ -57,15 +58,15 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 == Screenshots ==
 
 1. The Settings Screen.
-2. The Help Notes for the enabled 'Proof Reader' role - WordPress 3.7 or before
-3. Admin side Dashboard showing Help Notes at WordPress 3.8
-4. The 'Appearance..Widgets' Admin screen using the 'Help Note Users' widget with the 'twenty thirteen' theme sidebar
-5. The 'twenty thirteen' theme showing the Contents page for a user with 'Proof Reader' role access.
+2. A front end example Help Note for a user with the 'Proof Reader' role, also showing the user widget listing all proof readers.
+3. Dashboard showing Help Notes at WordPress 3.8
+4. The 'Appearance..Widgets' Admin screen using the 'Help Note Users' widget with the 'twenty fourteen' theme sidebar
+5. The 'twenty fourteen' theme showing the Contents page for a user with 'Proof Reader' role access.
 
 == Changelog ==
 
 = 1.2.3 =
-* 2013-12-17
+* 2013-12-18
 * removed the 'tgmpa_register' hook after use in-case other plugins/themes have also used tgmpa_register.
 * Re-ordered the 'Plugin Extensions' in order of suggested value.
 * Cleaned code by use of 'clean_post_type_name()'

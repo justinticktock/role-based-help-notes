@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
 define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
 define( 'HELP_SETTINGS_PAGE', 'notes-settings');
+define( 'HELP_NOTES_VERSION', '1.2.2' );
+
 
 /* Includes... */
 
@@ -45,8 +47,6 @@ require_once( HELP_MYPLUGINNAME_PATH . 'includes/widgets.php' );
 // Load code for better compatibility with other plugins.
 require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
 
-/* Main Plugin Code */
-
 // A settings page to the admin acitve plugin listing
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'role_based_help_notes_action_links' );
 
@@ -55,6 +55,40 @@ function role_based_help_notes_action_links( $links ) {
     return $links;
 }
 
+// Attached to admin_init. Loads the textdomain and the upgrade routine.
+add_action( 'admin_init', 'rbhn_admin_init' );
+
+function rbhn_admin_init() {
+
+	$settings_options = get_option('help_note_option');
+	if ( empty($settings_options) || ! isset( $settings_options['help_notes_version'] ) || $settings_options['help_notes_version'] < HELP_NOTES_VERSION ) {
+
+		$current_plugin_version = isset( $settings_options['help_notes_version'] ) ? $settings_options['help_notes_version'] : 0;
+		rbhn_upgrade( $current_plugin_version );
+		
+		$defaults = array(
+			'help_notes_version'	=> HELP_NOTES_VERSION,
+			);
+		$options = wp_parse_args(get_option('help_note_option'), $defaults);
+		update_option('help_note_option', $options); 
+		}
+		
+	//load_plugin_textdomain('role-based-help-notes', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+}
+
+function rbhn_upgrade( $current_plugin_version ) {
+	$settings_options = get_option('help_note_option');
+	if ( $current_plugin_version < '1.2.3' ) {
+		
+		// add missing option
+		$defaults = array(
+			'help_notes_version'	=> HELP_NOTES_VERSION,
+			);
+		$options = wp_parse_args(get_option('help_note_option'), $defaults);
+		update_option('help_note_option', $options); 
+		}
+}
+	
 // Returns the selected-active Help Note Custom Post Types
 
 function rbhn_active_posttypes() {
@@ -165,7 +199,7 @@ function help_register_posttype($role_key, $role_name) {
 
     global $wp_version;
     if (version_compare($wp_version, '3.8', '>=')) {  
-        //if version 3.8 or high we ahve dashicon support.
+        //if version 3.8 or high we have dashicon support.
 		$help_menu_icon    = 'dashicons-format-aside' ;	
 	} else {
 		$help_menu_icon    = HELP_PLUGIN_URI . '/images/help.png' ;
@@ -201,11 +235,7 @@ function help_register_posttype($role_key, $role_name) {
 
 }
 
-
-
-
-
-// Add Contents Details to the Contents page if delclared in settings ..
+// Add Contents Details to the Contents page if declared in settings ..
 
 add_filter('the_content', 'rbhn_add_post_content');
 
