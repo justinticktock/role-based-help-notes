@@ -1,5 +1,5 @@
 <?php
-/**
+/*
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
@@ -22,9 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // Define constants
 define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
+define( 'HELP_MYPLUGINNAME_FULL_PATH', HELP_MYPLUGINNAME_PATH . 'role-based-help-notes.php' );
 define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
 define( 'HELP_SETTINGS_PAGE', 'notes-settings');
-define( 'HELP_NOTES_VERSION', '1.2.3' );
+
 
 
 /* Includes... */
@@ -61,13 +62,13 @@ add_action( 'admin_init', 'rbhn_admin_init' );
 function rbhn_admin_init() {
 
 	$settings_options = get_option('help_note_option');
-	if ( empty($settings_options) || ! isset( $settings_options['help_notes_version'] ) || $settings_options['help_notes_version'] < HELP_NOTES_VERSION ) {
+	if ( empty($settings_options) || ! isset( $settings_options['help_notes_version'] ) || $settings_options['help_notes_version'] < plugin_get_version() ) {
 
 		$current_plugin_version = isset( $settings_options['help_notes_version'] ) ? $settings_options['help_notes_version'] : 0;
 		rbhn_upgrade( $current_plugin_version );
 		
 		$defaults = array(
-			'help_notes_version'	=> HELP_NOTES_VERSION,
+			'help_notes_version'	=> plugin_get_version(),
 			);
 		$options = wp_parse_args(get_option('help_note_option'), $defaults);
 		update_option('help_note_option', $options); 
@@ -77,16 +78,16 @@ function rbhn_admin_init() {
 }
 
 function rbhn_upgrade( $current_plugin_version ) {
-	$settings_options = get_option('help_note_option');
-	if ( $current_plugin_version < '1.2.3' ) {
 		
-		// add missing option
+	if ( $current_plugin_version < '1.2.4' ) {
+		
+		// add missing option for the new suggested plugin
 		$defaults = array(
-			'help_notes_version'	=> HELP_NOTES_VERSION,
+			'help_note_post_type_switcher_plugin'	=> false,
 			);
 		$options = wp_parse_args(get_option('help_note_option'), $defaults);
 		update_option('help_note_option', $options); 
-		}
+		}		
 }
 	
 // Returns the selected-active Help Note Custom Post Types
@@ -114,15 +115,15 @@ function rbhn_active_posttypes() {
 	}
 	
 	if (  ! empty($settings_options ) ) {	
-		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
-		{
-			if (array_key_exists ($role_selected, $roles)) {
-                $post_type_name = clean_post_type_name($role_selected);
-                if (current_user_can( $role_selected )) {
-				    $active_posttypes[] = $post_type_name; 
-                }
-			} 
-		}
+		foreach( $settings_options['help_note_post_types'] as $array) {
+			foreach( $array as $active_role=>$active_posttype) {
+				// add the Help Note active role in an array
+				//$active_roles[] = array("inactive_role" => $active_role, "inactive_posttype" => $active_posttype) ;
+                if (current_user_can( $active_role )) {
+				    $active_posttypes[] = $active_posttype;
+                }				
+			}
+		}	
 	}
     
     return $active_posttypes;
@@ -141,7 +142,7 @@ function help_register_multiple_posttypes() {
 
 	if ( isset( $settings_options['help_note_general_enabled'] ) && ! empty( $settings_options['help_note_general_enabled'] ) ) {
 		// generate a genetic help note post type
-        call_user_func_array( 'help_register_posttype', array("general", "General") );  
+        call_user_func_array( 'help_register_posttype', array("general", "General", "h_general") );  
 	}
 	 
     
@@ -154,22 +155,20 @@ function help_register_multiple_posttypes() {
 
 	$roles = $wp_roles->get_names();
 
-	
 	if (  ! empty($settings_options ) ) {	
-		foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected)
-		{
-			if (array_key_exists ($role_selected, $roles)) {
-				call_user_func_array( 'help_register_posttype', array($role_selected, $roles[$role_selected]) ); 
-			} 
+		foreach( $settings_options['help_note_post_types'] as $array) {
+			foreach( $array as $active_role=>$active_posttype) {
+				if (array_key_exists ($active_role, $roles)) {
+					call_user_func_array( 'help_register_posttype', array($active_role, $roles[$active_role], $active_posttype) ); 
+				} 
+			}
 		}
 	}
 }
 
 // Adds custom post type for a single Help Note
 
-function help_register_posttype($role_key, $role_name) {
-
-    $post_type_name = clean_post_type_name($role_key);
+function help_register_posttype($role_key, $role_name, $post_type_name) {
 	
     $role_name = (strcasecmp("note", $role_name) ?  $role_name . ' ' : '' );
 
@@ -287,5 +286,15 @@ function clean_post_type_name($role_key) {
     return $post_type_name;
 }
 
+/**
+* Returns current plugin version.
+*
+* @return string Plugin version
+*/
+function plugin_get_version() {
+	$plugin_data = get_plugin_data( HELP_MYPLUGINNAME_FULL_PATH);
+	$plugin_version = $plugin_data['Version'];
+	return $plugin_version;
+}
 
 ?>

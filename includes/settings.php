@@ -8,6 +8,7 @@ function register_role_based_help_notes_settings_page() {
 }
 
 function notes_settings_page_callback( $args = '' ) {
+
         extract( wp_parse_args( $args, array(
             'title'       => __( 'Help Notes Settings', 'help-notes' ),
             'options_group' => 'help_note_option_group',
@@ -28,8 +29,6 @@ function notes_settings_page_callback( $args = '' ) {
 		<?php
 	}  // end help_note_settings_page_content  
 
-
-
 /** 
  * Initializes the plugin's option by registering the Sections, 
  * Fields, and Settings. 
@@ -39,24 +38,23 @@ function notes_settings_page_callback( $args = '' ) {
  
 add_action('admin_init', 'help_note_plugin_intialize_options' );  
 
-
 function help_note_plugin_intialize_options() {  
 
+	// do a one shot during save of options
     if ( get_option( 'rbhn_update_request' )) {
-        
     	    update_option( 'rbhn_update_request', '' );
-            help_do_on_activation();
-            
+			
+			help_do_on_activation();   		// add the active capabilities
+			
+			clean_inactive_capabilties();	// remove the inactive role capabilities
+			
     }
 
-
-	
 	register_setting(  
 		'help_note_option_group',  		// A settings group 
 		'help_note_option'   ,  		 
 		'sanitize_help_note_option'  	
 	);  
-
 
     // General Settings..
     
@@ -142,6 +140,14 @@ function help_note_plugin_intialize_options() {
 	);       
     
     add_settings_field(   
+    	'help_note_post_tpye_switcher_plugin',                 
+		'Post Type Switcher:',             			           
+		'settings_field_help_notes_install_post_type_switcher',															   
+		HELP_SETTINGS_PAGE,   								   
+		'help_note_extensions'  							   
+	);       
+    	
+    add_settings_field(   
 		'help_note_menu_plugin',                 			
 		'Post type archive in menu:',             			
 		'settings_field_help_notes_install_menu_plugin', 	 
@@ -165,18 +171,19 @@ function help_note_post_types_section_callback() {
 } // end help_note_post_types_section_callback  
 
 function help_note_extensions_section_callback() {  
-    
-    ?><p>Select the extension plugins that you wish to use.  Selection of a plugin will prompt you through the installation and the plugin will be forced active while this is selected.
-	To install follow the prompts or go to the [Plugins Menu]..[Install Plugins], (deselecting will not remove the plugin, you will need to manually uninstall).</p><?php
+
+    ?><p>Select the extension plugins that you wish to use.  Selection of a plugin will prompt you through the installation or go to the Menu ..[Plugins]..[Install Plugins], </Br>
+	The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall .</p><?php
 
 } // end help_note_extensions_section_callback  
-
+	
 
 
 /**
  * Renders settings field for Help Notes general type enable check box
  */
 function settings_field_help_notes_general_type_enable() {
+
     // First, we read the option collection  
     $options = get_option('help_note_option');  
 
@@ -200,6 +207,7 @@ function settings_field_help_notes_general_type_enable() {
  * Renders settings field for User Widget enable check box
  */
 function settings_field_user_widget_enable() {
+
     // First, we read the option collection  
     $options = get_option('help_note_option');  
 
@@ -211,12 +219,21 @@ function settings_field_user_widget_enable() {
         id="user_widget_enabled" 
 		value="1"<?php checked( $options['user_widget_enabled'], 1 ); ?>
         <p>&nbsp Select to enable the 'User Widget'. </BR> 
-        (This will enable you to place the Help Notes user widget into your sider bars, it will only be shown on Help Note post types.  The wdget lists all users that have access to the Help Notes for a particular role.)</p>
+        (This will enable you to place the Help Notes user widget into your sidebars, it will only be shown on Help Note post types.  The wdget lists all users that have access to the Help Notes for a particular role.)</p>
 	</input>
     
 	<?php
 }
 
+function rbhn_role_active($role, $active_helpnote_roles) {
+
+    foreach ($active_helpnote_roles as $active_role=>$active_posttype) {
+			if (! empty($active_posttype["$role"])) {
+				return true;
+			}
+    }
+    return false;
+}
 
 /**
  * Renders settings field for Help Notes Post Types
@@ -237,18 +254,19 @@ function settings_field_help_notes_post_types() {
 	ksort($roles);
 	foreach($roles as $role_key=>$role_name)
 	{
-			$id = sanitize_key( $role_key );
+		$id = sanitize_key( $role_key );
+		$post_type_name = clean_post_type_name($role_key);
+		$role_active = rbhn_role_active( $role_key, (array) $options['help_note_post_types'])
 		
 		// Render the output  
 		?> 
 		<input 
 			type='checkbox'  
 			id="<?php echo "help_notes_{$id}" ; ?>" 
-			name="help_note_option[help_note_post_types][]"  
-			value="<?php echo $role_key; ?>"<?php checked( in_array( $role_key, (array) $options['help_note_post_types']) ); ?>
+			name="help_note_option[help_note_post_types][][<?php echo $role_key ; ?>]"
+			value="<?php echo $post_type_name	; ?>"<?php checked( $role_active ); ?>
 		</input>
-				
-		<?php echo " $role_name<br />";		
+		<?php echo " $role_name<br/>";			
 
 	}
 }
@@ -257,6 +275,7 @@ function settings_field_help_notes_post_types() {
  * Renders settings field for Help Notes menu_plugin
  */
 function settings_field_help_notes_install_menu_plugin() {
+
 	// First, we read the option collection  
 	$options = get_option('help_note_option');  
 
@@ -277,6 +296,7 @@ function settings_field_help_notes_install_menu_plugin() {
  * Renders settings field for Help Notes simple_footnotes_plugin
  */
 function settings_field_help_notes_install_simple_footnotes() {
+
     // First, we read the option collection  
 	$options = get_option('help_note_option');  
 
@@ -297,6 +317,7 @@ function settings_field_help_notes_install_simple_footnotes() {
  * Renders settings field for Help Notes simple_footnotes_plugin
  */
 function settings_field_help_notes_install_email_post_changes() {
+
     // First, we read the option collection  
 	$options = get_option('help_note_option');  
 
@@ -313,10 +334,34 @@ function settings_field_help_notes_install_email_post_changes() {
 	<?php
 }
 
+
+/**
+ * Renders settings field for Help Notes simple_footnotes_plugin
+ */
+function settings_field_help_notes_install_post_type_switcher() {
+
+    // First, we read the option collection  
+	$options = get_option('help_note_option');  
+
+	// Render the output  
+	?> 
+	<input 
+		type='checkbox' 
+		name="help_note_option[help_note_post_type_switcher_plugin]" 
+        id="help_note_post_type_switcher_plugin" 
+		value="1"<?php checked( $options['help_note_post_type_switcher_plugin'], 1 ); ?>
+        <p>&nbsp This plugin will allow you to change the role which has the help note.  Once installed within you will find a new selection/edit option in the 'Publish' area.  <?php echo plugin_get_version();?> </p>
+	</input>
+    
+	<?php
+}
+
+
 /**
  * Renders settings field for Help Notes simple_page_ordering
  */
 function settings_field_help_notes_install_simple_page_ordering() {
+
     // First, we read the option collection  
 	$options = get_option('help_note_option');  
 
@@ -337,6 +382,7 @@ function settings_field_help_notes_install_simple_page_ordering() {
 
 
 function settings_field_help_notes_contents_page() {
+
 	// First, we read the option collection  
 	$options = get_option('help_note_option');  
 
@@ -373,6 +419,5 @@ function sanitize_help_note_option( $settings ) {
 	return $settings;
 	
 }
-
 
 ?>

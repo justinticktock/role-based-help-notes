@@ -37,8 +37,6 @@ class Users_Widget extends WP_Widget {
 		);
 	}
 
-
-
 	/**
 	 * Front-end display of widget.
 	 *
@@ -58,14 +56,29 @@ class Users_Widget extends WP_Widget {
         if ( ! in_array( get_post_type(),  $show_widget_help_notes ) )
             return; 
 
-		$title = apply_filters( 'widget_title', $instance['title'] );
-
+		$post_type = get_post_type();
+		$help_note_object = get_post_type_object( $post_type );
+		$help_note_name = $help_note_object->labels->menu_name;
+		$title = __( $help_note_name . " Users", 'role-based-help-notes' );
+		
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
         
-        $post_type = get_post_type();
-        $help_note_role =  substr($post_type,2);
+		// Find the role based on the post type.
+		$post_type = get_post_type();
+		$settings_options = get_option('help_note_option');  
+		if (  ! empty($settings_options ) ) {
+			foreach( $settings_options['help_note_post_types'] as $array) {
+				foreach( $array as $active_role=>$active_posttype) {
+					if ($post_type == $active_posttype) {
+						$help_note_role =  $active_role;
+						break 2;
+					}
+				}
+			}		
+		}
+
         $users = get_users( Array('role' => $help_note_role) );
 
 		/* If users were found. */
@@ -101,12 +114,13 @@ class Users_Widget extends WP_Widget {
 	 * @param array $instance Previously saved values from database.
 	 */
 	public function form( $instance ) {
-		if ( isset( $instance[ 'title' ] ) ) {
+		if ( isset( $instance[ 'title' ] ) && ( $instance[ 'title' ] != "" )) {
 			$title = $instance[ 'title' ];
 		}
 		else {
 			$title = __( 'Help Note Users', 'text_domain' );
 		}
+
 		?>
 		<p>
 		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 

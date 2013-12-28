@@ -6,13 +6,14 @@ function help_do_on_activation() {
     $defaults = array(
       'help_note_post_types'                => array(),
       'help_note_simple_page_ordering'      => false,
+      'help_note_post_type_switcher_plugin'	=> false,
       'help_note_simple_footnotes_plugin'   => false,
       'help_note_email_post_changes_plugin' => false,
       'help_note_menu_plugin'               => false,
       'help_note_contents_page'             => '0',
       'help_note_general_enabled'           => false,
       'user_widget_enabled'                 => false,
-	  'help_notes_version'					=> HELP_NOTES_VERSION,
+	  'help_notes_version'					=> plugin_get_version(),
     );
 
     $options = wp_parse_args(get_option('help_note_option'), $defaults);

@@ -3,7 +3,7 @@ Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress
 Requires at least: 3.5
 Tested up to: 3.8
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,7 @@ If you select the options for extending functionality through other plugins the 
 * [Simple Page Ordering](http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
 * [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref].
 * [Email Post Changes](http://wordpress.org/plugins/email-post-changes/) for emailing out changes to a Help Note as they occur.
+* [post_tpye_switcher](http://wordpress.org/plugins/post_tpye_switcher/) to changing the role associated with a Help Note after it has been created.
 * [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
 
 
@@ -64,6 +65,13 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 5. The 'twenty fourteen' theme showing the Contents page for a user with 'Proof Reader' role access.
 
 == Changelog ==
+
+
+= 1.2.4 =
+* 2014-??-??
+* fixed widget and contents page for Roles with more than 18 characters.
+* Added the suggested plugin extension ["post_tpye_switcher"](http://wordpress.org/plugins/post_tpye_switcher/)
+* Unused capabilities are now removed on deselecting a Help Notes Role rather than waiting until the plugin is uninstalled.
 
 = 1.2.3 =
 * 2013-12-18

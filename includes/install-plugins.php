@@ -60,7 +60,17 @@ function help_note_register_required_plugins() {
                         'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
                         );
 	}                            
-             
+
+    if ( isset($options['help_note_post_type_switcher_plugin']) && $options['help_note_post_type_switcher_plugin'] ) {
+        $plugins[] = array(
+                        'name'          		=> 'Post Type Switcher',
+                        'slug'      			=> 'post-type-switcher',
+                        'required'              => false, // If false, the plugin is only 'recommended' instead of required
+            			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
+                        'force_activation'      => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
+                        );
+	} 			 
+			 
     if ( isset($options['help_note_menu_plugin']) && $options['help_note_menu_plugin'] ) {
         $plugins[] = array(
                         'name'          		=> 'Post type archive in menu',
