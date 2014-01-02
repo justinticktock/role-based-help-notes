@@ -59,7 +59,7 @@ class Users_Widget extends WP_Widget {
 		$post_type = get_post_type();
 		$help_note_object = get_post_type_object( $post_type );
 		$help_note_name = $help_note_object->labels->menu_name;
-		$title = __( $help_note_name . " Users", 'role-based-help-notes' );
+		$title = __( $help_note_name . " Line-up", 'role-based-help-notes' );
 		
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )

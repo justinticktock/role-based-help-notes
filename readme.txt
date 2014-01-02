@@ -122,8 +122,11 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 == Upgrade Notice ==
 
+= 1.2.4 =
+You may see a few php warnings if you are in debug mode while the option structure is updated but nothing after that.
+
 = 1.2.0 =
-The 'General Help Notes' are now selectable and initally not-selected, if you wish to continue to use the 'General Help Notes' go to settings and make the selection.
+The 'General Help Notes' are now selectable and initially not-selected, if you wish to continue to use the 'General Help Notes' go to settings and make the selection.
 
 = 1.01 =
 * uninstall 1.0 completely to clean up capabilities before installing 1.01.

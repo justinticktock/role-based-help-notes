@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.2.3
+Version: 1.2.4
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
@@ -58,21 +58,23 @@ function role_based_help_notes_action_links( $links ) {
 
 // Attached to admin_init. Loads the textdomain and the upgrade routine.
 add_action( 'admin_init', 'rbhn_admin_init' );
-
+				
 function rbhn_admin_init() {
 
 	$settings_options = get_option('help_note_option');
 	if ( empty($settings_options) || ! isset( $settings_options['help_notes_version'] ) || $settings_options['help_notes_version'] < plugin_get_version() ) {
-
+	
 		$current_plugin_version = isset( $settings_options['help_notes_version'] ) ? $settings_options['help_notes_version'] : 0;
 		rbhn_upgrade( $current_plugin_version );
 		
-		$defaults = array(
-			'help_notes_version'	=> plugin_get_version(),
-			);
-		$options = wp_parse_args(get_option('help_note_option'), $defaults);
-		update_option('help_note_option', $options); 
-		}
+		// set default options if not already set..
+		help_do_on_activation();
+		
+		// Collect option again after rbhn_upgrade() changes and set the current plugin revision
+		$settings_options = get_option('help_note_option');
+		$settings_options['help_notes_version']  = plugin_get_version();
+		update_option('help_note_option', $settings_options); 
+	}
 		
 	//load_plugin_textdomain('role-based-help-notes', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
@@ -80,14 +82,21 @@ function rbhn_admin_init() {
 function rbhn_upgrade( $current_plugin_version ) {
 		
 	if ( $current_plugin_version < '1.2.4' ) {
+		$settings_options = get_option('help_note_option');  	
+
+		if (  ! empty( $settings_options['help_note_post_types'] ) ) {
+			$new_help_note_post_types = array();
+			foreach( $settings_options['help_note_post_types'] as $selected_key=>$role_selected) {
+				$new_entry = array();
+				$new_entry[$role_selected] = clean_post_type_name($role_selected);
+				$new_help_note_post_types[] = $new_entry;
+			}
+		}
 		
-		// add missing option for the new suggested plugin
-		$defaults = array(
-			'help_note_post_type_switcher_plugin'	=> false,
-			);
-		$options = wp_parse_args(get_option('help_note_option'), $defaults);
-		update_option('help_note_option', $options); 
-		}		
+		// convert option format
+		$settings_options['help_note_post_types'] = $new_help_note_post_types;
+		update_option('help_note_option', $settings_options); 
+	}		
 }
 	
 // Returns the selected-active Help Note Custom Post Types
@@ -155,8 +164,8 @@ function help_register_multiple_posttypes() {
 
 	$roles = $wp_roles->get_names();
 
-	if (  ! empty($settings_options ) ) {	
-		foreach( $settings_options['help_note_post_types'] as $array) {
+	if (  ! empty($settings_options ) ) {
+		foreach( $settings_options['help_note_post_types'] as $array) {	
 			foreach( $array as $active_role=>$active_posttype) {
 				if (array_key_exists ($active_role, $roles)) {
 					call_user_func_array( 'help_register_posttype', array($active_role, $roles[$active_role], $active_posttype) ); 
@@ -292,7 +301,7 @@ function clean_post_type_name($role_key) {
 * @return string Plugin version
 */
 function plugin_get_version() {
-	$plugin_data = get_plugin_data( HELP_MYPLUGINNAME_FULL_PATH);
+	$plugin_data = get_plugin_data( HELP_MYPLUGINNAME_FULL_PATH );
 	$plugin_version = $plugin_data['Version'];
 	return $plugin_version;
 }
