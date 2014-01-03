@@ -22,8 +22,6 @@ if (is_multisite()) {
 		delete_option('rbhn_update_request');
 }
 
-
-
 // remove capabilities on uninstall.
 function rbhn_capabilities_clean_up() {
 
@@ -44,18 +42,6 @@ function rbhn_capabilities_clean_up() {
 // remove capabilities on uninstall.
 function rbhn_role_caps_uninstall( $role_key ) {
 
-//    global $wp_roles;
- 
-//    if ( ! isset( $wp_roles ) )
-//        $wp_roles = new WP_Roles();
-            
-//    $roles = $wp_roles->get_names();
-
-//    // loop through the roles to create the capability list that needs to be cleaned out
-//	foreach($roles as $role_key=>$role_name)  
-//    {
-
-
     // collect the Help Note Post Type name sorted within the option.
     $settings_options = get_option('help_note_option');  
     if (  ! empty($settings_options ) ) {
@@ -74,18 +60,6 @@ function rbhn_role_caps_uninstall( $role_key ) {
 	// if no post type found drop out.
 	if ( empty($capability_type) )
 		return;
-
-
-
-
-   
-//        $role = get_role( $role_key );
-//        $caps = $role->capabilities;
-        
-		// limit to 20 characters length for the WP limitation of custom post type names
-		// (note we can't call the clean_post_type_name() function from within uninstall.php as it doesn't exist at this point.
-//		$post_type_name = 'h_' . substr($role_key , -18);
-//		$capability_type = sanitize_key($post_type_name);
 
 	$delete_caps = array(
 			"edit_{$capability_type}",
@@ -116,6 +90,5 @@ function rbhn_role_caps_uninstall( $role_key ) {
 			$wp_roles->remove_cap($role, $cap);
 		}
 	}
-//    }
 }
 ?>

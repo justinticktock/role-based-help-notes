@@ -10,7 +10,7 @@ function register_role_based_help_notes_settings_page() {
 function notes_settings_page_callback( $args = '' ) {
 
         extract( wp_parse_args( $args, array(
-            'title'       => __( 'Help Notes Settings', 'help-notes' ),
+            'title'       => __( 'Help Notes Settings', 'role-based-help-notes-text-domain' ),
             'options_group' => 'help_note_option_group',
             'options_key' => 'help_note_option'
         ) ) );
@@ -41,8 +41,8 @@ add_action('admin_init', 'help_note_plugin_intialize_options' );
 function help_note_plugin_intialize_options() {  
 
 	// do a one shot during save of options
-    if ( get_option( 'rbhn_update_request' )) {
-    	    update_option( 'rbhn_update_request', '' );
+	if ( get_option( 'rbhn_update_request' )) {
+			update_option( 'rbhn_update_request', '' );
 			
 			help_do_on_activation();   		// add the active capabilities
 			
@@ -52,108 +52,108 @@ function help_note_plugin_intialize_options() {
 
 	register_setting(  
 		'help_note_option_group',  		// A settings group 
-		'help_note_option'   ,  		 
-		'sanitize_help_note_option'  	
+		'help_note_option',
+		'sanitize_help_note_option'
 	);  
 
-    // General Settings..
-    
-     add_settings_section(
-		'help_note_general',        			    
-		'General',            	                  
-		'help_note_general_section_callback',  	   
-		HELP_SETTINGS_PAGE      					  
+	// General Settings..
+
+	add_settings_section(
+		'help_note_general',
+		__( 'General', 'role-based-help-notes-text-domain' ),
+		'help_note_general_section_callback',
+		HELP_SETTINGS_PAGE
 	);  
-    
-    add_settings_field(     
-        'help_note_general_enabled',                         
-		'General Help Notes:',             			         
+
+	add_settings_field(     
+		'help_note_general_enabled',
+		__( 'General Help Notes:', 'role-based-help-notes-text-domain' ),
 		'settings_field_help_notes_general_type_enable',
-		HELP_SETTINGS_PAGE,   								 
-		'help_note_general'  							     
+		HELP_SETTINGS_PAGE,
+		'help_note_general'
 	);       
 
-    add_settings_field(     
-        'user_widget_enabled',                         
-    	'Widget:',             			         
+	add_settings_field(     
+		'user_widget_enabled',
+		__( 'Widget:', 'role-based-help-notes-text-domain' ),
 		'settings_field_user_widget_enable',
-		HELP_SETTINGS_PAGE,   								 
-		'help_note_general'  							     
+		HELP_SETTINGS_PAGE,
+		'help_note_general'
 	);       
-
-    add_settings_field(   
-		'help_note_contents_page',                 	
-		'Contents Page:',             				
-		'settings_field_help_notes_contents_page', 
-		HELP_SETTINGS_PAGE,   						
-		'help_note_general'  						
-	); 
-
-    // Role Settings..
-    
-	 add_settings_section(
-		'help_note_post_types',        			 
-		'Role Based Settings',            		 
-		'help_note_post_types_section_callback', 
-		HELP_SETTINGS_PAGE      					 
-	);  
 
 	add_settings_field(   
-		'help_note_post_types',                 
-		'Help Note Post Types:',                
+		'help_note_contents_page',
+		__( 'Contents Page:', 'role-based-help-notes-text-domain' ),
+		'settings_field_help_notes_contents_page', 
+		HELP_SETTINGS_PAGE,
+		'help_note_general'
+	);
+
+	// Role Settings..
+
+	 add_settings_section(
+		'help_note_post_types',
+		__( 'Role Based Settings:', 'role-based-help-notes-text-domain' ),
+		'help_note_post_types_section_callback', 
+		HELP_SETTINGS_PAGE
+	);
+
+	add_settings_field(   
+		'help_note_post_types',
+		__( 'Help Note Post Types:', 'role-based-help-notes-text-domain' ),
 		'settings_field_help_notes_post_types', 
-		HELP_SETTINGS_PAGE,   					
-		'help_note_post_types'  				
-	);      
-    
-    // Extensions Settings..
+		HELP_SETTINGS_PAGE,
+		'help_note_post_types'
+	);
+
+	// Extensions Settings..
 	    
 	 add_settings_section(
-		'help_note_extensions',        			    
-		'Plugin Extensions',            		    
-		'help_note_extensions_section_callback',  	
-		HELP_SETTINGS_PAGE      					    
-	);  
-    
-    add_settings_field(   
-    	'help_note_simple_page_ordering',                 	      
-		'Simple Page Ordering:',             			          
-		'settings_field_help_notes_install_simple_page_ordering', 
-		HELP_SETTINGS_PAGE,   								      
-		'help_note_extensions'  							      
-	);       
+		'help_note_extensions',
+		__( 'Plugin Extensions', 'role-based-help-notes-text-domain' ),
+		'help_note_extensions_section_callback',
+		HELP_SETTINGS_PAGE
+	);
 
-    add_settings_field(   
-    	'help_note_simple_footnotes_plugin',                 
-		'Simple Footnotes:',             			           
-		'settings_field_help_notes_install_simple_footnotes',															   
-		HELP_SETTINGS_PAGE,   								   
-		'help_note_extensions'  							   
-	);      
+	add_settings_field(   
+		'help_note_simple_page_ordering',
+		'Simple Page Ordering:',
+		'settings_field_help_notes_install_simple_page_ordering',
+		HELP_SETTINGS_PAGE,
+		'help_note_extensions'
+	);
+
+	add_settings_field(   
+		'help_note_simple_footnotes_plugin',
+		'Simple Footnotes:',
+		'settings_field_help_notes_install_simple_footnotes',	
+		HELP_SETTINGS_PAGE,
+		'help_note_extensions'
+	);
 	
-    add_settings_field(   
-    	'help_note_email_post_changes_plugin',                 
-		'Email Post Changes:',             			           
-		'settings_field_help_notes_install_email_post_changes',															   
-		HELP_SETTINGS_PAGE,   								   
-		'help_note_extensions'  							   
-	);       
-    
-    add_settings_field(   
-    	'help_note_post_tpye_switcher_plugin',                 
-		'Post Type Switcher:',             			           
-		'settings_field_help_notes_install_post_type_switcher',															   
-		HELP_SETTINGS_PAGE,   								   
-		'help_note_extensions'  							   
-	);       
-    	
-    add_settings_field(   
-		'help_note_menu_plugin',                 			
-		'Post type archive in menu:',             			
-		'settings_field_help_notes_install_menu_plugin', 	 
-		HELP_SETTINGS_PAGE,   								
-		'help_note_extensions'  							
-	);      
+	add_settings_field(   
+		'help_note_email_post_changes_plugin',
+		'Email Post Changes:',
+		'settings_field_help_notes_install_email_post_changes',
+		HELP_SETTINGS_PAGE, 
+		'help_note_extensions'
+	);
+
+	add_settings_field(
+		'help_note_post_tpye_switcher_plugin',
+		'Post Type Switcher:',
+		'settings_field_help_notes_install_post_type_switcher',
+		HELP_SETTINGS_PAGE,
+		'help_note_extensions'
+	);
+
+	add_settings_field(   
+		'help_note_menu_plugin',
+		'Post type archive in menu:',
+		'settings_field_help_notes_install_menu_plugin',
+		HELP_SETTINGS_PAGE,
+		'help_note_extensions'
+	);
 
 } // end help_note_plugin_intialize_options()
 
@@ -165,15 +165,17 @@ function help_note_general_section_callback() {
 
 
 function help_note_post_types_section_callback() {  
-
-	echo '<p>Select the Roles that you wish to create Help Notes for. </p>'; 
+	
+	_e( 'Select the Roles that you wish to create Help Notes for. ', 'role-based-help-notes-text-domain' );
 
 } // end help_note_post_types_section_callback  
 
 function help_note_extensions_section_callback() {  
 
-    ?><p>Select the extension plugins that you wish to use.  Selection of a plugin will prompt you through the installation or go to the Menu ..[Plugins]..[Install Plugins], </Br>
-	The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall .</p><?php
+    $string = "<p>Select the extension plugins that you wish to use.  Selection of a plugin will prompt you through the installation or go to the Menu ..[Plugins]..[Install Plugins], </Br>
+	The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall .</p>";
+	
+	_e( $string, 'role-based-help-notes-text-domain' );
 
 } // end help_note_extensions_section_callback  
 	
@@ -188,15 +190,16 @@ function settings_field_help_notes_general_type_enable() {
     $options = get_option('help_note_option');  
 
     // Render the output  
+	
+	 $string = "Enabling the 'General' option gives you global Help Notes, which are not limited to any one role, these will be accessible to all and follow the capabilities of the normal wordpress 'post' post type.";
+	 
 	?> 
 	<input 
 		type='checkbox' 
 		name="help_note_option[help_note_general_enabled]" 
         id="help_note_general_enabled" 
 		value="1"<?php checked( $options['help_note_general_enabled'], 1 ); ?>
-        <p>&nbsp Select to enable the 'General' Help Notes post type.  </BR>
-        (General Help Notes are global and not limited 
-        to any one role, and follow the capabilities of the 'post' post type.)</p>
+        </Br><p><?php _e( $string, 'role-based-help-notes-text-domain' );?></p>
 	</input>
     
 	<?php
@@ -212,14 +215,16 @@ function settings_field_user_widget_enable() {
     $options = get_option('help_note_option');  
 
     // Render the output  
+	
+	 $string = "Enabling the 'User Widget' will allow you to place the Help Notes user widget into your sidebars.  The widget lists all users that have access to the Help Notes for a particular role and it is only shown on individual Help Note posts.";
+	 	
     ?> 
 	<input 
 		type='checkbox' 
 		name="help_note_option[user_widget_enabled]" 
         id="user_widget_enabled" 
 		value="1"<?php checked( $options['user_widget_enabled'], 1 ); ?>
-        <p>&nbsp Select to enable the 'User Widget'. </BR> 
-        (This will enable you to place the Help Notes user widget into your sidebars, it will only be shown on Help Note post types.  The wdget lists all users that have access to the Help Notes for a particular role.)</p>
+        </BR><p><?php _e( $string, 'role-based-help-notes-text-domain' );?></p>
 	</input>
     
 	<?php
@@ -280,13 +285,16 @@ function settings_field_help_notes_install_menu_plugin() {
 	$options = get_option('help_note_option');  
 
 	// Render the output  
+	
+	 $string = "Once installed go to [Appearance]...[Menus] and locate the 'Archives' metabox for use in your theme menus.";
+		
 	?> 
 	<input 
 		type='checkbox' 
 		name="help_note_option[help_note_menu_plugin]" 
         id="help_note_menu_plugin" 
 		value="1"<?php checked( $options['help_note_menu_plugin'], 1 ); ?> 
-        <p>&nbsp Once installed go to [Appearance]...[Menus] and locate the 'Archives' metabox for use in your theme menus.</p>
+        </Br><p><?php _e( $string, 'role-based-help-notes-text-domain' );?></p>
 	</input>
     
 	<?php
@@ -301,13 +309,16 @@ function settings_field_help_notes_install_simple_footnotes() {
 	$options = get_option('help_note_option');  
 
 	// Render the output  
+	
+	 $string = "Once installed go you can use the 'ref' shortcode for example... [ref]Add footnote text here[/ref] within your posts.";
+			
 	?> 
 	<input 
 		type='checkbox' 
 		name="help_note_option[help_note_simple_footnotes_plugin]" 
         id="help_note_simple_footnotes_plugin" 
 		value="1"<?php checked( $options['help_note_simple_footnotes_plugin'], 1 ); ?>
-        <p>&nbsp Once installed go you can use the 'ref' shortcode for example... [ref]Add footnote text here[/ref] within your posts.</p>
+        </Br><p><?php _e( $string, 'role-based-help-notes-text-domain' );?></p>
 	</input>
     
 	<?php
@@ -322,13 +333,16 @@ function settings_field_help_notes_install_email_post_changes() {
 	$options = get_option('help_note_option');  
 
 	// Render the output  
+	
+	 $string = "Once installed go to [Settings]...[Email Post Changes] to use the plugin and notify specific users of changes to Help Notes by email.";
+			
 	?> 
 	<input 
 		type='checkbox' 
 		name="help_note_option[help_note_email_post_changes_plugin]" 
         id="help_note_email_post_changes_plugin" 
 		value="1"<?php checked( $options['help_note_email_post_changes_plugin'], 1 ); ?>
-        <p>&nbsp Once installed go to [Settings]...[Email Post Changes] to use the plugin and notify specific users of changes to Help Notes by email.</p>
+        </Br><p><?php _e( $string, 'role-based-help-notes-text-domain' );?></p>
 	</input>
     
 	<?php
@@ -344,13 +358,16 @@ function settings_field_help_notes_install_post_type_switcher() {
 	$options = get_option('help_note_option');  
 
 	// Render the output  
+	
+	 $string = "This plugin will allow you to change the role which has the help note.  Once installed within you will find a new selection/edit option in the 'Publish' area.";
+		
 	?> 
 	<input 
 		type='checkbox' 
 		name="help_note_option[help_note_post_type_switcher_plugin]" 
         id="help_note_post_type_switcher_plugin" 
 		value="1"<?php checked( $options['help_note_post_type_switcher_plugin'], 1 ); ?>
-        <p>&nbsp This plugin will allow you to change the role which has the help note.  Once installed within you will find a new selection/edit option in the 'Publish' area.  <?php echo plugin_get_version();?> </p>
+        </Br><p><?php _e( $string, 'role-based-help-notes-text-domain' );?></p>
 	</input>
     
 	<?php
@@ -366,20 +383,20 @@ function settings_field_help_notes_install_simple_page_ordering() {
 	$options = get_option('help_note_option');  
 
 	// Render the output  
+	
+	 $string = "Once installed go you can drag pages up/down within the admin side to re-order Help Notes.";
+	 
 	?> 
 	<input 
 		type='checkbox' 
 		name="help_note_option[help_note_simple_page_ordering]" 
         id="help_note_simple_page_ordering" 
 		value="1"<?php checked( $options['help_note_simple_page_ordering'], 1 ); ?>
-        <p>&nbsp Once installed go you can drag pages up/down within the admin side to re-order Help Notes.</p>
+        </Br><p><?php _e( $string, 'role-based-help-notes-text-domain' );?></p>
 	</input>
     
 	<?php
 }
-
-
-
 
 function settings_field_help_notes_contents_page() {
 
@@ -387,6 +404,9 @@ function settings_field_help_notes_contents_page() {
 	$options = get_option('help_note_option');  
 
 	// Render the output  
+	
+	 $string = "If you wish to create a contents page add a new page and select it here so that the Help Note Contents are displayed.";
+	  
 	?> 
     
     <form action="<?php bloginfo('url'); ?>" method="get">
@@ -400,7 +420,7 @@ function settings_field_help_notes_contents_page() {
             					'selected'     => $options['help_note_contents_page'],
             					'name'          => 'help_note_option[help_note_contents_page]'
             				    )); ?>
-    </Br> If you wish to create a contents page add a new page and select it here so that the Help Note Contents are displayed.
+    </Br> <?php _e( $string, 'role-based-help-notes-text-domain' );?>
     </form>
     
 	<?php
@@ -411,10 +431,8 @@ function sanitize_help_note_option( $settings ) {
 	// set the flag to flush the Permalink rules on save of the settings.
 	update_option( 'rbhn_update_request', '1' );
 
-    
 	// option must be safe
 	$settings['help_note_post_types'] = isset( $settings['help_note_post_types'] ) ? (array) $settings['help_note_post_types'] : array();
-
 
 	return $settings;
 	

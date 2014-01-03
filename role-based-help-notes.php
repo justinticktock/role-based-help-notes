@@ -76,7 +76,7 @@ function rbhn_admin_init() {
 		update_option('help_note_option', $settings_options); 
 	}
 		
-	//load_plugin_textdomain('role-based-help-notes', null, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain('role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 
 function rbhn_upgrade( $current_plugin_version ) {
@@ -126,8 +126,6 @@ function rbhn_active_posttypes() {
 	if (  ! empty($settings_options ) ) {	
 		foreach( $settings_options['help_note_post_types'] as $array) {
 			foreach( $array as $active_role=>$active_posttype) {
-				// add the Help Note active role in an array
-				//$active_roles[] = array("inactive_role" => $active_role, "inactive_posttype" => $active_posttype) ;
                 if (current_user_can( $active_role )) {
 				    $active_posttypes[] = $active_posttype;
                 }				
@@ -183,19 +181,18 @@ function help_register_posttype($role_key, $role_name, $post_type_name) {
 
 	$help_labels = array(
 
-		'name'               => $role_name . 'Notes',
-		'singular_name'      => $role_name . 'Note',
-		'add_new'            => 'Add New',
-		'add_new_item'       => 'Add New ' . $role_name . 'Note',
-		'edit_item'          => 'Edit ' . $role_name . 'Note',
-		'new_item'           => 'New ' . $role_name . 'Note',
-		'view_item'          => 'View ' . $role_name . 'Note',
-		'search_items'       => 'Search ' . $role_name . 'Notes',
-		'not_found'          => 'No ' . $role_name . 'Notes found',
-		'not_found_in_trash' => 'No ' . $role_name . 'Notes found in Trash',
+		'name'               => sprintf( __( '%1$s Notes', 'role-based-help-notes-text-domain'), $role_name) ,
+		'singular_name'      => sprintf( __( '%1$s Note', 'role-based-help-notes-text-domain'), $role_name) ,
+		'add_new'            => __( 'Add New', 'role-based-help-notes-text-domain'),
+		'add_new_item'       => sprintf( __( 'Add New %1$s Note', 'role-based-help-notes-text-domain'), $role_name) ,
+		'edit_item'          => sprintf( __( 'Edit %1$s Note', 'role-based-help-notes-text-domain'), $role_name) ,
+		'new_item'           => sprintf( __( 'New %1$s Note', 'role-based-help-notes-text-domain'), $role_name) ,
+		'view_item'          => sprintf( __( 'View %1$s Note', 'role-based-help-notes-text-domain'), $role_name) ,
+		'search_items'       => sprintf( __( 'Search %1$s Notes', 'role-based-help-notes-text-domain'), $role_name) ,
+		'not_found'          => sprintf( __( 'No %1$s Notes found', 'role-based-help-notes-text-domain'), $role_name) ,
+		'not_found_in_trash' => sprintf( __( 'No %1$s Notes found in Trash', 'role-based-help-notes-text-domain'), $role_name) ,
 		'parent_item_colon'  => '',
 		'menu_name'          =>  $role_name,
-
 	);
 	
 	if ($role_key == "general" ) {
@@ -204,11 +201,10 @@ function help_register_posttype($role_key, $role_name, $post_type_name) {
 		$help_capabilitytype    = $post_type_name;
 	};
     
-
     global $wp_version;
     if (version_compare($wp_version, '3.8', '>=')) {  
         //if version 3.8 or high we have dashicon support.
-		$help_menu_icon    = 'dashicons-format-aside' ;	
+		$help_menu_icon    = apply_filters( 'rbhn_dashicon', 'dashicons-format-aside') ;	
 	} else {
 		$help_menu_icon    = HELP_PLUGIN_URI . '/images/help.png' ;
 	};
@@ -235,7 +231,6 @@ function help_register_posttype($role_key, $role_name, $post_type_name) {
 		'can_export'          => true,
 		'show_in_nav_menus'   => false,
     	'menu_icon'			  => $help_menu_icon,
-        
         
 	);
 
@@ -264,7 +259,7 @@ function rbhn_add_post_content($content) {
             $posttype = get_post_type_object( $posttype_selected );
             $posttype_Name = $posttype->labels->name; 
         
-            
+           
             $args = array(
                         'depth'        => 0,
                         'show_date'    => '',
@@ -272,7 +267,7 @@ function rbhn_add_post_content($content) {
                     	'child_of'     => 0,
                     	'exclude'      => '',
                     	'include'      => '',
-                    	'title_li'     => __("$posttype_Name"),
+                    	'title_li'     =>  "$posttype_Name",
                     	'echo'         => 0,
                     	'authors'      => '',
                     	'sort_column'  => 'menu_order, post_title',

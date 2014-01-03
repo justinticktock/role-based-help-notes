@@ -52,8 +52,6 @@ function my_help_add_role_caps() {
 	}    
 }
 
-
-
 // remove capabilities.
 function rbhn_role_caps_cleanup( $role_key ) {
 
@@ -88,10 +86,7 @@ function rbhn_role_caps_cleanup( $role_key ) {
 			$wp_roles->remove_cap($role, $cap);
 		}
 	}
-//    }
 }
-
-//add_action('admin_init', 'clean_inactive_capabilties' );  
 
 function clean_inactive_capabilties() {
 	// collect an array of all inactive Help Note Post Types an remove capabilities
@@ -125,9 +120,6 @@ function clean_inactive_capabilties() {
 	}
 }
 
-
-
-
 // Add Meta Capability Handling 
 add_filter( 'map_meta_cap', 'rbhn_map_meta_cap', 10, 4 );
 
@@ -146,26 +138,23 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
         
 		foreach( $settings_options['help_note_post_types'] as $array) {
 			foreach( $array as $active_role=>$active_posttype) {
-	//			if (array_key_exists ($active_role, $roles)) {
-				
-					$capability_type = $active_posttype;
+	
+				$capability_type = $active_posttype;
 
-					if ( "edit_{$capability_type}" == $cap || "delete_{$capability_type}" == $cap || "read_{$capability_type}" == $cap  ) {
-							
-
-						$post = get_post( $args[0] );
-						$post_type = $capability_type;
-
-
-						/* Set an empty array for the caps. */
-						$caps = array();
+				if ( "edit_{$capability_type}" == $cap || "delete_{$capability_type}" == $cap || "read_{$capability_type}" == $cap  ) {
 						
-						$help_note_found = true;
-						break;
-						
-					}
-			
-	//			} 
+
+					$post = get_post( $args[0] );
+					$post_type = $capability_type;
+
+
+					/* Set an empty array for the caps. */
+					$caps = array();
+					
+					$help_note_found = true;
+					break;
+					
+				}
 			}
     	}
         
@@ -176,8 +165,6 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 				$caps[] = $post_type->cap->edit_posts;
 			else
 				$caps[] = $post_type->cap->edit_others_posts;	
-                
-//            echo "edit_{$capability_type} = " . var_dump($caps);
 		}
 				
 		/* If deleting a help note, assign the required capability. */
@@ -187,8 +174,6 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 				$caps[] = $post_type->cap->delete_posts;
 			elseif (isset($post_type->cap->delete_others_posts))
 				$caps[] = $post_type->cap->delete_others_posts;		
-                
-//            echo "delete_{$capability_type} = " . var_dump($caps);
 		}
 
 		/* If reading a private help note, assign the required capability. */
@@ -200,10 +185,7 @@ function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 				$caps[] = 'read';
 			else
 				$caps[] = $post_type->cap->read_private_posts;
-                
-//            echo "read_{$capability_type} = " . var_dump($caps);
 		}
-
 	}
 	
 	/* Return the capabilities required by the user. */

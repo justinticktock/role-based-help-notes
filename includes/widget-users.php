@@ -14,7 +14,6 @@ function rbhn_custom_post_author_archive( $query ) {
 
 		// remove the filter after running, run only once!
 		remove_action( 'pre_get_posts', 'rbhn_custom_post_author_archive' ); 
-
 	}
 }    
 
@@ -32,8 +31,8 @@ class Users_Widget extends WP_Widget {
 	function __construct() {
 		parent::__construct(
 			'users_widget', // Base ID
-			__('Help Note Users', 'text_domain'), // Name
-			array( 'description' => __( 'A Users Widget', 'text_domain' ), ) // Args
+			__('Help Note Users', 'role-based-help-notes-text-domain'), // Name
+			array( 'description' => __( 'A Users Widget', 'role-based-help-notes-text-domain' ), ) // Args
 		);
 	}
 
@@ -59,8 +58,8 @@ class Users_Widget extends WP_Widget {
 		$post_type = get_post_type();
 		$help_note_object = get_post_type_object( $post_type );
 		$help_note_name = $help_note_object->labels->menu_name;
-		$title = __( $help_note_name . " Line-up", 'role-based-help-notes' );
-		
+		$title = sprintf( __( '%1$s Line-up', 'role-based-help-notes-text-domain'), $help_note_name);
+
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
@@ -118,7 +117,7 @@ class Users_Widget extends WP_Widget {
 			$title = $instance[ 'title' ];
 		}
 		else {
-			$title = __( 'Help Note Users', 'text_domain' );
+			$title = __( 'Help Note Users', 'role-based-help-notes-text-domain' );
 		}
 
 		?>

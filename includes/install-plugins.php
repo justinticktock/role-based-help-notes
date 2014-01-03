@@ -97,7 +97,7 @@ function help_note_tgmpa_register() {
 
 
 	// Change this to your theme text domain, used for internationalising strings
-	$theme_text_domain = 'tgmpa';
+	$theme_text_domain = 'role-based-help-notes-text-domain';
 
 	/**
 	 * Array of configuration settings. Amend each line as needed.
