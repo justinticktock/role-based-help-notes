@@ -27,7 +27,6 @@ function rbhn_register_widgets() {
 		/* Register the user widget. */
 		register_widget( 'users_widget' );
 	}
-
 }
 
 ?>

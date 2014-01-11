@@ -58,8 +58,13 @@ class Users_Widget extends WP_Widget {
 		$post_type = get_post_type();
 		$help_note_object = get_post_type_object( $post_type );
 		$help_note_name = $help_note_object->labels->menu_name;
-		$title = sprintf( __( '%1$s Line-up', 'role-based-help-notes-text-domain'), $help_note_name);
-
+		
+		if ( empty( $instance['title'] ) ) {
+			$title = sprintf( __( '%1$s Line-up', 'role-based-help-notes-text-domain'), $help_note_name);
+		} else {
+			$title = $instance['title'];
+		}
+		
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
@@ -75,7 +80,7 @@ class Users_Widget extends WP_Widget {
 						break 2;
 					}
 				}
-			}		
+			}
 		}
 
         $users = get_users( Array('role' => $help_note_role) );
@@ -117,14 +122,14 @@ class Users_Widget extends WP_Widget {
 			$title = $instance[ 'title' ];
 		}
 		else {
-			$title = __( 'Help Note Users', 'role-based-help-notes-text-domain' );
+			$title = '';
 		}
 
 		?>
 		<p>
 		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-		</p>
+		<?php echo __('Leave Blank for a dynamic title which includes the Role.', 'role-based-help-notes-text-domain'); ?></p>
 		<?php 
 	}
 

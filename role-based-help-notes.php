@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.2.4
+Version: 1.2.5
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
@@ -58,15 +58,17 @@ function role_based_help_notes_action_links( $links ) {
 
 // Attached to admin_init. Loads the textdomain and the upgrade routine.
 add_action( 'admin_init', 'rbhn_admin_init' );
-				
+			
 function rbhn_admin_init() {
 
 	$settings_options = get_option('help_note_option');
+
 	if ( empty($settings_options) || ! isset( $settings_options['help_notes_version'] ) || $settings_options['help_notes_version'] < plugin_get_version() ) {
 	
 		$current_plugin_version = isset( $settings_options['help_notes_version'] ) ? $settings_options['help_notes_version'] : 0;
+
 		rbhn_upgrade( $current_plugin_version );
-		
+
 		// set default options if not already set..
 		help_do_on_activation();
 		
@@ -79,8 +81,10 @@ function rbhn_admin_init() {
 	load_plugin_textdomain('role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 
+
+
 function rbhn_upgrade( $current_plugin_version ) {
-		
+
 	if ( $current_plugin_version < '1.2.4' ) {
 		$settings_options = get_option('help_note_option');  	
 
@@ -96,6 +100,12 @@ function rbhn_upgrade( $current_plugin_version ) {
 		// convert option format
 		$settings_options['help_note_post_types'] = $new_help_note_post_types;
 		update_option('help_note_option', $settings_options); 
+	}
+
+	if ( $current_plugin_version < '1.2.5' ) {
+		$widget_options = get_option('widget_users_widget');
+		$widget_options[2]['title'] = '';
+		update_option('widget_users_widget', $widget_options); 
 	}		
 }
 	
@@ -239,7 +249,6 @@ function help_register_posttype($role_key, $role_name, $post_type_name) {
 }
 
 // Add Contents Details to the Contents page if declared in settings ..
-
 add_filter('the_content', 'rbhn_add_post_content');
 
 function rbhn_add_post_content($content) {

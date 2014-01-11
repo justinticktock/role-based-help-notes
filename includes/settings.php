@@ -22,7 +22,7 @@ function notes_settings_page_callback( $args = '' ) {
 				<?php
 					settings_fields( 'help_note_option_group' );
 					do_settings_sections( HELP_SETTINGS_PAGE );
-					submit_button();
+					submit_button();					
 				?>
 			</form>
 		</div>
@@ -42,12 +42,13 @@ function help_note_plugin_intialize_options() {
 
 	// do a one shot during save of options
 	if ( get_option( 'rbhn_update_request' )) {
+
 			update_option( 'rbhn_update_request', '' );
-			
-			help_do_on_activation();   		// add the active capabilities
-			
-			clean_inactive_capabilties();	// remove the inactive role capabilities
-			
+
+			help_do_on_activation();   			// add the active capabilities
+
+			rbhn_clean_inactive_capabilties();	// remove the inactive role capabilities
+
     }
 
 	register_setting(  
@@ -161,14 +162,14 @@ function help_note_general_section_callback() {
 
 	; 
 
-} // end help_note_post_types_section_callback  
+}
 
 
 function help_note_post_types_section_callback() {  
 	
 	_e( 'Select the Roles that you wish to create Help Notes for. ', 'role-based-help-notes-text-domain' );
 
-} // end help_note_post_types_section_callback  
+}
 
 function help_note_extensions_section_callback() {  
 
@@ -177,9 +178,8 @@ function help_note_extensions_section_callback() {
 	
 	_e( $string, 'role-based-help-notes-text-domain' );
 
-} // end help_note_extensions_section_callback  
+}
 	
-
 
 /**
  * Renders settings field for Help Notes general type enable check box
@@ -255,7 +255,7 @@ function settings_field_help_notes_post_types() {
 
 	// First, we read the option collection  
 	$options = get_option('help_note_option');  
-	  
+ 
 	ksort($roles);
 	foreach($roles as $role_key=>$role_name)
 	{
@@ -433,7 +433,7 @@ function sanitize_help_note_option( $settings ) {
 
 	// option must be safe
 	$settings['help_note_post_types'] = isset( $settings['help_note_post_types'] ) ? (array) $settings['help_note_post_types'] : array();
-
+	
 	return $settings;
 	
 }

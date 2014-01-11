@@ -12,6 +12,7 @@ if (is_multisite()) {
             switch_to_blog($blog['blog_id']);
             rbhn_capabilities_clean_up();
             delete_option('help_note_option');
+            delete_option('help_note_caps_created');
             delete_option('rbhn_update_request');
         }
         restore_current_blog();
@@ -19,6 +20,7 @@ if (is_multisite()) {
 } else {
 		rbhn_capabilities_clean_up();
 		delete_option('help_note_option');
+        delete_option('help_note_caps_created');
 		delete_option('rbhn_update_request');
 }
 
@@ -83,12 +85,24 @@ function rbhn_role_caps_uninstall( $role_key ) {
     if ( ! isset( $wp_roles ) )
         $wp_roles = new WP_Roles();
 		
+	$users = get_users();
+	$administrator      = get_role('administrator');
+	
 	// loop through the capability list.
 	foreach ($delete_caps as $cap) {
-		// loop through all roles and clean capabilities.
+
+		// Clean-up Capability from WordPress Roles
 		foreach (array_keys($wp_roles->roles) as $role) {
 			$wp_roles->remove_cap($role, $cap);
 		}
+		
+		// Clean-up Capability from WordPress Users where explicitly allocated 
+		foreach ($users as $user) {
+			$user->remove_cap($cap);
+		}
+
+		// Clean-up Capability from the Administrator Role
+		$administrator->remove_cap($cap);		
 	}
 }
 ?>
