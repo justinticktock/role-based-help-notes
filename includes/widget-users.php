@@ -7,7 +7,7 @@ function rbhn_custom_post_author_archive( $query ) {
 
 		// For author queries add Help Note post types
 		if ($query->is_author) {
-			$include_post_types = rbhn_active_posttypes() ;
+			$include_post_types = rbhn_active_posttypes();
 			$include_post_types[] = 'post';
 			$query->set( 'post_type', $include_post_types);
 		}

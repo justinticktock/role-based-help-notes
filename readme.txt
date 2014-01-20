@@ -3,7 +3,7 @@ Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress
 Requires at least: 3.5
 Tested up to: 3.8
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ So if you want to quickly give a group a private area to share and post ideas/no
 2. Add users to the role.
 3. Enable the Help Notes from the settings.
 
-A global 'General Help Notes' type is also available which is not tided to a specific role, this has the same access/capabilities as the standard WordPress 'post' type for read/write access.
+A global 'General Help Notes' type is also available which is not tided to a specific role, this has the same access/capabilities as the standard WordPress 'post' type for write access, user must be logged in to read General Help Notes.
 
 There is a widget available to list all users with access to the current Help Note type on display. The user display_name is shown and can be selected by each user within their own profile.
 
@@ -65,6 +65,11 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 5. The 'twenty fourteen' theme showing the Contents page for a user with 'Proof Reader' role access.
 
 == Changelog ==
+
+= 1.2.6 =
+* 2014-01-20
+* New feature: added new function help_notes_available() for use with conditional statements.
+* Fix: Removed use of current_user_can() for roles and not capabilities (ref [codex](http://codex.wordpress.org/Function_Reference/current_user_can#Notes) )
 
 = 1.2.5 =
 * 2014-01-10

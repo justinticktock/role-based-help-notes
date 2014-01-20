@@ -3,21 +3,10 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.2.5
+Version: 1.2.6
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
-Copyright 2013  (email : justin@justinandco.com)
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License, version 2, as 
-published by the Free Software Foundation.
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 // Define constants
@@ -108,7 +97,30 @@ function rbhn_upgrade( $current_plugin_version ) {
 		update_option('widget_users_widget', $widget_options); 
 	}		
 }
-	
+
+/**
+ * Checks if a particular user has a role. 
+ * Returns true if a match was found.
+ * ref: http://docs.appthemes.com/tutorials/wordpress-check-user-role-function/
+ *
+ * @param string $role Role name.
+ * @param int $user_id (Optional) The ID of a user. Defaults to the current user.
+ * @return bool
+ */
+function help_notes_current_user_has_role( $role, $user_id = null ) {
+ 
+    if ( is_numeric( $user_id ) )
+	$user = get_userdata( $user_id );
+    else
+        $user = wp_get_current_user();
+ 
+    if ( empty( $user ) )
+	return false;
+ 
+    return in_array( $role, (array) $user->roles );
+}
+
+
 // Returns the selected-active Help Note Custom Post Types
 
 function rbhn_active_posttypes() {
@@ -128,7 +140,7 @@ function rbhn_active_posttypes() {
 	// option collection  
 	$settings_options = get_option('help_note_option');  
     	
-   if ( isset( $settings_options['help_note_general_enabled'] ) && !empty( $settings_options['help_note_general_enabled'] ) ) {
+   if ( isset( $settings_options['help_note_general_enabled'] ) && ! empty( $settings_options['help_note_general_enabled'] ) ) {
     
 		$active_posttypes[] = "h_general"; 
 	}
@@ -136,7 +148,7 @@ function rbhn_active_posttypes() {
 	if (  ! empty($settings_options ) ) {	
 		foreach( $settings_options['help_note_post_types'] as $array) {
 			foreach( $array as $active_role=>$active_posttype) {
-                if (current_user_can( $active_role )) {
+                if (help_notes_current_user_has_role( $active_role )) {
 				    $active_posttypes[] = $active_posttype;
                 }				
 			}
@@ -176,12 +188,46 @@ function help_register_multiple_posttypes() {
 		foreach( $settings_options['help_note_post_types'] as $array) {	
 			foreach( $array as $active_role=>$active_posttype) {
 				if (array_key_exists ($active_role, $roles)) {
-					call_user_func_array( 'help_register_posttype', array($active_role, $roles[$active_role], $active_posttype) ); 
+					if ( help_notes_current_user_has_role($active_role) ) {
+						call_user_func_array( 'help_register_posttype', array($active_role, $roles[$active_role], $active_posttype) ); 
+					}
 				} 
 			}
 		}
 	}
 }
+
+if ( !function_exists('help_notes_available') ) :
+/**
+ * Checks if the current visitor has available Help Notes
+ *
+ * @since 1.2.6
+ *
+ * @return bool True if Help Notes are available for the site front-end, false if not logged or no Help Notes are available.
+ */
+function help_notes_available() {
+	// option collection  
+	$settings_options = get_option('help_note_option');  
+    	
+   // if General Help Notes enabled
+   if ( $settings_options['help_note_general_enabled']  ) 
+		return true;
+
+   //if the current user has the role of an active Help Note.
+	if (  ! empty($settings_options ) ) {	
+		foreach( $settings_options['help_note_post_types'] as $array) {
+			foreach( $array as $active_role=>$active_posttype) {
+                if (help_notes_current_user_has_role( $active_role )) {
+				    return true;
+                }				
+			}
+		}	
+	}   
+			
+	return false;
+}
+endif;
+
 
 // Adds custom post type for a single Help Note
 
@@ -206,9 +252,9 @@ function help_register_posttype($role_key, $role_name, $post_type_name) {
 	);
 	
 	if ($role_key == "general" ) {
-		$help_capabilitytype    = 'post';	
+		$help_capabilitytype    = 'post';
 	} else {
-		$help_capabilitytype    = $post_type_name;
+		$help_capabilitytype    = $post_type_name;	
 	};
     
     global $wp_version;
@@ -219,14 +265,13 @@ function help_register_posttype($role_key, $role_name, $post_type_name) {
 		$help_menu_icon    = HELP_PLUGIN_URI . '/images/help.png' ;
 	};
 
-	$help_public = true;
+
 	        
 	$help_args = array(
 
 		'labels'              => $help_labels,
-		'public'              => $help_public,  // true implies the members 'content permissions'
-										        // meta box is available.
-		'publicly_queryable'  => $help_public,
+		'public'              => true, 
+		'publicly_queryable'  => true,
 		'exclude_from_search' => false,
 		'show_ui'             => true,
 		'show_in_menu'        => true,
