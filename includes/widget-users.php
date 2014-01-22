@@ -52,7 +52,7 @@ class Users_Widget extends WP_Widget {
        $exclude_help_notes = array('h_general');
        $show_widget_help_notes = array_diff($show_widget_help_notes, $exclude_help_notes);
        
-        if ( ! in_array( get_post_type(),  $show_widget_help_notes ) )
+        if ( ! in_array( get_post_type(),  $show_widget_help_notes ) || is_archive()  )
             return; 
 
 		$post_type = get_post_type();
