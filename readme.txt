@@ -2,7 +2,7 @@
 Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress
 Requires at least: 3.5
-Tested up to: 3.8
+Tested up to: 3.8.1
 Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -32,6 +32,7 @@ If you select the options for extending functionality through other plugins the 
 
 * [Simple Page Ordering](http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
 * [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref].
+* [disable_comments](http://wordpress.org/plugins/disable-comments/) by [solarissmoke](http://profiles.wordpress.org/solarissmoke/) allows you to easily remove comments from 'Help Note' use.
 * [Email Post Changes](http://wordpress.org/plugins/email-post-changes/) for emailing out changes to a Help Note as they occur.
 * [post_type_switcher](http://wordpress.org/plugins/post-type-switcher/) plugin by [John James Jacoby](http://profiles.wordpress.org/johnjamesjacoby/) & [Matthew Gerring](http://profiles.wordpress.org/beatpanda/), useful to change the role associated with a Help Note after it has been created.
 * [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
@@ -67,9 +68,10 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 == Changelog ==
 
 = 1.2.7 =
-* 2014-??-??
+* 2014-01-31
 * Fix: Widget is now invisible for Archive pages.  Previously for Author Archive Pages the widget would switch to the last role type displayed in the archive causing confusion.
-
+* Fix: Translation ready fix.
+* New feature: Added the suggested plugin extension ["disable_comments"](http://wordpress.org/plugins/disable-comments/)
 
 = 1.2.6 =
 * 2014-01-20

@@ -4,14 +4,13 @@
 add_action('admin_menu', 'register_role_based_help_notes_settings_page');
 
 function register_role_based_help_notes_settings_page() {
-    add_submenu_page( 'options-general.php', 'Notes', 'Help Notes', 'manage_options', HELP_SETTINGS_PAGE, 'notes_settings_page_callback' ); 
+    add_submenu_page( 'options-general.php', __( 'Notes', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'role-based-help-notes-text-domain' ), 'manage_options', HELP_SETTINGS_PAGE, 'notes_settings_page_callback' ); 
 }
 
 function notes_settings_page_callback( $args = '' ) {
 
         extract( wp_parse_args( $args, array(
             'title'       => __( 'Help Notes Settings', 'role-based-help-notes-text-domain' ),
-            'options_group' => 'help_note_option_group',
             'options_key' => 'help_note_option'
         ) ) );
         ?>
@@ -116,6 +115,9 @@ function help_note_plugin_intialize_options() {
 		HELP_SETTINGS_PAGE
 	);
 
+	
+	// Note: The plugin title text below are not in the translations as wordpress.org knows these by their English Title.
+	
 	add_settings_field(   
 		'help_note_simple_page_ordering',
 		'Simple Page Ordering:',
@@ -128,6 +130,14 @@ function help_note_plugin_intialize_options() {
 		'help_note_simple_footnotes_plugin',
 		'Simple Footnotes:',
 		'settings_field_help_notes_install_simple_footnotes',	
+		HELP_SETTINGS_PAGE,
+		'help_note_extensions'
+	);
+	
+	add_settings_field(   
+		'help_note_disable_comments_plugin',
+		'Disable Comments:',
+		'settings_field_help_notes_install_disable_comments',	
 		HELP_SETTINGS_PAGE,
 		'help_note_extensions'
 	);
@@ -325,7 +335,31 @@ function settings_field_help_notes_install_simple_footnotes() {
 }
 
 /**
- * Renders settings field for Help Notes simple_footnotes_plugin
+ * Renders settings field for Help Notes disable_comments_plugin
+ */
+function settings_field_help_notes_install_disable_comments() {
+
+    // First, we read the option collection  
+	$options = get_option('help_note_option');  
+
+	// Render the output  
+	
+	 $string = "Comments are of less value for Help Notes and this plugin will allow you to easily remove their comments from use.";
+			
+	?> 
+	<input 
+		type='checkbox' 
+		name="help_note_option[help_note_disable_comments_plugin]" 
+        id="help_note_disable_comments_plugin" 
+		value="1"<?php checked( $options['help_note_disable_comments_plugin'], 1 ); ?>
+        </Br><p><?php _e( $string, 'role-based-help-notes-text-domain' );?></p>
+	</input>
+    
+	<?php
+}
+
+/**
+ * Renders settings field for Help Notes email_post_changes_plugin
  */
 function settings_field_help_notes_install_email_post_changes() {
 
@@ -350,7 +384,7 @@ function settings_field_help_notes_install_email_post_changes() {
 
 
 /**
- * Renders settings field for Help Notes simple_footnotes_plugin
+ * Renders settings field for Help Notes post_type_switcher_plugin
  */
 function settings_field_help_notes_install_post_type_switcher() {
 
@@ -411,7 +445,7 @@ function settings_field_help_notes_contents_page() {
     
     <form action="<?php bloginfo('url'); ?>" method="get">
 	<?php wp_dropdown_pages(array( 
-                                'show_option_none' => __( "- None -" ), 
+                                'show_option_none' => __( "- None -", 'role-based-help-notes-text-domain' ), 
                                 'option_none_value' => '0', 
                                 'sort_order'   => 'ASC',
                 				'sort_column'  => 'post_title',

@@ -8,6 +8,7 @@ function help_do_on_activation() {
       'help_note_simple_page_ordering'      => false,
       'help_note_post_type_switcher_plugin'	=> false,
       'help_note_simple_footnotes_plugin'   => false,
+      'help_note_disable_comments_plugin'   => false,
       'help_note_email_post_changes_plugin' => false,
       'help_note_menu_plugin'               => false,
       'help_note_contents_page'             => '0',
