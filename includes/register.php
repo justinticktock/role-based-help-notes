@@ -34,6 +34,6 @@ function help_do_on_activation() {
 	
 }
 
-register_activation_hook( HELP_MYPLUGINNAME_PATH.'role-based-help-notes.php', 'help_do_on_activation' );
+//register_activation_hook( HELP_MYPLUGINNAME_PATH.'role-based-help-notes.php', 'help_do_on_activation' );
 
 ?>
