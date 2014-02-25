@@ -39,9 +39,6 @@ class RBHN_Role_Based_Help_Notes {
 
 		/* Includes... */
 
-		// plugin registration
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/register.php' );  
-
 		// settings 
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings.php' );  
 
