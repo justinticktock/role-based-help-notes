@@ -16,10 +16,10 @@ add_action( 'widgets_init', 'rbhn_register_widgets' );
 function rbhn_register_widgets() {
 
     // option collection  
-	$settings_options = get_option('help_note_option');  
+	$option = get_option('rbhn_user_widget_enabled');  
 
     /* If the user widget is enabled. */    
-    if ( isset( $settings_options['user_widget_enabled'] ) && !empty( $settings_options['user_widget_enabled'] ) ) {
+    if ( isset( $option ) && !empty( $option ) ) {
 
 		/* Load the user widget file. */
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/widget-users.php' );

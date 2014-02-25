@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class RBHN_Settings {
 
+	private static $settings = '';
+	
 	/**
 	 * __construct function.
 	 *
@@ -20,7 +22,7 @@ class RBHN_Settings {
 		// Initialize the plugin option by registering the Sections,
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		
-		register_activation_hook( HELP_MYPLUGINNAME_PATH.'role-based-help-notes.php', array( $this, 'help_do_on_activation' ) );
+		///////register_activation_hook( HELP_MYPLUGINNAME_PATH.'role-based-help-notes.php', array( $this, 'help_do_on_activation' ) );
 
 	}
 
@@ -40,101 +42,146 @@ class RBHN_Settings {
 	 * @access private
 	 * @return void
 	 */
-	private function init_settings() {
-		$this->settings = apply_filters( 'role_based_help_notes_settings',
+	private static function init_settings() {
+		self::$settings = apply_filters( 'role_based_help_notes_settings',
 			array(
 				'general' => array(
-					__( 'General', 'role-based-help-notes-text-domain' ),
-					array(
-						array(
-							'name' 		=> 'rbhn_general_enabled',
-							'std' 		=> '',
-							'label' 	=> __( 'General Help Notes:', 'role-based-help-notes-text-domain' ),
-							'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
-							'desc'		=> __( "Enabling the 'General' option gives you global Help Notes, which are not limited to any one role, these will be accessible to all and follow the capabilities of the normal wordpress 'post' post type.", 'role-based-help-notes-text-domain' ),
-							'type'      => 'checkbox'
-						),
-						array(
-							'name' 		=> 'rbhn_user_widget_enabled',
-							'std' 		=> '',
-							'label' 	=> __( 'Widget:', 'role-based-help-notes-text-domain' ),
-							'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
-							'desc'		=> __( "Enabling the 'User Widget' will allow you to place the Help Notes user widget into your sidebars.  The widget lists all users that have access to the Help Notes for a particular role and it is only shown on individual Help Note posts.", 'role-based-help-notes-text-domain' ),
-							'type'      => 'checkbox'
-						),
-						array(
-							'name' 		=> 'rbhn_contents_page',
-							'std' 		=> '',
-							'label' 	=> __( 'Contents Page:', 'download_monitor' ),
-							'desc'		=> __( 'If you wish to create a contents page add a new page and select it here so that the Help Note Contents are displayed.', 'role-based-help-notes-text-domain' ),
-							'type'      => 'settings_field_help_notes_contents_page',
-						),						
-					),
+					'title' 		=> __( 'General', 'role-based-help-notes-text-domain' ),
+					'description' 	=> __( 'Settings for general purpose.', 'role-based-help-notes-text-domain' ),
+					'settings' 		=> array(		
+											array(
+												'name' 		=> 'rbhn_general_enabled',
+												'std' 		=> false,
+												'label' 	=> __( 'General Help Notes', 'role-based-help-notes-text-domain' ),
+												'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
+												'desc'		=> __( "Enabling the 'General' option gives you global Help Notes, which are not limited to any one role, these will be accessible to all and follow the capabilities of the normal wordpress 'post' post type.", 'role-based-help-notes-text-domain' ),
+												'type'      => 'checkbox'
+												),
+											array(
+												'name' 		=> 'rbhn_user_widget_enabled',
+												'std' 		=> false,
+												'label' 	=> __( 'Widget', 'role-based-help-notes-text-domain' ),
+												'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
+												'desc'		=> __( "Enabling the 'User Widget' will allow you to place the Help Notes user widget into your sidebars.  The widget lists all users that have access to the Help Notes for a particular role and it is only shown on individual Help Note posts.", 'role-based-help-notes-text-domain' ),
+												'type'      => 'checkbox'
+												),
+											array(
+												'name' 		=> 'rbhn_contents_page',
+												'std' 		=> '0',
+												'label' 	=> __( 'Contents Page', 'download_monitor' ),
+												'desc'		=> __( 'If you wish to create a contents page add a new page and select it here so that the Help Note Contents are displayed.', 'role-based-help-notes-text-domain' ),
+												'type'      => 'settings_field_help_notes_contents_page',
+												),						
+										),
 				),
 				'roles' => array(
-					__( 'Roles', 'role-based-help-notes-text-domain' ),
-					array(
-						array(
-							'name' 		=> 'rbhn_post_types',
-							'std' 		=> '',
-							'label' 	=> __( 'Help Note Post Types:', 'role-based-help-notes-text-domain' ),
-							'desc'		=> __( 'Select the Roles that you wish to create Help Notes for. ', 'role-based-help-notes-text-domain' ),
-							'type'      => 'settings_field_help_notes_post_types'
-						)					
-					)
+					'title' 		=> __( 'Roles', 'role-based-help-notes-text-domain' ),
+					'settings' 		=> array(					
+											array(
+												'name' 		=> 'rbhn_post_types',
+												'std' 		=> array(),
+												'label' 	=> __( 'Help Note Post Types', 'role-based-help-notes-text-domain' ),
+												'desc'		=> __( 'Select the Roles that you wish to create Help Notes for. ', 'role-based-help-notes-text-domain' ),
+												'type'      => 'settings_field_help_notes_post_types'
+												),					
+											),
 				),
 				'plugin_extension' => array(
-					__( 'Plugin Extensions', 'role-based-help-notes-text-domain' ),
-					array(
-						array(
-							'name' 		=> 'rbhn_simple_page_ordering',
-							'std' 		=> '',
-							'label' 	=> __( 'Simple Page Ordering:', 'role-based-help-notes-text-domain' ),
-							'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
-							'desc'		=> __( 'Once installed go you can drag pages up/down within the admin side to re-order Help Notes.', 'role-based-help-notes-text-domain' ),
-							'type'      => 'checkbox'
-						),					
-						array(
-							'name' 		=> 'rbhn_simple_footnotes_plugin',
-							'std' 		=> '',
-							'label' 	=> __( 'Simple Footnotes:', 'role-based-help-notes-text-domain' ),
-							'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
-							'desc'		=> __( "Once installed go you can use the 'ref' shortcode for example... [ref]Add footnote text here[/ref] within your posts.", 'role-based-help-notes-text-domain' ),
-							'type'      => 'checkbox'
-						),					
-						array(
-							'name' 		=> 'rbhn_disable_comments_plugin',
-							'std' 		=> '',
-							'label' 	=> __( 'Disable Comments:', 'role-based-help-notes-text-domain' ),
-							'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
-							'desc'		=> __( 'Comments are of less value for Help Notes and this plugin will allow you to easily remove their comments from use.', 'role-based-help-notes-text-domain' ),
-							'type'      => 'checkbox'
-						),					
-						array(
-							'name' 		=> 'rbhn_email_post_changes_plugin',
-							'std' 		=> '',
-							'label' 	=> __( 'Email Post Changes:', 'role-based-help-notes-text-domain' ),
-							'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
-							'desc'		=> __( 'Once installed go to [Settings]...[Email Post Changes] to use the plugin and notify specific users of changes to Help Notes by email.', 'role-based-help-notes-text-domain' ),
-							'type'      => 'checkbox'
-						),					
-						array(
-							'name' 		=> 'rbhn_post_tpye_switcher_plugin',
-							'std' 		=> '',
-							'label' 	=> __( 'Post Type Switcher:', 'role-based-help-notes-text-domain' ),
-							'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
-							'desc'		=> __( "This plugin will allow users with two or more roles capability to change the role assigned to a help note.  Once installed within you will find a new selection/edit option in the 'Publish' area.", 'role-based-help-notes-text-domain' ),
-							'type'      => 'checkbox'
-						),					
-						array(
-							'name' 		=> 'rbhn_post_type_archive_in_menu_plugin',
-							'std' 		=> '',
-							'label' 	=> __( 'Post type archive in menu:', 'role-based-help-notes-text-domain' ),
-							'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
-							'desc'		=> __( "Once installed go to [Appearance]...[Menus] and locate the 'Archives' metabox for use in your theme menus.", 'role-based-help-notes-text-domain' ),
-							'type'      => 'checkbox'
-						)
-					)
+						'title' 		=> __( 'Plugin Extensions', 'role-based-help-notes-text-domain' ),
+						'description' 	=> __( 'These settings are optional.  Selection of any suggested plugin here will prompt you through the installation or you can go to the Menu ..[Plugins]..[Install Plugins].  The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall.', 'role-based-help-notes-text-domain' ),					
+						'settings' 		=> array(
+												array(
+													'name' 		=> 'rbhn_user_switching',
+													'std' 		=> false,
+													'label' 	=> 'User Switching',
+													'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
+													'desc'		=> __( 'This is a useful plugin for Administrators to test the accessibility of users with different roles, you can simply switch to their account to check how the Help Notes appear for them.', 'role-based-help-notes-text-domain' ),
+													'type'      => 'install_plugin_checkbox',
+													// for tgmpa_register activation of the plugin
+													'slug'      			=> 'user-switching', 
+													'required'              => false,
+													'force_deactivation' 	=> false,
+													'force_activation'      => true,												
+													),						
+												array(
+													'name' 		=> 'rbhn_simple_page_ordering',
+													'std' 		=> false,
+													'label' 	=> 'Simple Page Ordering',
+													'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
+													'desc'		=> __( 'Once installed go you can drag pages up/down within the admin side to re-order Help Notes.', 'role-based-help-notes-text-domain' ),
+													'type'      => 'install_plugin_checkbox',
+													// for tgmpa_register activation of the plugin
+													'slug'      			=> 'simple-page-ordering', 
+													'required'              => false,
+													'force_deactivation' 	=> false,
+													'force_activation'      => true,												
+													),					
+												array(
+													'name' 		=> 'rbhn_simple_footnotes_plugin',
+													'std' 		=> false,
+													'label' 	=> 'Simple Footnotes',
+													'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
+													'desc'		=> __( "Once installed go you can use the 'ref' shortcode for example... [ref]Add footnote text here[/ref] within your posts.", 'role-based-help-notes-text-domain' ),
+													'type'      => 'install_plugin_checkbox',
+													// for tgmpa_register activation of the plugin
+													'slug'      			=> 'simple-footnotes',
+													'required'              => false,
+													'force_deactivation' 	=> false,
+													'force_activation'      => true,		
+													),					
+												array(
+													'name' 		=> 'rbhn_disable_comments_plugin',
+													'std' 		=> false,
+													'label' 	=> 'Disable Comments',
+													'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
+													'desc'		=> __( 'Comments are of less value for Help Notes and this plugin will allow you to easily remove their comments from use.', 'role-based-help-notes-text-domain' ),
+													'type'      => 'install_plugin_checkbox',
+													// for tgmpa_register activation of the plugin
+													'slug'      			=> 'disable-comments',
+													'required'              => false,
+													'force_deactivation' 	=> false,
+													'force_activation'      => true,		
+													),					
+												array(
+													'name' 		=> 'rbhn_email_post_changes_plugin',
+													'std' 		=> false,
+													'label' 	=> 'Email Post Changes',
+													'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
+													'desc'		=> __( 'Once installed go to [Settings]...[Email Post Changes] to use the plugin and notify specific users of changes to Help Notes by email.', 'role-based-help-notes-text-domain' ),
+													'type'      => 'install_plugin_checkbox',
+													// for tgmpa_register activation of the plugin
+													'slug'      			=> 'email-post-changes',
+													'required'              => false,
+													'force_deactivation' 	=> false,
+													'force_activation'      => true,		
+													),					
+												array(
+													'name' 		=> 'rbhn_post_type_switcher_plugin',
+													'std' 		=> false,
+													'label' 	=> 'Post Type Switcher',
+													'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
+													'desc'		=> __( "This plugin will allow users with two or more roles capability to change the role assigned to a help note.  Once installed within you will find a new selection/edit option in the 'Publish' area.", 'role-based-help-notes-text-domain' ),
+													'type'      => 'install_plugin_checkbox',
+													// for tgmpa_register activation of the plugin
+													'slug'      			=> 'post-type-switcher', 
+													'required'              => false,
+													'force_deactivation' 	=> false,
+													'force_activation'      => true,		
+													),					
+												array(
+													'name' 		=> 'rbhn_post_type_archive_in_menu_plugin',
+													'std' 		=> false,
+													'label' 	=> 'Post type archive in menu',
+													'cb_label'  => __( 'Enable', 'role-based-help-notes-text-domain' ),
+													'desc'		=> __( "Once installed go to [Appearance]...[Menus] and locate the 'Archives' metabox for use in your theme menus.", 'role-based-help-notes-text-domain' ),
+													'type'      => 'install_plugin_checkbox',
+													// for tgmpa_register activation of the plugin
+													'slug'      			=> 'post-type-archive-in-menu', 
+													'required'              => false,
+													'force_deactivation' 	=> false,
+													'force_activation'      => true,		
+													),
+												),
 				)				
 			)
 		);
@@ -147,10 +194,10 @@ class RBHN_Settings {
 	 * @return void
 	 */
 	public function register_settings() {
-		$this->init_settings();
 
-		foreach ( $this->settings as $section ) {
-			foreach ( $section[1] as $option ) {
+		self::init_settings();
+		foreach ( self::$settings as $section ) {
+			foreach ( $section['settings'] as $option ) {
 				if ( isset( $option['std'] ) )
 					add_option( $option['name'], $option['std'] );
 				register_setting( 'role_based_help_notes', $option['name'] );
@@ -180,15 +227,15 @@ class RBHN_Settings {
 		global $role_based_help_notes;
 
 		// do a one shot during save of options
-		if ( get_option( 'rbhn_update_request' )) {
+		if ( get_option( 'rbhn_update_request' ) ) {
 
 				update_option( 'rbhn_update_request', '' );
-				help_do_on_activation();   			// add the active capabilities
-				rbhn_clean_inactive_capabilties();	// remove the inactive role capabilities
+				//help_do_on_activation();	// add the active capabilities
+				rbhn_clean_inactive_capabilties();						// remove the inactive role capabilities
 
 		}
 
-		$this->init_settings();
+		self::init_settings();
 		?>
 		<div class="wrap">
 			<form method="post" action="options.php">
@@ -198,8 +245,8 @@ class RBHN_Settings {
 
 			    <h2 class="nav-tab-wrapper">
 			    	<?php
-			    		foreach ( $this->settings as $key => $section ) {
-			    			echo '<a href="#settings-' . sanitize_title( $key ) . '" class="nav-tab">' . esc_html( $section[0] ) . '</a>';
+			    		foreach ( self::$settings as $key => $section ) {
+			    			echo '<a href="#settings-' . sanitize_title( $key ) . '" class="nav-tab">' . esc_html( $section['title'] ) . '</a>';
 			    		}
 			    	?>
 			    </h2><br/>
@@ -208,14 +255,15 @@ class RBHN_Settings {
 					if ( ! empty( $_GET['settings-updated'] ) ) {
 						flush_rewrite_rules();
 					}
-
-					foreach ( $this->settings as $key => $section ) {
+			
+					foreach ( self::$settings as $key => $section ) {
 
 						echo '<div id="settings-' . sanitize_title( $key ) . '" class="settings_panel">';
-
+						if ( isset( $section['description'] ) )
+							echo ' <p>' . $section['description']  . '</p>';	
 						echo '<table class="form-table">';
 
-						foreach ( $section[1] as $option ) {
+						foreach ( $section['settings'] as $option ) {
 
 							$placeholder = ( ! empty( $option['placeholder'] ) ) ? 'placeholder="' . $option['placeholder'] . '"' : '';
 
@@ -227,6 +275,8 @@ class RBHN_Settings {
 
 							switch ( $option['type'] ) {
 							
+								// Generate Help Note Role Form Elements
+							
 								case "settings_field_help_notes_post_types" :
 								
 									//  loop through the site roles and create a custom post for each
@@ -237,9 +287,6 @@ class RBHN_Settings {
 									$wp_roles = new WP_Roles();
 									
 									$roles = $wp_roles->get_names();
-
-									// First, we read the option collection  
-									$options = get_option('help_note_option');  
 
 									ksort($roles);
 									foreach($roles as $role_key=>$role_name)
@@ -264,7 +311,9 @@ class RBHN_Settings {
 										echo ' <p class="description">' . $option['desc'] . '</p>';		
 
 								break;
-
+							
+								// Generate Help Note Content Page Form Element
+								
 								case "settings_field_help_notes_contents_page" :
 								?> 
 									
@@ -298,6 +347,27 @@ class RBHN_Settings {
 										echo ' <p class="description">' . $option['desc'] . '</p>';
 
 								break;
+								
+								
+								case "install_plugin_checkbox" :
+
+									?><label><input id="setting-<?php echo $option['name']; ?>" name="<?php echo $option['name']; ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php 
+									$plugin_main_file =  HELP_PLUGIN_DIR . $option['slug'] . '/' .  $option['slug'] . '.php' ;
+
+									//echo $plugin_main_file ; 
+									if ( ! file_exists( $plugin_main_file ) ) {
+										echo __( 'Enable to prompt installation', 'role-based-help-notes-text-domain' ) ;									
+									} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) ) {
+										echo __(  'Force Active', 'role-based-help-notes-text-domain' ) .  '  ( <a href="plugins.php?s=' . $option['slug'] . '">' .  __( "Deactivate", 'role-based-help-notes-text-domain' ) . " </a> )" ;
+									} else {
+										echo __(  'Force Active', 'role-based-help-notes-text-domain' ) .  '  ( <a href="plugins.php?s=' . $option['slug'] . '">' .  __( "Active", 'role-based-help-notes-text-domain' ) . " </a> )" ;
+									}
+									?></label><?php
+									if ( $option['desc'] )
+										echo ' <p class="description">' . $option['desc'] . '</p>';
+
+								break;
+									
 								case "textarea" :
 
 									?><textarea id="setting-<?php echo $option['name']; ?>" class="large-text" cols="50" rows="3" name="<?php echo $option['name']; ?>" <?php echo $placeholder; ?>><?php echo esc_textarea( $value ); ?></textarea><?php
@@ -332,8 +402,8 @@ class RBHN_Settings {
 						}
 
 						echo '</table></div>';
-
 					}
+
 				?>
 				<p class="submit">
 					<input type="submit" class="button-primary" value="<?php _e( 'Save Changes', 'role_based_help_notes' ); ?>" />
@@ -361,10 +431,38 @@ class RBHN_Settings {
 			jQuery('.nav-tab-wrapper a:first').click();
 		");
 	}
-
 	
+	/**
+	 * install_plugins function.
+	 *
+	 * @access public
+	 * @return array of plugins for installation via the TGM_Plugin_Activation class
+	 */
+	public static function install_plugins() {
+		
+		self::init_settings();
+		$plugin_array = self::$settings['plugin_extension']['settings'];
+		$plugins = array();
+		
+		foreach ( $plugin_array as $plugin ) {
+		
+			if ( get_option( $plugin['name'] ) ) {
+				// change the array element key name from 'label' to 'name' for use by TGM Activation
+				$plugin['option-name'] = $plugin['name'];
+				$plugin['name'] = $plugin['label'];
+				unset($plugin['label']);
+				$plugins[] = $plugin;
+			}
+		}
+				
+		return $plugins; 
+
+	}
+
+
 }
 
+/** Create a new instance of the class */
 new RBHN_Settings();
 
 ?>

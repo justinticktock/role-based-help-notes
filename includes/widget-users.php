@@ -2,12 +2,13 @@
 
 /* Add the Help Note Custom Post Type to the author post listing */ 
 function rbhn_custom_post_author_archive( $query ) {
-    
+    global $role_based_help_notes;
+	
 	if( !is_admin() && $query->is_main_query() && empty( $query->query_vars['suppress_filters'] ) ) {
 
 		// For author queries add Help Note post types
 		if ($query->is_author) {
-			$include_post_types = rbhn_active_posttypes();
+			$include_post_types = $role_based_help_notes->rbhn_active_posttypes();
 			$include_post_types[] = 'post';
 			$query->set( 'post_type', $include_post_types);
 		}
@@ -45,10 +46,11 @@ class Users_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
-
+		global $role_based_help_notes;
+	
        // drop out if not a single Help Note page or Help Hote Archive page.
        // or the General Help Note Type
-       $show_widget_help_notes = rbhn_active_posttypes();
+       $show_widget_help_notes = $role_based_help_notes->rbhn_active_posttypes();
        $exclude_help_notes = array('h_general');
        $show_widget_help_notes = array_diff($show_widget_help_notes, $exclude_help_notes);
        
@@ -71,14 +73,12 @@ class Users_Widget extends WP_Widget {
         
 		// Find the role based on the post type.
 		$post_type = get_post_type();
-		$settings_options = get_option('help_note_option');  
+		$post_types_array = get_option('rbhn_post_types');  
 		if (  ! empty($settings_options ) ) {
-			foreach( $settings_options['help_note_post_types'] as $array) {
-				foreach( $array as $active_role=>$active_posttype) {
-					if ($post_type == $active_posttype) {
-						$help_note_role =  $active_role;
-						break 2;
-					}
+			foreach( $post_types_array as $active_role=>$active_posttype) {
+				if ($post_type == $active_posttype) {
+					$help_note_role =  $active_role;
+					break 2;
 				}
 			}
 		}

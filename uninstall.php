@@ -11,18 +11,17 @@ if (is_multisite()) {
         foreach($blogs as $blog) {
             switch_to_blog($blog['blog_id']);
             rbhn_capabilities_clean_up();
-            delete_option('help_note_option');
-            delete_option('help_note_caps_created');
+            delete_option('rbhn_caps_created');
             delete_option('rbhn_update_request');
         }
         restore_current_blog();
     }
 } else {
 		rbhn_capabilities_clean_up();
-		delete_option('help_note_option');
-        delete_option('help_note_caps_created');
+        delete_option('rbhn_caps_created');
 		delete_option('rbhn_update_request');
 }
+
 
 // remove capabilities on uninstall.
 function rbhn_capabilities_clean_up() {
@@ -44,10 +43,10 @@ function rbhn_capabilities_clean_up() {
 // remove capabilities on uninstall.
 function rbhn_role_caps_uninstall( $role_key ) {
 
-    // collect the Help Note Post Type name sorted within the option.
-    $settings_options = get_option('help_note_option');  
-    if (  ! empty($settings_options ) ) {
-	    foreach( $settings_options['help_note_post_types'] as $array) {
+	$post_types_array = get_option('rbhn_post_types');
+	
+    if (  ! empty($post_types_array ) ) {
+	    foreach( $post_types_array as $array) {
 			
 			foreach( $array as $active_role=>$active_posttype) {
 
