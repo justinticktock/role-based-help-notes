@@ -73,8 +73,9 @@ class Users_Widget extends WP_Widget {
         
 		// Find the role based on the post type.
 		$post_type = get_post_type();
-		$post_types_array = get_option('rbhn_post_types');  
-		if (  ! empty($settings_options ) ) {
+		$post_types_array = get_option('rbhn_post_types');
+		$help_note_role =  '';
+		if (  ! empty($post_types_array ) ) {
 			foreach( $post_types_array as $active_role=>$active_posttype) {
 				if ($post_type == $active_posttype) {
 					$help_note_role =  $active_role;
