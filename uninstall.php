@@ -11,15 +11,37 @@ if (is_multisite()) {
         foreach($blogs as $blog) {
             switch_to_blog($blog['blog_id']);
             rbhn_capabilities_clean_up();
+			delete_option('rbhn_plugin_version');
             delete_option('rbhn_caps_created');
-            delete_option('rbhn_update_request');
+            delete_option('rbhn_post_types');
+            delete_option('rbhn_contents_page');
+            delete_option('rbhn_user_widget_enabled');
+            delete_option('rbhn_general_enabled');
+            delete_option('rbhn_user_switching');
+            delete_option('rbhn_simple_page_ordering');
+            delete_option('rbhn_simple_footnotes_plugin');
+            delete_option('rbhn_disable_comments_plugin');
+            delete_option('rbhn_email_post_changes_plugin');
+            delete_option('rbhn_post_type_switcher_plugin');
+            delete_option('rbhn_post_type_archive_in_menu_plugin');
         }
         restore_current_blog();
     }
 } else {
 		rbhn_capabilities_clean_up();
-        delete_option('rbhn_caps_created');
-		delete_option('rbhn_update_request');
+		delete_option('rbhn_plugin_version');
+		delete_option('rbhn_caps_created');
+		delete_option('rbhn_post_types');
+		delete_option('rbhn_contents_page');
+		delete_option('rbhn_user_widget_enabled');
+		delete_option('rbhn_general_enabled');
+		delete_option('rbhn_user_switching');
+		delete_option('rbhn_simple_page_ordering');
+		delete_option('rbhn_simple_footnotes_plugin');
+		delete_option('rbhn_disable_comments_plugin');
+		delete_option('rbhn_email_post_changes_plugin');
+		delete_option('rbhn_post_type_switcher_plugin');
+		delete_option('rbhn_post_type_archive_in_menu_plugin');
 }
 
 
@@ -104,4 +126,5 @@ function rbhn_role_caps_uninstall( $role_key ) {
 		$administrator->remove_cap($cap);		
 	}
 }
+	
 ?>

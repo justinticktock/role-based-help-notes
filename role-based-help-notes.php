@@ -40,21 +40,19 @@ class RBHN_Role_Based_Help_Notes {
 		/* Includes... */
 
 		// settings 
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings.php' );  
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-settings.php' );  
 
 		// custom post type capabilities
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/capabilities.php' );  
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-capabilities.php' );  
 
 		// if selected install the plugins and force activation
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/install-plugins.php' );    
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-install-plugins.php' );    
 
 		// Load the widgets functions file.
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/widgets.php' );
 
 		// Load code for better compatibility with other plugins.
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
-
-		
 		
 		/* Hooks... */
 		
@@ -64,10 +62,6 @@ class RBHN_Role_Based_Help_Notes {
 		// Attached to admin_init. Loads the textdomain and the upgrade routine.
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		
-		
-		
-		
-		
 		// register the selected-active Help Note post types
 		add_action( 'init', array( $this, 'help_register_multiple_posttypes' ) );
 		
@@ -75,9 +69,7 @@ class RBHN_Role_Based_Help_Notes {
 		add_action( 'init', array( $this, 'help_notes_available' ) );
 			
 		// Add Contents Details to the Contents page if declared in settings ..
-		add_filter('the_content', array( $this, 'rbhn_add_post_content' ));		
-		add_action( 'wp_footer', array( $this, 'output_inline_js' ), 25 );
-		add_action( 'admin_footer', array( $this, 'output_inline_js' ), 25 );
+		add_filter( 'the_content', array( $this, 'rbhn_add_post_content' ));		
 			
 	}
 
