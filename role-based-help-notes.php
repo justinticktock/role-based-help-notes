@@ -53,32 +53,46 @@ class RBHN_Role_Based_Help_Notes {
 
 		// Load code for better compatibility with other plugins.
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
+
 		
 		/* Hooks... */
 		
 		// A settings page to the admin acitve plugin listing
-		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'role_based_help_notes_action_links' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'role_based_help_notes_action_links' ));
 		
 		// Attached to admin_init. Loads the textdomain and the upgrade routine.
-		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ));
 		
 		// register the selected-active Help Note post types
-		add_action( 'init', array( $this, 'help_register_multiple_posttypes' ) );
+		add_action( 'init', array( $this, 'help_register_multiple_posttypes' ));
 		
 		// register the selected-active Help Note post types
-		add_action( 'init', array( $this, 'help_notes_available' ) );
+		add_action( 'init', array( $this, 'help_notes_available' ));
 			
 		// Add Contents Details to the Contents page if declared in settings ..
-		add_filter( 'the_content', array( $this, 'rbhn_add_post_content' ));		
+		add_filter( 'the_content', array( $this, 'rbhn_add_post_content' ));
+		
+		// Add the Help Note Custom Post Types to the author post listing
+		add_filter( 'pre_get_posts', array( $this, 'rbhn_custom_post_author_archive' ));
 			
 	}
 
-
+	/**
+	 * Append new links to the Plugin admin side
+	 *
+	 * @param array $links Current links/urls provided for the plugin admin.
+	 * @return array $links
+	 */
 	public function role_based_help_notes_action_links( $links ) {
 		array_unshift( $links, '<a href="options-general.php?page=' . HELP_SETTINGS_PAGE . '">' . __( 'Settings' ) . "</a>" );
 		return $links;
 	}
-		
+
+	/**
+	 * Initialise the plugin by handling upgrades and loading the text domain. 
+	 *
+	 * @return void
+	 */
 	public function admin_init() {
 		
 		$plugin_version = get_option( 'rbhn_plugin_version' );
@@ -99,6 +113,12 @@ class RBHN_Role_Based_Help_Notes {
 		load_plugin_textdomain('role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
+	/**
+	 * Provides an upgrade path for older versions of the plugin
+	 *
+	 * @param float $current_plugin_version the local plugin version prior to an update 
+	 * @return void
+	 */
 	public function rbhn_upgrade( $current_plugin_version ) {
 
 		if ( $current_plugin_version < '1.2.4' ) {
@@ -121,13 +141,73 @@ class RBHN_Role_Based_Help_Notes {
 			$widget_options = get_option('widget_users_widget');
 			$widget_options[2]['title'] = '';
 			update_option('widget_users_widget', $widget_options); 
-		}		
-	}
+		}
+		
+		// move current database stored values into the next structure
+		if ( $current_plugin_version < '1.2.8' ) {
 
+			//rbhn_caps_created
+			$db_help_note_caps_created = get_option( 'help_note_caps_created' );
+			if ( ! empty( $db_help_note_caps_created ));
+				add_option( 'rbhn_caps_created', $db_help_note_caps_created );
+
+			$settings_options = get_option( 'help_note_option' );
+		
+			//rbhn_plugin_version
+			if ( ! empty( $settings_options['help_notes_version'] ));
+				add_option( 'rbhn_plugin_version', $settings_options['help_notes_version'] );
+
+			//rbhn_general_enabled
+			if ( ! empty( $settings_options['help_note_general_enabled'] ));
+				add_option( 'rbhn_general_enabled', $settings_options['help_note_general_enabled'] );
+				
+			//rbhn_post_types
+			if ( ! empty( $settings_options['help_note_post_types'] ));
+				add_option( 'rbhn_post_types', $settings_options['help_note_post_types'] );
+				
+			//rbhn_contents_page
+			if ( ! empty( $settings_options['help_note_contents_page'] ));
+				add_option( 'rbhn_contents_page', $settings_options['help_note_contents_page'] );
+				
+			//rbhn_user_widget_enabled
+			if ( ! empty( $settings_options['user_widget_enabled'] ));
+				add_option( 'rbhn_user_widget_enabled', $settings_options['user_widget_enabled'] );
+				
+			//rbhn_simple_page_ordering
+			if ( ! empty( $settings_options['help_note_simple_page_ordering'] ));
+				add_option( 'rbhn_simple_page_ordering', $settings_options['help_note_simple_page_ordering'] );
+				
+			//rbhn_simple_footnotes_plugin
+			if ( ! empty( $settings_options['help_note_simple_footnotes_plugin'] ));
+				add_option( 'rbhn_simple_footnotes_plugin', $settings_options['help_note_simple_footnotes_plugin'] );
+				
+			//rbhn_disable_comments_plugin
+			if ( ! empty( $settings_options['help_note_disable_comments_plugin'] ));
+				add_option( 'rbhn_disable_comments_plugin', $settings_options['help_note_disable_comments_plugin'] );
+				
+			//rbhn_email_post_changes_plugin
+			if ( ! empty( $settings_options['help_note_email_post_changes_plugin'] ));
+				add_option( 'rbhn_email_post_changes_plugin', $settings_options['help_note_email_post_changes_plugin'] );
+				
+			//rbhn_post_type_switcher_plugin
+			if ( ! empty( $settings_options['help_note_post_type_switcher_plugin'] ));
+				add_option( 'rbhn_post_type_switcher_plugin', $settings_options['help_note_post_type_switcher_plugin'] );
+				
+			//rbhn_post_type_archive_in_menu_plugin
+			if ( ! empty( $settings_options['help_note_menu_plugin'] ));
+				add_option( 'rbhn_post_type_archive_in_menu_plugin', $settings_options['help_note_menu_plugin'] );
+				
+			// remove old options from DB
+			delete_option('rbhn_update_request');
+            delete_option('help_note_option');
+            delete_option('help_note_caps_created');
+
+		}
+	}
+	
 	/**
 	 * Checks if a particular user has a role. 
 	 * Returns true if a match was found.
-	 * ref: http://docs.appthemes.com/tutorials/wordpress-check-user-role-function/
 	 *
 	 * @param string $role Role name.
 	 * @param int $user_id (Optional) The ID of a user. Defaults to the current user.
@@ -147,7 +227,12 @@ class RBHN_Role_Based_Help_Notes {
 	}
 
 
-	// Returns the selected-active Help Note Custom Post Types
+	/**
+	 * Returns the selected-active Help Note Custom Post Types
+	 *
+	 * @access public
+	 * @return array of active Help Notes post types
+	 */		
 	public function rbhn_active_posttypes() {
 
 		$active_posttypes = array();
@@ -180,14 +265,39 @@ class RBHN_Role_Based_Help_Notes {
 				}
 			}	
 		}
-		
 		return $active_posttypes;
 	}
 
+	/**
+	 * Include the Help Note Custom Post Type in the author post listing
+	 *
+	 * @access public
+	 * @param object $query 
+	 * @return void
+	 */		
+	function rbhn_custom_post_author_archive( $query ) {
+		global $role_based_help_notes;
+		
+		if( !is_admin() && $query->is_main_query() && empty( $query->query_vars['suppress_filters'] ) ) {
 
+			// For author queries add Help Note post types
+			if ($query->is_author) {
+				$include_post_types = $role_based_help_notes->rbhn_active_posttypes();
+				$include_post_types[] = 'post';
+				$query->set( 'post_type', $include_post_types);
+			}
 
+			// remove the filter after running, run only once!
+			remove_action( 'pre_get_posts', 'rbhn_custom_post_author_archive' ); 
+		}
+	}    
 
-
+	/**
+	 * Registers all required Help Notes
+	 *
+	 * @access public	 
+	 * @return void
+	 */
 	public function help_register_multiple_posttypes() {
 		
 		// option collection  
@@ -222,12 +332,10 @@ class RBHN_Role_Based_Help_Notes {
 		}
 	}
 
-	
 	/**
 	 * Checks if the current visitor has available Help Notes
 	 *
-	 * @since 1.2.6
-	 *
+	 * @access public	 
 	 * @return bool True if Help Notes are available for the site front-end, false if not logged or no Help Notes are available.
 	 */
 	public function help_notes_available() {
@@ -253,9 +361,15 @@ class RBHN_Role_Based_Help_Notes {
 		return false;
 	}
 
-
-	// Adds custom post type for a single Help Note
-
+	/**
+	 * Registers custom post type for a single Help Note
+	 *
+	 * @access public
+	 * @param text $role_key Role Key id
+	 * @param text $role_name Role Name
+	 * @param text $post_type_name Post Type name/id	 
+	 * @return void
+	 */	
 	public function help_register_posttype($role_key, $role_name, $post_type_name) {
 		
 		$role_name = (strcasecmp("note", $role_name) ?  $role_name . ' ' : '' );
@@ -290,10 +404,7 @@ class RBHN_Role_Based_Help_Notes {
 			$help_menu_icon    = HELP_PLUGIN_URI . '/images/help.png' ;
 		};
 
-
-				
 		$help_args = array(
-
 			'labels'              => $help_labels,
 			'public'              => true, 
 			'publicly_queryable'  => true,
@@ -311,14 +422,17 @@ class RBHN_Role_Based_Help_Notes {
 			'can_export'          => true,
 			'show_in_nav_menus'   => false,
 			'menu_icon'			  => $help_menu_icon,
-			
 		);
-
 		register_post_type( $post_type_name, $help_args );
-
 	}
 
-
+	/**
+	 * Returns the post content with the Help Notes index appended.
+	 *
+	 * @access public
+	 * @param text $content post content	 
+	 * @return $content
+	 */	
 	public function rbhn_add_post_content($content) {
 		
 		global $post;
@@ -333,7 +447,6 @@ class RBHN_Role_Based_Help_Notes {
 				$posttype = get_post_type_object( $posttype_selected );
 				$posttype_Name = $posttype->labels->name; 
 			
-			   
 				$args = array(
 							'depth'        => 0,
 							'show_date'    => '',
@@ -358,6 +471,13 @@ class RBHN_Role_Based_Help_Notes {
 		return $content;
 	}
 
+	/**
+	 * Returns a cleaned custom post type name.
+	 *
+	 * @access public
+	 * @param string $role_key current suggested Help Notes post type name
+	 * @return $post_type_name
+	 */	
 	public function clean_post_type_name($role_key) {
 		// limit to 20 characters length for the WP limitation of custom post type names
 		$post_type_name = sanitize_key('h_' . substr($role_key , -18)); 
@@ -381,47 +501,19 @@ class RBHN_Role_Based_Help_Notes {
 		// Add the selected role capabilities for use with the role help notes
 		RBHN_Capabilities::rbhn_add_role_caps();
 		
-		// ATTENTION: This is *only* done during plugin activation hook in this example!
-		// You should *NEVER EVER* do this on every page load!!
 		flush_rewrite_rules();
-		
 	}
 
 	/**
 	 * Returns current plugin version.
-	 * @return string Plugin version
-	 */
+	 *
+	 * @access public
+	 * @return $plugin_version
+	 */	
 	public function plugin_get_version() {
 		$plugin_data = get_plugin_data( HELP_MYPLUGINNAME_FULL_PATH );
 		$plugin_version = $plugin_data['Version'];
 		return $plugin_version;
-	}
-	
-	
-	/**
-	 * Enqueue JS to be added to the footer.
-	 *
-	 * @access public
-	 * @param mixed $code
-	 * @return void
-	 */
-	public function add_inline_js( $code ) {
-		$this->_inline_js .= "\n" . $code . "\n";
-	}
-
-	/**
-	 * Output enqueued JS
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function output_inline_js() {
-		if ( $this->_inline_js ) {
-			echo "<!-- Download Monitor JavaScript-->\n<script type=\"text/javascript\">\njQuery(document).ready(function($) {";
-			echo $this->_inline_js;
-			echo "});\n</script>\n";
-			$this->_inline_js = '';
-		}
 	}
 }
 

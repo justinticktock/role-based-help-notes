@@ -13,10 +13,10 @@ if (is_multisite()) {
             rbhn_capabilities_clean_up();
 			delete_option('rbhn_plugin_version');
             delete_option('rbhn_caps_created');
+            delete_option('rbhn_general_enabled');
             delete_option('rbhn_post_types');
             delete_option('rbhn_contents_page');
             delete_option('rbhn_user_widget_enabled');
-            delete_option('rbhn_general_enabled');
             delete_option('rbhn_user_switching');
             delete_option('rbhn_simple_page_ordering');
             delete_option('rbhn_simple_footnotes_plugin');
@@ -24,6 +24,7 @@ if (is_multisite()) {
             delete_option('rbhn_email_post_changes_plugin');
             delete_option('rbhn_post_type_switcher_plugin');
             delete_option('rbhn_post_type_archive_in_menu_plugin');
+			
         }
         restore_current_blog();
     }
@@ -31,10 +32,10 @@ if (is_multisite()) {
 		rbhn_capabilities_clean_up();
 		delete_option('rbhn_plugin_version');
 		delete_option('rbhn_caps_created');
+		delete_option('rbhn_general_enabled');
 		delete_option('rbhn_post_types');
 		delete_option('rbhn_contents_page');
 		delete_option('rbhn_user_widget_enabled');
-		delete_option('rbhn_general_enabled');
 		delete_option('rbhn_user_switching');
 		delete_option('rbhn_simple_page_ordering');
 		delete_option('rbhn_simple_footnotes_plugin');

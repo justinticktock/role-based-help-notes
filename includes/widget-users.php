@@ -1,25 +1,6 @@
 <?php
 
-/* Add the Help Note Custom Post Type to the author post listing */ 
-function rbhn_custom_post_author_archive( $query ) {
-    global $role_based_help_notes;
-	
-	if( !is_admin() && $query->is_main_query() && empty( $query->query_vars['suppress_filters'] ) ) {
-
-		// For author queries add Help Note post types
-		if ($query->is_author) {
-			$include_post_types = $role_based_help_notes->rbhn_active_posttypes();
-			$include_post_types[] = 'post';
-			$query->set( 'post_type', $include_post_types);
-		}
-
-		// remove the filter after running, run only once!
-		remove_action( 'pre_get_posts', 'rbhn_custom_post_author_archive' ); 
-	}
-}    
-
-add_filter( 'pre_get_posts', 'rbhn_custom_post_author_archive' );
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
  * Adds Users_Widget widget.
