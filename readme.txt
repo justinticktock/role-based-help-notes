@@ -30,13 +30,16 @@ Extensions:
 
 If you select the options for extending functionality through other plugins the following are available for ease of installing..
 
+Admin side Plugins..
+* [User Switching](http://wordpress.org/plugins/user-switching/) great tool for admins to switch to test any users access/capability.
 * [Simple Page Ordering](http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
-* [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref].
-* [disable_comments](http://wordpress.org/plugins/disable-comments/) by [solarissmoke](http://profiles.wordpress.org/solarissmoke/) allows you to easily remove comments from 'Help Note' use.
 * [Email Post Changes](http://wordpress.org/plugins/email-post-changes/) for emailing out changes to a Help Note as they occur.
 * [post_type_switcher](http://wordpress.org/plugins/post-type-switcher/) plugin by [John James Jacoby](http://profiles.wordpress.org/johnjamesjacoby/) & [Matthew Gerring](http://profiles.wordpress.org/beatpanda/), useful to change the role associated with a Help Note after it has been created.
-* [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
 
+Front End Plugins..
+* [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref].
+* [disable_comments](http://wordpress.org/plugins/disable-comments/) by [solarissmoke](http://profiles.wordpress.org/solarissmoke/) allows you to easily remove comments from 'Help Note' use.
+* [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
 
 [Plugin site](http://justinandco.com/plugins/role-based-help-notes/).  	
 [GitHub page](http://github.com/justinticktock/role-based-help-notes).
@@ -69,6 +72,12 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 = 1.2.8 =
 * 2014-??-??
+* Re-factored code into Classes.
+* Settings now in tabs.
+* Database handling of options simplified.
+* 
+* 
+* 
 * 
 
 = 1.2.7 =

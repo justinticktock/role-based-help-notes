@@ -11,41 +11,49 @@ if (is_multisite()) {
         foreach($blogs as $blog) {
             switch_to_blog($blog['blog_id']);
             rbhn_capabilities_clean_up();
-			delete_option('rbhn_plugin_version');
-            delete_option('rbhn_caps_created');
-            delete_option('rbhn_general_enabled');
-            delete_option('rbhn_post_types');
-            delete_option('rbhn_contents_page');
-            delete_option('rbhn_user_widget_enabled');
-            delete_option('rbhn_user_switching');
-            delete_option('rbhn_simple_page_ordering');
-            delete_option('rbhn_simple_footnotes_plugin');
-            delete_option('rbhn_disable_comments_plugin');
-            delete_option('rbhn_email_post_changes_plugin');
-            delete_option('rbhn_post_type_switcher_plugin');
-            delete_option('rbhn_post_type_archive_in_menu_plugin');
-			
+			rbhn_clean_database();
         }
         restore_current_blog();
     }
 } else {
 		rbhn_capabilities_clean_up();
+		rbhn_clean_database();
+}
+		// loop plugins forced active.
+		$plugins = RBHN_Settings::install_plugins();
+
+		foreach ( $plugins as $plugin ) {
+			$plugin_file = 'C:\BitNami\wordpress-3.8-0\apps\wordpress\htdocs\wp-content\plugins\\' . $plugin["slug"] . '\\' . $plugin['slug'] . '.php' ;
+			register_deactivation_hook( $plugin_file, array( 'RBHN_Role_Based_Help_Notes', 'on_deactivation' ) );
+		}
+		
+// remove all database entries for currently active blog on uninstall.
+function rbhn_clean_database() {
+		
 		delete_option('rbhn_plugin_version');
 		delete_option('rbhn_caps_created');
 		delete_option('rbhn_general_enabled');
 		delete_option('rbhn_post_types');
 		delete_option('rbhn_contents_page');
 		delete_option('rbhn_user_widget_enabled');
+		
+		// plugin specific database entries
 		delete_option('rbhn_user_switching');
+		delete_option('rbhn_deactivate_user-switching');
 		delete_option('rbhn_simple_page_ordering');
+		delete_option('rbhn_deactivate_simple-page-ordering');
 		delete_option('rbhn_simple_footnotes_plugin');
+		delete_option('rbhn_deactivate_simple-footnotes');
 		delete_option('rbhn_disable_comments_plugin');
+		delete_option('rbhn_deactivate_xxxxx');
 		delete_option('rbhn_email_post_changes_plugin');
+		delete_option('rbhn_deactivate_email-post-changes');
 		delete_option('rbhn_post_type_switcher_plugin');
+		delete_option('rbhn_deactivate_post-type-switcher');
 		delete_option('rbhn_post_type_archive_in_menu_plugin');
+		delete_option('rbhn_deactivate_post-type-archive-in-menu');
 }
-
-
+		
 // remove capabilities on uninstall.
 function rbhn_capabilities_clean_up() {
 

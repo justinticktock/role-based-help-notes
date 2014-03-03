@@ -53,8 +53,8 @@ class RBHN_Role_Based_Help_Notes {
 
 		// Load code for better compatibility with other plugins.
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
-
 		
+
 		/* Hooks... */
 		
 		// A settings page to the admin acitve plugin listing
@@ -68,13 +68,19 @@ class RBHN_Role_Based_Help_Notes {
 		
 		// register the selected-active Help Note post types
 		add_action( 'init', array( $this, 'help_notes_available' ));
-			
+
+		// Load admin error messages	
+		add_action( 'admin_init', array( $this, 'deactivation_notice' ));
+		add_action( 'admin_notices', array( $this, 'action_admin_notices' ));
+				
 		// Add Contents Details to the Contents page if declared in settings ..
 		add_filter( 'the_content', array( $this, 'rbhn_add_post_content' ));
 		
 		// Add the Help Note Custom Post Types to the author post listing
 		add_filter( 'pre_get_posts', array( $this, 'rbhn_custom_post_author_archive' ));
-			
+		
+
+				
 	}
 
 	/**
@@ -500,7 +506,7 @@ class RBHN_Role_Based_Help_Notes {
 		
 		// Add the selected role capabilities for use with the role help notes
 		RBHN_Capabilities::rbhn_add_role_caps();
-		
+
 		flush_rewrite_rules();
 	}
 
@@ -515,6 +521,81 @@ class RBHN_Role_Based_Help_Notes {
 		$plugin_version = $plugin_data['Version'];
 		return $plugin_version;
 	}
+
+	
+		
+	/**
+	 * Register Plugin Deactivation Hooks for all the currently 
+	 * enforced active extension plugins.
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function deactivation_notice() {
+
+		// loop plugins forced active.
+		$plugins = RBHN_Settings::install_plugins();
+
+		foreach ( $plugins as $plugin ) {
+			$plugin_file = 'C:\BitNami\wordpress-3.8-0\apps\wordpress\htdocs\wp-content\plugins\\' . $plugin["slug"] . '\\' . $plugin['slug'] . '.php' ;
+			register_deactivation_hook( $plugin_file, array( 'RBHN_Role_Based_Help_Notes', 'on_deactivation' ) );
+		}
+	}
+
+	/**
+	 * This function is hooked into plugin deactivation for 
+	 * enforced active extension plugins.
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public static function on_deactivation()
+    {
+        if ( ! current_user_can( 'activate_plugins' ) )
+            return;
+        $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+        check_admin_referer( "deactivate-plugin_{$plugin}" );
+	
+		$plugin_slug = explode( "/", $plugin);
+		$plugin_slug = $plugin_slug[0];
+		update_option( "rbhn_deactivate_{$plugin_slug}", true );
+    }
+	
+	/**
+	 * Display the admin warnings.
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function action_admin_notices() {
+
+		// loop plugins forced active.
+		$plugins = RBHN_Settings::install_plugins();
+
+		// for each extension plugin enabled (forced active) add a error message for deactivation.
+		foreach ( $plugins as $plugin ) {
+			$this->action_admin_plugin_forced_active_notices( $plugin["slug"] );
+		}
+	}
+	
+	/**
+	 * Display the admin error message for pluging forced active.
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function action_admin_plugin_forced_active_notices( $plugin ) {
+		$plugin_message = get_option("rbhn_deactivate_{$plugin}");
+		if ( ! empty( $plugin_message ) ) {
+			?>
+			<div class="error">
+				  <p><?php echo esc_html(sprintf( __( 'Error the %1$s plugin is forced active with ', 'role-based-help-notes-text-domain'), $plugin)); ?>
+				  <a href="options-general.php?page=<?php echo HELP_SETTINGS_PAGE ?>&tab=rbhn_plugin_extension"> <?php echo esc_html(__( 'Help Note Settings!', 'role-based-help-notes-text-domain')); ?> </a></p>
+			</div>
+			<?php
+			update_option("rbhn_deactivate_{$plugin}", false); 
+		}
+	}	
 }
 
 /**
