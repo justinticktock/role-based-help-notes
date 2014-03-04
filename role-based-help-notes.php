@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.2.8
+Version: 1.2.9.4
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
@@ -17,8 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Main Class which inits the CPTs and plugin
  */
 class RBHN_Role_Based_Help_Notes {
-
-	private $_inline_js;
 
 	/**
 	 * __construct function.
@@ -77,8 +75,6 @@ class RBHN_Role_Based_Help_Notes {
 		
 		// Add the Help Note Custom Post Types to the author post listing
 		add_filter( 'pre_get_posts', array( $this, 'rbhn_custom_post_author_archive' ));
-		
-
 				
 	}
 
@@ -100,19 +96,20 @@ class RBHN_Role_Based_Help_Notes {
 	 */
 	public function admin_init() {
 		
-		$plugin_version = get_option( 'rbhn_plugin_version' );
-
-		if ( empty($plugin_version) || $plugin_version < array( $this, 'plugin_get_version' ) ) {
+		$plugin_current_version = get_option( 'rbhn_plugin_version' );
+		$plugin_new_version =  $this->plugin_get_version();
 		
-			$current_plugin_version = isset( $plugin_version ) ? $plugin_version : 0;
+		if ( empty($plugin_current_version) || $plugin_current_version < $plugin_new_version ) {
+		
+			$plugin_current_version = isset( $plugin_current_version ) ? $plugin_current_version : 0;
 
-			$this->rbhn_upgrade( $current_plugin_version );
+			$this->rbhn_upgrade( $plugin_current_version );
 
 			// set default options if not already set..
 			$this->help_do_on_activation();
 			
-			// Update the option again after rbhn_upgrade() changes and set the current plugin revision
-			update_option('rbhn_plugin_version', array( $this, 'plugin_get_version' )); 
+			// Update the option again after rbhn_upgrade() changes and set the current plugin revision	
+			update_option('rbhn_plugin_version', $plugin_new_version ); 
 		}
 			
 		load_plugin_textdomain('role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
@@ -133,7 +130,7 @@ class RBHN_Role_Based_Help_Notes {
 			if (  ! empty( $post_types_array ) ) {
 				foreach( $post_types_array as $selected_key=>$role_selected) {
 					$new_entry = array();
-					$new_entry[$role_selected] = clean_post_type_name($role_selected);
+					$new_entry[$role_selected] = $this->clean_post_type_name($role_selected);
 					$new_help_note_post_types[] = $new_entry;
 				}
 			}
@@ -498,7 +495,8 @@ class RBHN_Role_Based_Help_Notes {
 	public function help_do_on_activation() {
 
 		// create the plugin_version store option if not already present.
-		update_option('rbhn_plugin_version', array( $this, 'plugin_get_version' )); 
+		$plugin_version = $this->plugin_get_version();
+		update_option('rbhn_plugin_version', $plugin_version ); 
 
 		// create the tracking enabled capabilities option if not already present.
 		update_option( 'rbhn_caps_created', get_option( 'rbhn_caps_created', array() )); 
@@ -516,9 +514,9 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return $plugin_version
 	 */	
 	public function plugin_get_version() {
-		$plugin_data = get_plugin_data( HELP_MYPLUGINNAME_FULL_PATH );
-		$plugin_version = $plugin_data['Version'];
-		return $plugin_version;
+		$plugin_data = get_plugin_data( HELP_MYPLUGINNAME_FULL_PATH );	
+		$plugin_version = $plugin_data['Version'];	
+		return filter_var($plugin_version, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 	}
 
 	
