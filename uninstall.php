@@ -19,13 +19,6 @@ if (is_multisite()) {
 		rbhn_capabilities_clean_up();
 		rbhn_clean_database();
 }
-		// loop plugins forced active.
-		$plugins = RBHN_Settings::install_plugins();
-
-		foreach ( $plugins as $plugin ) {
-			$plugin_file = 'C:\BitNami\wordpress-3.8-0\apps\wordpress\htdocs\wp-content\plugins\\' . $plugin["slug"] . '\\' . $plugin['slug'] . '.php' ;
-			register_deactivation_hook( $plugin_file, array( 'RBHN_Role_Based_Help_Notes', 'on_deactivation' ) );
-		}
 		
 // remove all database entries for currently active blog on uninstall.
 function rbhn_clean_database() {
@@ -45,7 +38,7 @@ function rbhn_clean_database() {
 		delete_option('rbhn_simple_footnotes_plugin');
 		delete_option('rbhn_deactivate_simple-footnotes');
 		delete_option('rbhn_disable_comments_plugin');
-		delete_option('rbhn_deactivate_xxxxx');
+		delete_option('rbhn_deactivate_disable-comments');
 		delete_option('rbhn_email_post_changes_plugin');
 		delete_option('rbhn_deactivate_email-post-changes');
 		delete_option('rbhn_post_type_switcher_plugin');

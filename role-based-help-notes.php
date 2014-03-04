@@ -35,7 +35,6 @@ class RBHN_Role_Based_Help_Notes {
 		define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
 		define( 'HELP_PLUGIN_DIR', plugin_dir_path( HELP_MYPLUGINNAME_PATH ) );
 		define( 'HELP_SETTINGS_PAGE', 'notes-settings');
-		
 
 		/* Includes... */
 
@@ -537,7 +536,7 @@ class RBHN_Role_Based_Help_Notes {
 		$plugins = RBHN_Settings::install_plugins();
 
 		foreach ( $plugins as $plugin ) {
-			$plugin_file = 'C:\BitNami\wordpress-3.8-0\apps\wordpress\htdocs\wp-content\plugins\\' . $plugin["slug"] . '\\' . $plugin['slug'] . '.php' ;
+			$plugin_file = HELP_PLUGIN_DIR . $plugin["slug"] . '\\' . $plugin['slug'] . '.php' ;
 			register_deactivation_hook( $plugin_file, array( 'RBHN_Role_Based_Help_Notes', 'on_deactivation' ) );
 		}
 	}
