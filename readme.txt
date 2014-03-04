@@ -75,10 +75,8 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 * Re-factored code into Classes.
 * Settings now in tabs.
 * Database handling of options simplified.
-* 
-* 
-* 
-* 
+* New feature: Added the suggested plugin extension ["user_switching"](http://wordpress.org/plugins/user-switching/)
+* New feature: New error message on attempting to disable a plugin that is being forced active by a plugin extension option.
 
 = 1.2.7 =
 * 2014-01-31
