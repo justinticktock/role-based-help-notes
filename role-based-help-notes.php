@@ -8,9 +8,9 @@ Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
 */
-		
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+	
 /**
  * RBHN_Role_Based_Help_Notes class.
  *
@@ -62,9 +62,6 @@ class RBHN_Role_Based_Help_Notes {
 		
 		// register the selected-active Help Note post types
 		add_action( 'init', array( $this, 'help_register_multiple_posttypes' ));
-		
-		// register the selected-active Help Note post types
-		add_action( 'init', array( $this, 'help_notes_available' ));
 
 		// Load admin error messages	
 		add_action( 'admin_init', array( $this, 'deactivation_notice' ));
@@ -309,35 +306,6 @@ class RBHN_Role_Based_Help_Notes {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Checks if the current visitor has available Help Notes
-	 *
-	 * @access public	 
-	 * @return bool True if Help Notes are available for the site front-end, false if not logged or no Help Notes are available.
-	 */
-	public function help_notes_available() {
-		// option collection  
-		$general_help_enabled 	= get_option('rbhn_general_enabled');
-		$post_types_array 		= get_option('rbhn_post_types');
-		
-	   // if General Help Notes enabled
-	   if ( $general_help_enabled  ) 
-			return true;
-
-	   //if the current user has the role of an active Help Note.
-		if (  ! empty( $post_types_array ) ) {	
-			foreach( $post_types_array as $array) {
-				foreach( $array as $active_role=>$active_posttype) {
-					if ($this->help_notes_current_user_has_role( $active_role )) {
-						return true;
-					}				
-				}
-			}	
-		}   
-				
-		return false;
 	}
 
 	/**
