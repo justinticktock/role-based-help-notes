@@ -71,12 +71,12 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 == Changelog ==
 
 = 1.2.8 =
-* 2014-??-??
+* 2014-03-06
 * Re-factored code into Classes.
-* Settings now in tabs.
-* Database handling of options simplified.
-* New feature: Added the suggested plugin extension ["user_switching"](http://wordpress.org/plugins/user-switching/)
-* New feature: New error message on attempting to disable a plugin that is being forced active by a plugin extension option.
+* Settings screen now in tabs.
+* Database handling of options simplified, dropped upgrade support pre 1.2.7 version.
+* New feature: Added the suggested plugin extension ["user_switching"](http://wordpress.org/plugins/user-switching/).
+* New feature: New error message on attempting to disable a plugin that is being forced active by plugin extensions.
 
 = 1.2.7 =
 * 2014-01-31

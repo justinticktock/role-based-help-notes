@@ -122,28 +122,6 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	public function rbhn_upgrade( $current_plugin_version ) {
-
-		if ( $current_plugin_version < '1.2.4' ) {
-			$post_types_array = get_option('rbhn_post_types');  
-			$new_help_note_post_types = array();
-			
-			if (  ! empty( $post_types_array ) ) {
-				foreach( $post_types_array as $selected_key=>$role_selected) {
-					$new_entry = array();
-					$new_entry[$role_selected] = $this->clean_post_type_name($role_selected);
-					$new_help_note_post_types[] = $new_entry;
-				}
-			}
-			
-			// convert option format
-			update_option('rbhn_post_types', (array) $new_help_note_post_types); 
-		}
-
-		if ( $current_plugin_version < '1.2.5' ) {
-			$widget_options = get_option('widget_users_widget');
-			$widget_options[2]['title'] = '';
-			update_option('widget_users_widget', $widget_options); 
-		}
 		
 		// move current database stored values into the next structure
 		if ( $current_plugin_version < '1.2.8' ) {
@@ -151,58 +129,58 @@ class RBHN_Role_Based_Help_Notes {
 			//rbhn_caps_created
 			$db_help_note_caps_created = get_option( 'help_note_caps_created' );
 			if ( ! empty( $db_help_note_caps_created ));
-				add_option( 'rbhn_caps_created', (array) $db_help_note_caps_created );
+				update_option( 'rbhn_caps_created', (array) $db_help_note_caps_created );
 
 			$settings_options = get_option( 'help_note_option' );
 		
 			//rbhn_plugin_version
 			if ( ! empty( $settings_options['help_notes_version'] ));
-				add_option( 'rbhn_plugin_version', $settings_options['help_notes_version'] );
+				update_option( 'rbhn_plugin_version', $settings_options['help_notes_version'] );
 
 			//rbhn_general_enabled
 			if ( ! empty( $settings_options['help_note_general_enabled'] ));
-				add_option( 'rbhn_general_enabled', $settings_options['help_note_general_enabled'] );
+				update_option( 'rbhn_general_enabled', $settings_options['help_note_general_enabled'] );
 				
 			//rbhn_post_types
 			if ( ! empty( $settings_options['help_note_post_types'] ));
-				add_option( 'rbhn_post_types', $settings_options['help_note_post_types'] );
+				update_option( 'rbhn_post_types', (array) $settings_options['help_note_post_types'] );
 				
 			//rbhn_contents_page
 			if ( ! empty( $settings_options['help_note_contents_page'] ));
-				add_option( 'rbhn_contents_page', $settings_options['help_note_contents_page'] );
+				update_option( 'rbhn_contents_page', $settings_options['help_note_contents_page'] );
 				
 			//rbhn_user_widget_enabled
 			if ( ! empty( $settings_options['user_widget_enabled'] ));
-				add_option( 'rbhn_user_widget_enabled', $settings_options['user_widget_enabled'] );
+				update_option( 'rbhn_user_widget_enabled', $settings_options['user_widget_enabled'] );
 				
 			//rbhn_simple_page_ordering
 			if ( ! empty( $settings_options['help_note_simple_page_ordering'] ));
-				add_option( 'rbhn_simple_page_ordering', $settings_options['help_note_simple_page_ordering'] );
+				update_option( 'rbhn_simple_page_ordering', $settings_options['help_note_simple_page_ordering'] );
 				
 			//rbhn_simple_footnotes_plugin
 			if ( ! empty( $settings_options['help_note_simple_footnotes_plugin'] ));
-				add_option( 'rbhn_simple_footnotes_plugin', $settings_options['help_note_simple_footnotes_plugin'] );
+				update_option( 'rbhn_simple_footnotes_plugin', $settings_options['help_note_simple_footnotes_plugin'] );
 				
 			//rbhn_disable_comments_plugin
 			if ( ! empty( $settings_options['help_note_disable_comments_plugin'] ));
-				add_option( 'rbhn_disable_comments_plugin', $settings_options['help_note_disable_comments_plugin'] );
+				update_option( 'rbhn_disable_comments_plugin', $settings_options['help_note_disable_comments_plugin'] );
 				
 			//rbhn_email_post_changes_plugin
 			if ( ! empty( $settings_options['help_note_email_post_changes_plugin'] ));
-				add_option( 'rbhn_email_post_changes_plugin', $settings_options['help_note_email_post_changes_plugin'] );
+				update_option( 'rbhn_email_post_changes_plugin', $settings_options['help_note_email_post_changes_plugin'] );
 				
 			//rbhn_post_type_switcher_plugin
 			if ( ! empty( $settings_options['help_note_post_type_switcher_plugin'] ));
-				add_option( 'rbhn_post_type_switcher_plugin', $settings_options['help_note_post_type_switcher_plugin'] );
+				update_option( 'rbhn_post_type_switcher_plugin', $settings_options['help_note_post_type_switcher_plugin'] );
 				
 			//rbhn_post_type_archive_in_menu_plugin
 			if ( ! empty( $settings_options['help_note_menu_plugin'] ));
-				add_option( 'rbhn_post_type_archive_in_menu_plugin', $settings_options['help_note_menu_plugin'] );
+				update_option( 'rbhn_post_type_archive_in_menu_plugin', $settings_options['help_note_menu_plugin'] );
 				
 			// remove old options from DB
 			delete_option('rbhn_update_request');
-            delete_option('help_note_option');
-            delete_option('help_note_caps_created');
+			delete_option('help_note_option');
+			delete_option('help_note_caps_created');
 
 		}
 	}
@@ -227,7 +205,6 @@ class RBHN_Role_Based_Help_Notes {
 	 
 		return in_array( $role, (array) $user->roles );
 	}
-
 
 	/**
 	 * Returns the selected-active Help Note Custom Post Types
