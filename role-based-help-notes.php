@@ -385,7 +385,7 @@ class RBHN_Role_Based_Help_Notes {
 		global $post;
 
 		//http://pippinsplugins.com/playing-nice-with-the-content-filter/
-		if ( ( get_option('rbhn_contents_page') != "0") && is_page( get_option('rbhn_contents_page') && is_main_query() ) ) {
+		if ( ( get_option('rbhn_contents_page') != "0") && is_page( get_option('rbhn_contents_page') ) && is_main_query() ) {
 			
 			$active_role_notes = $this->rbhn_active_posttypes();
 			
