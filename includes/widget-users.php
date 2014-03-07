@@ -57,11 +57,13 @@ class Users_Widget extends WP_Widget {
 		$post_types_array = get_option('rbhn_post_types');
 		$help_note_role =  '';
 		if (  ! empty($post_types_array ) ) {
-			foreach( $post_types_array as $active_role=>$active_posttype) {
-				if ($post_type == $active_posttype) {
-					$help_note_role =  $active_role;
-					break 2;
-				}
+			foreach( $post_types_array as $key=>$post_array) {
+                foreach( $post_array as $active_role=>$active_posttype) {
+    				if ($post_type == $active_posttype) {
+    					$help_note_role =  $active_role;
+    					break 2;
+				    }
+                }
 			}
 		}
 
@@ -81,7 +83,7 @@ class Users_Widget extends WP_Widget {
 				$class = "user-{$user->ID}";
 				if ( is_author( $user->ID ) )
 					$class .= ' current-user';
-
+                    
 				echo "<li class='{$class}'><a href='{$url}' title='" . esc_attr( $user->display_name ) . "'>{$user->display_name}</a></li>\n";
 			}
 

@@ -3,7 +3,7 @@ Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: 1.2.8.1
+Stable tag: 1.2.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,15 +70,13 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 == Changelog ==
 
+= 1.2.8.2 =
+* 2014-03-07
+* Quick Fix - correction to user listing in widget.
+
 = 1.2.8.1 =
 * 2014-03-07
 * Quick Fix - correction to code directing the page that the contents are sent to.
-1.2.8 version details...
-* Re-factored code into Classes.
-* Settings screen now in tabs.
-* Database handling of options simplified, dropped upgrade support pre 1.2.7 version.
-* New feature: Added the suggested plugin extension ["user_switching"](http://wordpress.org/plugins/user-switching/).
-* New feature: New error message on attempting to disable a plugin that is being forced active by plugin extensions.
 
 = 1.2.8 =
 * 2014-03-06
