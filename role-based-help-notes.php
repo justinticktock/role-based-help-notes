@@ -42,9 +42,6 @@ class RBHN_Role_Based_Help_Notes {
 		// custom post type capabilities
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-capabilities.php' );  
 
-		// if selected install the plugins and force activation
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-install-plugins.php' );    
-
 		// Load the widgets functions file.
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/widgets.php' );
 
@@ -56,12 +53,15 @@ class RBHN_Role_Based_Help_Notes {
 		
 		// A settings page to the admin acitve plugin listing
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'role_based_help_notes_action_links' ));
+
+		// Attached to set_current_user. Loads the plugin installer CLASS after themes are set-up to stop duplication of the CLASS.
+		add_action( 'set_current_user', array( $this, 'set_current_user' ));
 		
 		// Attached to admin_init. Loads the textdomain and the upgrade routine.
 		add_action( 'admin_init', array( $this, 'admin_init' ));
 		
 		// register the selected-active Help Note post types
-		add_action( 'init', array( $this, 'help_register_multiple_posttypes' ));
+		add_action( 'init', array( $this, 'init' ));
 
 		// Load admin error messages	
 		add_action( 'admin_init', array( $this, 'deactivation_notice' ));
@@ -86,6 +86,21 @@ class RBHN_Role_Based_Help_Notes {
 		return $links;
 	}
 
+	
+	
+	
+	/**
+	 * Initialise the plugin installs
+	 *
+	 * @return void
+	 */
+	public function set_current_user() {
+
+		// install the plugins and force activation if they are selected within the plugin settings
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-install-plugins.php' );    	
+		
+	}
+		
 	/**
 	 * Initialise the plugin by handling upgrades and loading the text domain. 
 	 *
@@ -274,7 +289,7 @@ class RBHN_Role_Based_Help_Notes {
 	 * @access public	 
 	 * @return void
 	 */
-	public function help_register_multiple_posttypes() {
+	public function init() {
 		
 		// option collection  
 		$general_help_enabled 	= get_option('rbhn_general_enabled');

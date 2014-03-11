@@ -31,12 +31,14 @@ Extensions:
 If you select the options for extending functionality through other plugins the following are available for ease of installing..
 
 Admin side Plugins..
+
 * [User Switching](http://wordpress.org/plugins/user-switching/) great tool for admins to switch to test any users access/capability.
 * [Simple Page Ordering](http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
 * [Email Post Changes](http://wordpress.org/plugins/email-post-changes/) for emailing out changes to a Help Note as they occur.
 * [post_type_switcher](http://wordpress.org/plugins/post-type-switcher/) plugin by [John James Jacoby](http://profiles.wordpress.org/johnjamesjacoby/) & [Matthew Gerring](http://profiles.wordpress.org/beatpanda/), useful to change the role associated with a Help Note after it has been created.
 
 Front End Plugins..
+
 * [Simple FootNotes](http://wordpress.org/plugins/simple-footnotes/) by [Andrew Nacin](http://profiles.wordpress.org/nacin/) to add a footnote shortcode [ref][/ref].
 * [disable_comments](http://wordpress.org/plugins/disable-comments/) by [solarissmoke](http://profiles.wordpress.org/solarissmoke/) allows you to easily remove comments from 'Help Note' use.
 * [Post type archive in menu](http://wordpress.org/plugins/post-type-archive-in-menu/) plugin by [lpeharda](http://profiles.wordpress.org/lpeharda/) to add 'Help Notes' archives to your menus.
@@ -69,6 +71,10 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 5. The 'twenty fourteen' theme showing the Contents page for a user with 'Proof Reader' role access.
 
 == Changelog ==
+
+= 1.2.9 =
+* 2014-??-??
+* Fix: Corrected the linking to plugin install page if a theme is using the TGM_Plugin_Activation CLASS
 
 = 1.2.8.2 =
 * 2014-03-07
@@ -160,14 +166,5 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 == Upgrade Notice ==
 
-= 1.2.8 =
-You may see a Help Notes not appearing with a 404 error, just re-save your Help Notes settings to clear this issue.
-
-= 1.2.4 =
-You may see a few php warnings if you are in debug mode while the option structure is updated but nothing after that.
-
-= 1.2.0 =
-The 'General Help Notes' are now selectable and initially not-selected, if you wish to continue to use the 'General Help Notes' go to settings and make the selection.
-
-= 1.01 =
-* uninstall 1.0 completely to clean up capabilities before installing 1.01.
+= 1.2.9 =
+["Change Log.."](http://justinandco.com/plugins/role-based-help-notes-change-log/)
