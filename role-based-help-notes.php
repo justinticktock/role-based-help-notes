@@ -536,7 +536,7 @@ class RBHN_Role_Based_Help_Notes {
 	}
 	
 	/**
-	 * Display the admin error message for pluging forced active.
+	 * Display the admin error message for plugin forced active.
 	 *
 	 * @access public
 	 * @return null

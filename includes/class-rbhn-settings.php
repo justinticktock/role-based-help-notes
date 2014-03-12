@@ -78,7 +78,7 @@ class RBHN_Settings {
 				),
 				'rbhn_plugin_extension' => array(
 						'title' 		=> __( 'Plugin Extensions', 'role-based-help-notes-text-domain' ),
-						'description' 	=> __( 'These settings are optional.  Selection of any suggested plugin here will prompt you through the installation or you can go to the Menu ..[Plugins]..[Install Plugins].  The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall.', 'role-based-help-notes-text-domain' ),					
+						'description' 	=> __( 'These settings are optional.  Selection of any suggested plugin here will prompt you through the installation.  The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall.', 'role-based-help-notes-text-domain' ),					
 						'settings' 		=> array(
 												array(
 													'name' 		=> 'rbhn_user_switching',
