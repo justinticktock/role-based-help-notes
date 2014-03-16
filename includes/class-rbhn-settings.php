@@ -2,10 +2,30 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+Class RBHN_Extendible_Settings  {
+
+    private $handlers = array();
+	
+    public function registerHandler($handler) {
+        $this->handlers[] = $handler;
+    }
+
+    public function __call($method, $arguments) {
+        foreach ($this->handlers as $handler) {
+            if (method_exists($handler, $method)) {
+                return call_user_func_array(
+                    array($handler, $method),
+                    $arguments
+                );
+            }
+        }
+    }
+}
+
 /**
  * RBHN_Settings class.
  */
-class RBHN_Settings {
+class RBHN_Settings extends RBHN_Extendible_Settings {
 
 	private static $settings = '';
 	private $default_tab_key = 'rbhn_general';
@@ -247,7 +267,7 @@ class RBHN_Settings {
 	 * @access public
 	 * @return void
 	 */	
-	public function rbhn_hooks_section_callback($section_passed){
+	public function rbhn_hooks_section_callback( $section_passed ){
 		foreach ( self::$settings as $options_group => $section  ) {
 			if (( $section_passed['id'] == $options_group) && ( ! empty( $section['description'] ))) {
 				echo esc_html( self::$settings[$options_group]['description'] );	
@@ -317,8 +337,8 @@ class RBHN_Settings {
 		if ( ! isset( $wp_roles ) )
 		$wp_roles = new WP_Roles();
 
-		$roles = $wp_roles->get_names();
-
+		$roles = $wp_roles->get_names(); 
+		?><ul><?php 
 		asort($roles);
 		foreach($roles as $role_key=>$role_name)
 		{
@@ -329,18 +349,35 @@ class RBHN_Settings {
 
 			// Render the output  
 			?> 
-			<input 
+			<li><label><input 
 				type='checkbox'  
 				id="<?php echo esc_html( "help_notes_{$id}" ) ; ?>" 
 				name="<?php echo esc_html( $option['name'] ); ?>[][<?php echo esc_html( $role_key ) ; ?>]"
-				value="<?php echo esc_html( $post_type_name )	; ?>"<?php checked( $role_active ); ?>
+				value="<?php echo esc_attr( $post_type_name )	; ?>"<?php checked( $role_active ); ?>
 			</input>
-			<?php echo esc_html( $role_name ) . " <br/>";			
-		}								
-									
+			<?php echo esc_html( $role_name ) . " <br/>"; ?>	
+			</label></li>
+			<?php 
+		}?></ul><?php 
 		if ( ! empty( $option['desc'] ))
 			echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';		
 	}
+
+
+	function field_email_post_changes_setting_duplicate( ) {
+			
+		$options = (array) get_option( 'email_post_changes' );
+		?>
+				<ul>
+		<?php		foreach ( Email_Post_Changes::get_post_types() as $post_type ) :
+					$label = Email_Post_Changes::get_post_type_label( $post_type );
+		?>
+					<li><label><input type="checkbox" name="email_post_changes[post_types][]" value="<?php echo esc_attr( $post_type ); ?>"<?php checked( in_array( $post_type, $options['post_types'] ) ); ?> /> <?php echo esc_html( $label ); ?></label></li>
+		<?php		endforeach; ?>
+				</ul>
+		<?php
+	}
+	
 	
 	/**
 	 * field_plugin_checkbox_option 
@@ -484,8 +521,5 @@ class RBHN_Settings {
 		return $plugins; 
 	}
 }
-
-/** Create a new instance of the class */
-new RBHN_Settings();
 
 ?>

@@ -10,7 +10,7 @@ License: GPLv2 or later
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-	
+
 /**
  * RBHN_Role_Based_Help_Notes class.
  *
@@ -48,7 +48,6 @@ class RBHN_Role_Based_Help_Notes {
 		// Load code for better compatibility with other plugins.
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
 		
-
 		/* Hooks... */
 		
 		// A settings page to the admin acitve plugin listing
@@ -125,6 +124,7 @@ class RBHN_Role_Based_Help_Notes {
 		}
 			
 		load_plugin_textdomain('role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	
 	}
 
 	/**
@@ -224,7 +224,7 @@ class RBHN_Role_Based_Help_Notes {
 	 * @access public
 	 * @return array of active Help Notes post types
 	 */		
-	public function rbhn_active_posttypes() {
+	public function active_help_notes() {
 
 		$active_posttypes = array();
 
@@ -273,7 +273,7 @@ class RBHN_Role_Based_Help_Notes {
 
 			// For author queries add Help Note post types
 			if ($query->is_author) {
-				$include_post_types = $role_based_help_notes->rbhn_active_posttypes();
+				$include_post_types = $role_based_help_notes->active_help_notes();
 				$include_post_types[] = 'post';
 				$query->set( 'post_type', $include_post_types);
 			}
@@ -321,6 +321,16 @@ class RBHN_Role_Based_Help_Notes {
 				}
 			}
 		}
+		
+		/**
+		 * Init rbhn_settings class
+		 */
+		$rbhn_settings = new RBHN_Settings();
+
+		if (class_exists(RBHNE_Settings)) {
+			$rbhn_settings->registerHandler(new RBHNE_Settings_Additional_Methods());
+		}
+			
 	}
 
 	/**
@@ -402,7 +412,7 @@ class RBHN_Role_Based_Help_Notes {
 		//http://pippinsplugins.com/playing-nice-with-the-content-filter/
 		if ( ( get_option('rbhn_contents_page') != "0") && is_page( get_option('rbhn_contents_page') ) && is_main_query() ) {
 			
-			$active_role_notes = $this->rbhn_active_posttypes();
+			$active_role_notes = $this->active_help_notes();
 			
 			foreach( $active_role_notes as $posttype_selected) {
 				
@@ -546,7 +556,7 @@ class RBHN_Role_Based_Help_Notes {
 		if ( ! empty( $plugin_message ) ) {
 			?>
 			<div class="error">
-				  <p><?php echo esc_html(sprintf( __( 'Error the %1$s plugin is forced active with ', 'role-based-help-notes-text-domain'), $plugin)); ?>
+				  <p><?php esc_html_e(sprintf( __( 'Error the %1$s plugin is forced active with ', 'role-based-help-notes-text-domain'), $plugin)); ?>
 				  <a href="options-general.php?page=<?php echo HELP_SETTINGS_PAGE ?>&tab=rbhn_plugin_extension"> <?php echo esc_html(__( 'Help Note Settings!', 'role-based-help-notes-text-domain')); ?> </a></p>
 			</div>
 			<?php
