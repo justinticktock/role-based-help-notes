@@ -75,6 +75,7 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 = 1.2.9 =
 * 2014-??-??
 * Fix: Corrected the linking to plugin install page if a theme is using the TGM_Plugin_Activation CLASS
+* New feature:  simplification using method help_notes_role()
 
 = 1.2.8.2 =
 * 2014-03-07

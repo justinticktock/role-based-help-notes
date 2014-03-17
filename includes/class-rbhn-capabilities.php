@@ -39,10 +39,9 @@ class RBHN_Capabilities {
 
 				foreach( $help_note_post_types_array as $active_role=>$active_posttype) {
 
-					//echo "checking active role..." . $active_role 		. "</br>";	
+
 					if ( in_array( $active_role, $caps_options ) )
 						break ; // if capabilities are already created drop out
-					//echo "creating capabilities for $active_role</br></br>";	
 					
 					// add active role to option to stop re-creating its capabilities
 					$caps_options[] = $active_role;
@@ -157,17 +156,8 @@ class RBHN_Capabilities {
 		// collect an array of all inactive Help Note Post Types an remove capabilities
 		$post_types_array = get_option('rbhn_post_types');  
 		
-		$active_roles = array();	
-		
-
-		if (  ! empty($post_types_array ) ) {
-			foreach( $post_types_array as $array) {
-				foreach( $array as $active_role=>$active_posttype) {
-					// add the Help Note active role in an array
-					$active_roles[] = $active_role;
-				}
-			}
-		}
+		global $role_based_help_notes;
+		$active_roles = $role_based_help_notes->help_notes_role();
 
 		// Find capabilities already built.
 		$caps_options = get_option('rbhn_caps_created');
@@ -176,7 +166,6 @@ class RBHN_Capabilities {
 
 				// capabilities have been built so stop further re-builds.
 				if ( $cap_built && ! in_array( $cap_built, $active_roles ) ) {
-					//echo "removing  $cap_built</BR></BR>";		
 
 					// clean up the capabilities 
 					self::rbhn_role_caps_cleanup( $cap_built );
@@ -189,7 +178,6 @@ class RBHN_Capabilities {
 		}
 	}
 	
-
 	/**
 	 * rbhn_map_meta_cap function to add Meta Capability Handling.
 	 *
