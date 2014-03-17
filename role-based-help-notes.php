@@ -259,6 +259,30 @@ class RBHN_Role_Based_Help_Notes {
 		return $active_posttypes;
 	}
 
+    /**
+	 * Returns the array of active Help Notes roles or if a post_type is provided the single role associated.
+	 *
+	 * @access public
+	 * @param string $help_note_post_type post_type name.	 
+	 * @return array of active Help Notes roles
+	 */		
+	public function help_notes_role( $help_note_post_type  = null ) {
+		$post_types_array 		= get_option('rbhn_post_types');
+
+		$help_note_role = array();
+		if (  ! empty( $post_types_array ) ) {
+			foreach( $post_types_array as $array) {	
+				foreach( $array as $active_role=>$active_posttype) {
+					if ( $help_note_post_type == $active_posttype ) {
+						return $active_role; 
+					}
+					$help_note_role[] = $active_role;
+				}
+			}
+		}
+		return $help_note_role; 
+	}
+	
 	/**
 	 * Include the Help Note Custom Post Type in the author post listing
 	 *
