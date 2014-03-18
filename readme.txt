@@ -13,7 +13,7 @@ Help Notes/Posts private to assigned users of a WordPress role.
 
 Do you want to give users a private area to share information based on a role they have been assigned? 
 
-...this plugin allows you to quickly create a custom post type for user roles.  This allows users, with a specific role, the ability to create and edit their own 'help notes' providing a private set of notes for use.  It can be used for anything else that fits with that role (e.g. creating minutes-of-meetings notes etc...).
+...this plugin allows you to quickly create a custom post type for user roles.  This allows users, with a specific role, the ability to create and edit their own 'help notes' providing a private set of notes for use.  It can be used for anything else that fits with that role (e.g. creating and sharing ideas within teams, minutes-of-meetings, formal notes... etc.).
 
 To add new roles to the basic WordPress roles (Administrator, Editor, Subscriber ..etc) you will need to use another plugin refer to [Roles_and_Capabilities](http://codex.wordpress.org/Roles_and_Capabilities#Resources) and Resources.. Plugins.  You can then use one of these plugins (e.g. [User Role Editor](http://wordpress.org/extend/plugins/user-role-editor/ "User Role Editor")) to allocate users to multiple roles.
 
@@ -73,7 +73,7 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 == Changelog ==
 
 = 1.2.9 =
-* 2014-??-??
+* 2014-03-18
 * Fix: Corrected the linking to plugin install page if a theme is using the TGM_Plugin_Activation CLASS
 * New feature:  simplification using method help_notes_role()
 
