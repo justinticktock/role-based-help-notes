@@ -33,6 +33,8 @@ class RBHN_install_plugins {
 		$config = array(
 			'domain'       		=> $theme_text_domain,         	// Text domain - likely want to be the same as your theme.
 			'default_path' 		=> '',                         	// Default absolute path to pre-packaged plugins
+			'parent_menu_slug' 	=> 'plugins.php', 				// Default parent menu slug
+			'parent_url_slug' 	=> 'plugins.php', 				// Default parent URL slug
 			'menu'         		=> 'install-required-plugins', 	// Menu slug
 			'has_notices'      	=> true,                       	// Show admin notices or not
 			'is_automatic'    	=> false,					   	// Automatically activate plugins after installation or not
@@ -61,8 +63,6 @@ class RBHN_install_plugins {
 		
 		tgmpa( $plugins, $config );
 		
-		// remove the action in-case other plugins/themes have also used tgmpa_register
-		//remove_action( 'tgmpa_register', 'rbhn_tgmpa_register' );
 		}
 }
 
