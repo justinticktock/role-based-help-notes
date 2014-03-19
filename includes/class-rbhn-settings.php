@@ -363,22 +363,6 @@ class RBHN_Settings extends RBHN_Extendible_Settings {
 			echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';		
 	}
 
-
-	function field_email_post_changes_setting_duplicate( ) {
-			
-		$options = (array) get_option( 'email_post_changes' );
-		?>
-				<ul>
-		<?php		foreach ( Email_Post_Changes::get_post_types() as $post_type ) :
-					$label = Email_Post_Changes::get_post_type_label( $post_type );
-		?>
-					<li><label><input type="checkbox" name="email_post_changes[post_types][]" value="<?php echo esc_attr( $post_type ); ?>"<?php checked( in_array( $post_type, $options['post_types'] ) ); ?> /> <?php echo esc_html( $label ); ?></label></li>
-		<?php		endforeach; ?>
-				</ul>
-		<?php
-	}
-	
-	
 	/**
 	 * field_plugin_checkbox_option 
 	 *
