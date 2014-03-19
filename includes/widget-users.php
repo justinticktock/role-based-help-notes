@@ -5,14 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Adds Users_Widget widget.
  */
-class Users_Widget extends WP_Widget {
+class RBHN_Users_Widget extends WP_Widget {
 
 	/**
 	 * Register widget with WordPress.
 	 */
 	function __construct() {
 		parent::__construct(
-			'users_widget', // Base ID
+			'rbhn_users_widget', // Base ID
 			__('Help Note Users', 'role-based-help-notes-text-domain'), // Name
 			array( 'description' => __( 'A Users Widget', 'role-based-help-notes-text-domain' ), ) // Args
 		);
@@ -28,10 +28,10 @@ class Users_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		global $role_based_help_notes;
-	
+
        // drop out if not a single Help Note page or Help Hote Archive page.
        // or the General Help Note Type
-       $show_widget_help_notes = $role_based_help_notes->rbhn_active_posttypes();
+       $show_widget_help_notes = $role_based_help_notes->active_help_notes();
        $exclude_help_notes = array('h_general');
        $show_widget_help_notes = array_diff($show_widget_help_notes, $exclude_help_notes);
        
@@ -52,21 +52,9 @@ class Users_Widget extends WP_Widget {
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
         
-		// Find the role based on the post type.
+		// Find the users of the role based on the post type in use
 		$post_type = get_post_type();
-		$post_types_array = get_option('rbhn_post_types');
-		$help_note_role =  '';
-		if (  ! empty($post_types_array ) ) {
-			foreach( $post_types_array as $key=>$post_array) {
-                foreach( $post_array as $active_role=>$active_posttype) {
-    				if ($post_type == $active_posttype) {
-    					$help_note_role =  $active_role;
-    					break 2;
-				    }
-                }
-			}
-		}
-
+    	$help_note_role = $role_based_help_notes->help_notes_role($post_type);
         $users = get_users( Array('role' => $help_note_role) );
 
 		/* If users were found. */

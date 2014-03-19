@@ -28,7 +28,7 @@ function rbhn_register_widgets() {
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/widget-users.php' );
 
 		/* Register the user widget. */
-		register_widget( 'users_widget' );
+		register_widget( 'rbhn_users_widget' );
 	}
 }
 
