@@ -3,7 +3,7 @@ Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: 1.2.8.2
+Stable tag: 1.2.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,8 +74,11 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 = 1.2.9 =
 * 2014-03-18
-* Fix: Corrected the linking to plugin install page if a theme is using the TGM_Plugin_Activation CLASS
 * New feature:  simplification using method help_notes_role()
+* New feature:  added extendibility for Help Notes Extra
+* Fix: Corrected the linking to plugin install page if a theme is using the TGM_Plugin_Activation CLASS
+* Fix: TGM-Plugin-Activation more than once within a site. [#161](https://github.com/thomasgriffin/TGM-Plugin-Activation/pull/168).
+* Fix: removed debug code.
 
 = 1.2.8.2 =
 * 2014-03-07
