@@ -2,8 +2,8 @@
 Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress
 Requires at least: 3.5
-Tested up to: 3.8.1
-Stable tag: 1.2.9.1
+Tested up to: 1.2.9.2
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ So if you want to quickly give a group a private area to share and post ideas/no
 2. Add users to the role.
 3. Enable the Help Notes from the settings.
 
-A global 'General Help Notes' type is also available which is not tided to a specific role, this has the same access/capabilities as the standard WordPress 'post' type for write access, user must be logged in to read General Help Notes.
+A global 'General Help Notes' type is also available which is not tided to a specific role, this has the same access/capabilities as the standard WordPress 'post' type for write access.  Unlike the other Help Notes the General Type is public to read, you can see an example over at an [example content page](https://justinandco.com/plugins/help-notes/).
 
 There is a widget available to list all users with access to the current Help Note type on display. The user display_name is shown and can be selected by each user within their own profile.
 
@@ -72,9 +72,13 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 == Changelog ==
 
+= 1.2.9.2 =
+* 2014-03-27
+* Fix - Help Note Content listing now limited to 'pages' to stop conflict with the '[spots](http://wordpress.org/plugins/spots/)' plugin and any other custom post types placing content elsewhere on the contents page.
+
 = 1.2.9.1 =
 * 2014-03-19
-* Quick Fix - User Widget Class Name now unique so stop conflicts with other plugins.
+* Quick Fix - User Widget Class Name now unique to stop conflicts with other plugins.
 
 = 1.2.9 =
 * 2014-03-18
@@ -173,6 +177,10 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 
 == Upgrade Notice ==
+
+= 1.2.9.1 =
+The User Widget has been changed to fix conflicts.  
+Due to this you will need to replace the widget in your sidebar!
 
 = 1.2.9 =
 ["Change Log.."](http://justinandco.com/plugins/role-based-help-notes-change-log/)

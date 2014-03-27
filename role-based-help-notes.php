@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.2.9
+Version: 1.2.9.2
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
@@ -67,7 +67,7 @@ class RBHN_Role_Based_Help_Notes {
 		add_action( 'admin_notices', array( $this, 'action_admin_notices' ));
 				
 		// Add Contents Details to the Contents page if declared in settings ..
-		add_filter( 'the_content', array( $this, 'rbhn_add_post_content' ));
+		add_filter( 'the_content', array( $this, 'rbhn_add_post_content' ), 12 );
 		
 		// Add the Help Note Custom Post Types to the author post listing
 		add_filter( 'pre_get_posts', array( $this, 'rbhn_custom_post_author_archive' ));
@@ -433,7 +433,10 @@ class RBHN_Role_Based_Help_Notes {
 		
 		global $post;
 
-		//http://pippinsplugins.com/playing-nice-with-the-content-filter/
+		// drop out if not a page or post
+		if ( 'page' != get_post_type() )
+			return $content;
+			
 		if ( ( get_option('rbhn_contents_page') != "0") && is_page( get_option('rbhn_contents_page') ) && is_main_query() ) {
 			
 			$active_role_notes = $this->active_help_notes();
@@ -463,6 +466,7 @@ class RBHN_Role_Based_Help_Notes {
 						
 				$content =  $content . '<p>' . wp_list_pages( $args ) . '</p>';
 			}
+			
 		}
 		return $content;
 	}
