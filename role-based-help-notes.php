@@ -433,7 +433,7 @@ class RBHN_Role_Based_Help_Notes {
 		
 		global $post;
 
-		// drop out if not a page or post
+		// drop out if not a page
 		if ( 'page' != get_post_type() )
 			return $content;
 			
