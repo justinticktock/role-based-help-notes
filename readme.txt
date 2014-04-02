@@ -72,6 +72,10 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 == Changelog ==
 
+= 1.2.x.x =
+* 2014-0x-xx
+* Fix - Updated 'class-tgm-plugin-activation' to version 2.4.0
+
 = 1.2.9.2 =
 * 2014-03-27
 * Fix - Help Note Content listing now limited to 'pages' to stop conflict with the '[spots](http://wordpress.org/plugins/spots/)' plugin and any other custom post types placing content elsewhere on the contents page.

@@ -378,7 +378,7 @@ class RBHN_Settings extends RBHN_Extendible_Settings {
 
 		if ( ! file_exists( $plugin_main_file ) ) {
 			echo esc_html__( 'Enable to prompt installation and force active.', 'role-based-help-notes-text-domain' ) . ' ( ';
-			if ( $value ) echo '  <a href="' . TGM_Plugin_Activation::$instance->parent_menu_slug . '?page=install-required-plugins">' .  esc_html__( "Install", 'role-based-help-notes-text-domain' ) . " </a> | " ;
+			if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  esc_html__( "Install", 'role-based-help-notes-text-domain' ) . " </a> | " ;
 			
 		} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) ) {
 			echo esc_html__(  'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
