@@ -64,15 +64,24 @@ class RBHN_Users_Widget extends WP_Widget {
 
 			/* Loop through each available user, creating a list item with a link to the user's archive. */
 			foreach ( $users as $user ) {
-
+			
+				$url_found = '';
 				$user_id = $user->ID;
-				$url = apply_filters( 'rbhn_author_url', get_author_posts_url( $user_id, $user->user_nicename ) , $user_id);	
+				if ( count_user_posts( $user_id ) > 0 ) {
+					$url_found = get_author_posts_url( $user_id, $user->user_nicename );
+				}
+
+				$url = apply_filters( 'rbhn_author_url', $url_found , $user_id);	
 
 				$class = "user-{$user->ID}";
 				if ( is_author( $user->ID ) )
 					$class .= ' current-user';
-                    
-				echo "<li class='{$class}'><a href='{$url}' title='" . esc_attr( $user->display_name ) . "'>{$user->display_name}</a></li>\n";
+
+				if ( $url ) {
+					echo "<li class='{$class}'><a href='{$url}' title='" . esc_attr( $user->display_name ) . "'>{$user->display_name}</a></li>\n";
+				} else {
+					echo "<li class='{$class}'>{$user->display_name}</li>\n";		
+				}
 			}
 
 			echo '</ul>';

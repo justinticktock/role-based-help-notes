@@ -25,28 +25,12 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	public function __construct() {
-	
-		// Define constants
+
+		// Set the constants needed by the plugin.
+		add_action( 'plugins_loaded', array( $this, 'constants' ), 1 );
 		
-		define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
-		define( 'HELP_MYPLUGINNAME_FULL_PATH', HELP_MYPLUGINNAME_PATH . 'role-based-help-notes.php' );
-		define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
-		define( 'HELP_PLUGIN_DIR', plugin_dir_path( HELP_MYPLUGINNAME_PATH ) );
-		define( 'HELP_SETTINGS_PAGE', 'notes-settings');
-
-		/* Includes... */
-
-		// settings 
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-settings.php' );  
-
-		// custom post type capabilities
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-capabilities.php' );  
-
-		// Load the widgets functions file.
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/widgets.php' );
-
-		// Load code for better compatibility with other plugins.
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
+		/* Load the functions files. */
+		add_action( 'plugins_loaded', array( $this, 'includes' ), 2 );
 		
 		/* Hooks... */
 		
@@ -74,6 +58,46 @@ class RBHN_Role_Based_Help_Notes {
 				
 	}
 
+	
+	/**
+	 * Defines constants used by the plugin.
+	 *
+	 * @return void
+	 */
+	function constants() {
+
+		// Define constants
+		
+		define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
+		define( 'HELP_MYPLUGINNAME_FULL_PATH', HELP_MYPLUGINNAME_PATH . 'role-based-help-notes.php' );
+		define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
+		define( 'HELP_PLUGIN_DIR', plugin_dir_path( HELP_MYPLUGINNAME_PATH ) );
+		define( 'HELP_SETTINGS_PAGE', 'notes-settings');
+		
+	}
+
+	/**
+	 * Loads the initial files needed by the plugin.
+	 *
+	 * @return void
+	 */
+	function includes() {
+	
+		// settings 
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-settings.php' );  
+
+		// custom post type capabilities
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-capabilities.php' );  
+
+		// Load the widgets functions file.
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/widgets.php' );
+
+		// Load code for better compatibility with other plugins.
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
+		
+	}
+
+	
 	/**
 	 * Append new links to the Plugin admin side
 	 *
@@ -351,7 +375,7 @@ class RBHN_Role_Based_Help_Notes {
 		 */
 		$rbhn_settings = new RBHN_Settings();
 
-		if (class_exists(RBHNE_Settings)) {
+		if (class_exists( 'RBHNE_Settings' )) {
 			$rbhn_settings->registerHandler(new RBHNE_Settings_Additional_Methods());
 		}
 			
