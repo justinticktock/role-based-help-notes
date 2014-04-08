@@ -72,9 +72,10 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 == Changelog ==
 
-= 1.2.x.x =
+= 1.2.9.3 =
 * 2014-0x-xx
 * Fix - Updated 'class-tgm-plugin-activation' to version 2.4.0
+* Fix - Removed the hyperlink from users listed in the user-widget who have authored no posts or Help Notes.
 
 = 1.2.9.2 =
 * 2014-03-27
