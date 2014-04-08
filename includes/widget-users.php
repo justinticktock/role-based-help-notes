@@ -64,10 +64,19 @@ class RBHN_Users_Widget extends WP_Widget {
 
 			/* Loop through each available user, creating a list item with a link to the user's archive. */
 			foreach ( $users as $user ) {
-			
+
 				$url_found = '';
 				$user_id = $user->ID;
-				if ( count_user_posts( $user_id ) > 0 ) {
+
+                $args = array(
+                    'author'        => $user_id,
+                    'post_type'     => get_post_types( array('public' => true) ),
+                    'post_status'   => 'publish',
+                );
+                
+                $my_query = new WP_Query( $args );
+
+				if ( $my_query->have_posts() ) {
 					$url_found = get_author_posts_url( $user_id, $user->user_nicename );
 				}
 
@@ -77,11 +86,13 @@ class RBHN_Users_Widget extends WP_Widget {
 				if ( is_author( $user->ID ) )
 					$class .= ' current-user';
 
-				if ( $url ) {
+				if ( ! empty($url) ) {
 					echo "<li class='{$class}'><a href='{$url}' title='" . esc_attr( $user->display_name ) . "'>{$user->display_name}</a></li>\n";
 				} else {
 					echo "<li class='{$class}'>{$user->display_name}</li>\n";		
 				}
+                
+                wp_reset_postdata();
 			}
 
 			echo '</ul>';
