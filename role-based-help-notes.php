@@ -419,14 +419,6 @@ class RBHN_Role_Based_Help_Notes {
 			$help_capabilitytype    = $post_type_name;	
 		};
 		
-		global $wp_version;
-		if (version_compare($wp_version, '3.8', '>=')) {  
-			//if version 3.8 or high we have dashicon support.
-			$help_menu_icon    = apply_filters( 'rbhn_dashicon', 'dashicons-format-aside') ;	
-		} else {
-			$help_menu_icon    = HELP_PLUGIN_URI . '/images/help.png' ;
-		};
-
 		$help_args = array(
 			'labels'              => $help_labels,
 			'public'              => true, 
@@ -444,7 +436,7 @@ class RBHN_Role_Based_Help_Notes {
 			'query_var'           => true,
 			'can_export'          => true,
 			'show_in_nav_menus'   => false,
-			'menu_icon'			  => $help_menu_icon,
+			'menu_icon'			  => apply_filters( 'rbhn_dashicon', 'dashicons-format-aside'),
 		);
 		register_post_type( $post_type_name, $help_args );
 	}
