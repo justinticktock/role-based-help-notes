@@ -73,6 +73,7 @@ class RBHN_Role_Based_Help_Notes {
 		define( 'HELP_PLUGIN_URI', plugins_url('', __FILE__) );
 		define( 'HELP_PLUGIN_DIR', plugin_dir_path( HELP_MYPLUGINNAME_PATH ) );
 		define( 'HELP_SETTINGS_PAGE', 'notes-settings');
+		define( 'HELP_MENU_PAGE', 'notes.php');
 		
 	}
 
@@ -148,7 +149,9 @@ class RBHN_Role_Based_Help_Notes {
 		}
 			
 		load_plugin_textdomain('role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-	
+
+		if ( help_notes_available() ) 
+			add_menu_page( __( 'Notes', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'role-based-help-notes-text-domain' ), 'read', HELP_MENU_PAGE, array( &$this, 'menu_page' ), 'dashicons-format-aside', 6 ); 		
 	}
 
 	/**
@@ -430,7 +433,7 @@ class RBHN_Role_Based_Help_Notes {
 			'publicly_queryable'  => true,
 			'exclude_from_search' => false,
 			'show_ui'             => true,
-			'show_in_menu'        => true,
+			'show_in_menu'        => HELP_MENU_PAGE,
 			'show_in_admin_bar'   => true,
 			'capability_type'     => $help_capabilitytype,
 			'map_meta_cap'        => true,

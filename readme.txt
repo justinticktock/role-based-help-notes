@@ -74,8 +74,9 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 
 = 1.2.9.3 =
 * 2014-0x-xx
-* Fix - Updated 'class-tgm-plugin-activation' to version 2.4.0
-* Fix - Removed the hyperlink from users listed in the user-widget who have authored no posts or Help Notes.
+* New feature:  Moved Help Notes under one menu page.  This de-clutters the Admin menu when multiple Help Notes are used. 
+* Fix: Updated 'class-tgm-plugin-activation' to version 2.4.0
+* Fix: Removed the hyperlink from username in the widget for users who have no published posts.
 
 = 1.2.9.2 =
 * 2014-03-27

@@ -68,13 +68,17 @@ class RBHN_Users_Widget extends WP_Widget {
 				$url_found = '';
 				$user_id = $user->ID;
 
-                $args = array(
+                $my_query_args = array(
                     'author'        => $user_id,
                     'post_type'     => get_post_types( array('public' => true) ),
                     'post_status'   => 'publish',
                 );
                 
-                $my_query = new WP_Query( $args );
+                $my_query = new WP_Query( array(
+                    'author'        => $user_id,
+                    'post_type'     => get_post_types( array('public' => true) ),
+                    'post_status'   => 'publish',
+					));
 
 				if ( $my_query->have_posts() ) {
 					$url_found = get_author_posts_url( $user_id, $user->user_nicename );
@@ -91,15 +95,13 @@ class RBHN_Users_Widget extends WP_Widget {
 				} else {
 					echo "<li class='{$class}'>{$user->display_name}</li>\n";		
 				}
-                
-                wp_reset_postdata();
 			}
 
 			echo '</ul>';
 		}
-        
-        
+
 		echo $args['after_widget'];
+		wp_reset_postdata();
 	}
 
 	/**

@@ -196,7 +196,6 @@ class RBHN_Settings extends RBHN_Extendible_Settings {
 			)
 		);
 	}
-	
 
 	/**
 	 * Called during admin_menu, adds rendered using the plugin_options_page method.
@@ -208,6 +207,15 @@ class RBHN_Settings extends RBHN_Extendible_Settings {
 		add_options_page( __( 'Notes', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'role-based-help-notes-text-domain' ), 'manage_options', $this->plugin_options_key, array( &$this, 'plugin_options_page' ) );
 	}
 
+	/**
+	 * Menu page for Help Notes to become sub menus
+	 *
+	 * @access public
+	 * @return void
+	 */		 
+	public function menu_page() {
+	
+	}
 	
 	/**
 	 * register_settings function.
