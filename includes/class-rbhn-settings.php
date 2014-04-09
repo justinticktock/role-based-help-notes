@@ -380,15 +380,20 @@ class RBHN_Settings extends RBHN_Extendible_Settings {
 	 */
 	public function field_plugin_checkbox_option( array $args  ) {
 		$option   = $args['option'];
-		$value = get_option( $option['name'] );
-		?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php 
+		if ( is_plugin_active_for_network( $option['slug'] . '/' . $option['slug'] . '.php' )) {
+			?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" disabled="disabled" checked="checked"/> <?php
+		} else {
+			$value = get_option( $option['name'] );
+			?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php 
+		}
+		
 		$plugin_main_file =  HELP_PLUGIN_DIR . $option['slug'] . '/' .  $option['slug'] . '.php' ;
 
 		if ( ! file_exists( $plugin_main_file ) ) {
 			echo esc_html__( 'Enable to prompt installation and force active.', 'role-based-help-notes-text-domain' ) . ' ( ';
 			if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  esc_html__( "Install", 'role-based-help-notes-text-domain' ) . " </a> | " ;
 			
-		} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) ) {
+		} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) &&  ! is_plugin_active_for_network( $option['slug'] . '/' . $option['slug'] . '.php' )) {
 			echo esc_html__(  'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
 			if ( ! $value ) echo '<a href="plugins.php?s=' . esc_html( $option['label'] )	 . '">' .  esc_html__( "Deactivate", 'role-based-help-notes-text-domain' ) . "</a> | " ;	
 		} else {
