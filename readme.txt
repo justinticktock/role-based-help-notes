@@ -75,9 +75,10 @@ Yes ... [Answer](http://wordpress.org/support/topic/is-there-a-theme-template-i-
 = 1.2.9.3 =
 * 2014-0x-xx
 * New feature:  Moved Help Notes under one menu page.  This de-clutters the Admin menu when multiple Help Notes are used.  Also dropped the icon for pre-3.8 WordPress.
+* New feature:  Added Private Help Notes to the Contents Page, viewable only if logged in.
 * Fix: Updated 'class-tgm-plugin-activation' to version 2.4.0
-* Fix: Removed the hyperlink from username in the widget for users who have no published posts.
-* Fix: Removed the Deactivate hyperlink from the plugin_extension settings when the plugin has been Network Activated.
+* Fix: Removed the hyper-link from user name in the widget for users who have no published posts.
+* Fix: Removed the Deactivate hyper-link from the plugin_extension settings when the plugin has been Network Activated.
 
 = 1.2.9.2 =
 * 2014-03-27

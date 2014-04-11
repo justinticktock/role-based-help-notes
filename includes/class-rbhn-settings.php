@@ -80,7 +80,7 @@ class RBHN_Settings extends RBHN_Extendible_Settings {
 												'label' 	=> __( 'Contents Page', 'download_monitor' ),
 												'desc'		=> __( 'If you wish to create a contents page add a new page and select it here so that the Help Note Contents are displayed.', 'role-based-help-notes-text-domain' ),
 												'type'      => 'field_help_notes_contents_page_option',
-												),						
+												),
 										),
 				),
 				'rbhn_roles' => array(

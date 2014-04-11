@@ -32,11 +32,17 @@ if ( !function_exists('help_notes_available') ) {
 		global $role_based_help_notes; 
 		
 		// option collection  
-		$general_help_enabled 	= get_option('rbhn_general_enabled');
 		$post_types_array 		= get_option('rbhn_post_types');
 		
-	   // if General Help Notes enabled
-	   if ( $general_help_enabled  ) 
+		// General Help Notes
+		$my_query = new WP_Query( array(
+			'post_type'     => array( 'h_general' ),
+			'post_status'  => ( is_user_logged_in() ? 'publish,private' : 'publish' ),
+			));
+		
+		wp_reset_postdata();
+		
+		if ( $my_query->have_posts() )
 			return true;
 
 	   //if the current user has the role of an active Help Note.
@@ -52,5 +58,4 @@ if ( !function_exists('help_notes_available') ) {
 		return false;
 	}
 }
-
 ?>

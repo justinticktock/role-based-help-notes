@@ -68,12 +68,6 @@ class RBHN_Users_Widget extends WP_Widget {
 				$url_found = '';
 				$user_id = $user->ID;
 
-                $my_query_args = array(
-                    'author'        => $user_id,
-                    'post_type'     => get_post_types( array('public' => true) ),
-                    'post_status'   => 'publish',
-                );
-                
                 $my_query = new WP_Query( array(
                     'author'        => $user_id,
                     'post_type'     => get_post_types( array('public' => true) ),

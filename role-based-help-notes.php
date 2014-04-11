@@ -480,7 +480,7 @@ class RBHN_Role_Based_Help_Notes {
 							'link_after'   => '',
 							'walker'       => '',
 							'post_type'    => "$posttype_selected",
-							'post_status'  => 'publish' 
+							'post_status'  => ( is_user_logged_in() ? 'publish,private' : 'publish' ),
 						);
 						
 				$content =  $content . '<p>' . wp_list_pages( $args ) . '</p>';
