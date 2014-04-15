@@ -40,11 +40,13 @@ if ( !function_exists('help_notes_available') ) {
 			'post_status'  => ( is_user_logged_in() ? 'publish,private' : 'publish' ),
 			));
 		
+		if ( $my_query->have_posts() ) {
+			wp_reset_postdata();
+			return true;
+			}
+	
 		wp_reset_postdata();
 		
-		if ( $my_query->have_posts() )
-			return true;
-
 	   //if the current user has the role of an active Help Note.
 		if (  ! empty( $post_types_array ) ) {	
 			foreach( $post_types_array as $array) {

@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.2.9.3
+Version: 1.2.9.0
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class RBHN_Role_Based_Help_Notes {
 
+	const HELP_NOW_DELAY_IN_DAYS = 1;
+   
 	/**
 	 * __construct function.
 	 *
@@ -135,6 +137,9 @@ class RBHN_Role_Based_Help_Notes {
 		$plugin_current_version = get_option( 'rbhn_plugin_version' );
 		$plugin_new_version =  $this->plugin_get_version();
 		
+		// Admin notice hide prompt notice catch
+		$this->catch_hide_notice();
+
 		if ( empty($plugin_current_version) || $plugin_current_version < $plugin_new_version ) {
 		
 			$plugin_current_version = isset( $plugin_current_version ) ? $plugin_current_version : 0;
@@ -342,9 +347,12 @@ class RBHN_Role_Based_Help_Notes {
 	 */
 	public function init() {
 		
+		$this->action_init_store_user_start_date();
+		
 		// option collection  
 		$general_help_enabled 	= get_option('rbhn_general_enabled');
 		$post_types_array 		= get_option('rbhn_post_types');
+		
 		
 		if ( isset( $general_help_enabled ) && ! empty( $general_help_enabled ) ) {
 			// generate a genetic help note post type
@@ -511,6 +519,9 @@ class RBHN_Role_Based_Help_Notes {
 	 */	
 	public function help_do_on_activation() {
 
+		// Record plugin activation date.
+		add_option('rbhn_install_date',  time() ); 
+		
 		// create the plugin_version store option if not already present.
 		$plugin_version = $this->plugin_get_version();
 		update_option('rbhn_plugin_version', $plugin_version ); 
@@ -590,6 +601,9 @@ class RBHN_Role_Based_Help_Notes {
 		foreach ( $plugins as $plugin ) {
 			$this->action_admin_plugin_forced_active_notices( $plugin["slug"] );
 		}
+		
+		// Prompt for rating
+		$this->action_admin_rating_prompt_notices();
 	}
 	
 	/**
@@ -599,6 +613,7 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return null
 	 */
 	public function action_admin_plugin_forced_active_notices( $plugin ) {
+	
 		$plugin_message = get_option("rbhn_deactivate_{$plugin}");
 		if ( ! empty( $plugin_message ) ) {
 			?>
@@ -608,6 +623,113 @@ class RBHN_Role_Based_Help_Notes {
 			</div>
 			<?php
 			update_option("rbhn_deactivate_{$plugin}", false); 
+		}
+	}
+
+		
+	/**
+	 * Store the current users start date with Help Notes.
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function action_init_store_user_start_date() {
+		
+		if ( help_notes_available() ) {
+			// start date for a user
+			add_user_meta( get_current_user_id(), 'rbhn_start_date', time(), true );
+			//add_option('rbhn_install_date',  time() );
+		}
+	}
+
+	
+	/**
+	 * Display the admin message for plugin rating prompt.
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function action_admin_rating_prompt_notices( ) {
+	
+		$help_note_post_types =  get_option('rbhn_post_types');
+		$help_note_post_types = array_filter( $help_note_post_types );  // Filter out any empty entries, if non active.	
+
+
+		$number_of_help_notes_acitve 	= ( empty( $help_note_post_types ) ? 0 : count($help_note_post_types) );
+
+		$user_responses =  array_filter( get_user_meta( get_current_user_id(), 'rbhn_prompt_response', true ));	
+//		if ( in_array(  "not_now", $user_responses )) {
+//			echo  "not_now is true";
+//		}
+		
+		if ( in_array(  "done_now", $user_responses )) 
+			return;
+
+//echo "rbhn_prompt_timeout = " . get_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', true ) ; 
+			
+		if (( $number_of_help_notes_acitve > 0 ) || get_option('rbhn_general_enabled') ) {
+		
+			$plugin_user_start_date = get_user_meta( get_current_user_id(), 'rbhn_start_date', true );
+			$timeout_days = get_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', true );
+			if ( ! empty( $plugin_user_start_date ) && ( time() > ( $plugin_user_start_date + ( 60*60*24* $timeout_days )))) {
+				?>
+				<div class="update-nag">
+				
+					<p><?php esc_html(printf( __("You've been using <b>Role Based Help Notes</b> for %s now.  How about giving it a review by logging in at wordpress.org ?", 'role-based-help-notes-text-domain'), human_time_diff( $plugin_user_start_date) )); ?>
+					
+					<?php if ( get_option('rbhn_general_enabled') ) { ?>
+						<li><?php esc_html(printf( __("The site is using General Help Notes type.", 'role-based-help-notes-text-domain'))); ?>
+					<?php } ?>
+					
+					<?php if ( $number_of_help_notes_acitve ) { ?>
+						<LI><?php esc_html(printf( _n("You are using Help Notes with 1 user role.",  "You are using Help Notes with %d user roles.", $number_of_help_notes_acitve, 'role-based-help-notes-text-domain'), $number_of_help_notes_acitve ) ); ?>
+						<?php  for ($x=0; $x<$number_of_help_notes_acitve; $x++) echo '  :-) '; ?>
+					<?php } ?>						
+					</p>
+					<p>
+						  <?php echo ' <a href="' .  esc_url(add_query_arg( array( 'rbhn_hide_notice' => 'done_now' )))  . '">' .  esc_html__( "I've already done this !", 'role-based-help-notes-extra-text-domain' ) . '</a> ';?>
+						| <a href='http://wordpress.org/support/view/plugin-reviews/role-based-help-notes' target='_blank'><?php esc_html_e( __("Yes, please take me there.", 'role-based-help-notes-text-domain'));?></a> 
+						| <?php echo ' <a href="' .  esc_url(add_query_arg( array( 'rbhn_hide_notice' => 'not_now' )))  . '">' .  esc_html__( "Not right now thanks.", 'role-based-help-notes-extra-text-domain' ) . '</a> ';?>
+					</p>
+				</div>
+				<?php
+				update_option("rbhn_deactivate_{$plugin}", false); 
+			}
+		}
+	}
+	
+	/**
+	 * Store the user selection from the rate the plugin prompt.
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function catch_hide_notice() {
+	
+
+		//if ( ! empty( $user_user_hide_message ) && current_user_can( 'install_plugins' )) {
+		if ( isset($_GET['rbhn_hide_notice']) && $_GET['rbhn_hide_notice'] && current_user_can( 'install_plugins' )) {
+			
+			$user_user_hide_message = array( sanitize_key( $_GET['rbhn_hide_notice'] )) ;				
+			$user_responses =  array_filter( get_user_meta( get_current_user_id(), 'rbhn_prompt_response', true ));	
+//echo var_dump ( $user_responses ) ."  </br>";
+
+			if ( ! empty( $user_responses )) {
+				$response = array_unique( array_merge( $user_user_hide_message, $user_responses ));
+			} else {
+				$response =  $user_user_hide_message;
+			}
+//echo	 var_dump ( (array)$response );	
+
+			update_user_meta( get_current_user_id(), 'rbhn_prompt_response', $response );
+//echo var_dump($user_user_hide_message		);
+			if ( in_array( "not_now", (array_values((array)$user_user_hide_message ))))  {
+				$timeout =  get_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', true ) + self::HELP_NOW_DELAY_IN_DAYS ;		
+				update_user_meta( get_current_user_id(), 'rbhn_prompt_timeout' , $timeout );		
+			}
+				
+			wp_redirect( remove_query_arg( 'rbhn_hide_notice' ) );
+			exit;		
 		}
 	}	
 }
