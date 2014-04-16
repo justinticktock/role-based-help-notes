@@ -29,26 +29,18 @@ function rbhn_bp_enable_root_profiles($val, $user_id ) {
 if ( !function_exists('help_notes_available') ) {
 	function help_notes_available() {
 	
+		// check if no help notes are selected.
+		$help_note_post_types =  get_option('rbhn_post_types');
+		if ( ! array_filter( (array) $help_note_post_types ) && ! get_option('rbhn_general_enabled') )
+			return false;
+
+	   
 		global $role_based_help_notes; 
-		
 		// option collection  
 		$post_types_array 		= get_option('rbhn_post_types');
 		
-		// General Help Notes
-		$my_query = new WP_Query( array(
-			'post_type'     => array( 'h_general' ),
-			'post_status'  => ( is_user_logged_in() ? 'publish,private' : 'publish' ),
-			));
-		
-		if ( $my_query->have_posts() ) {
-			wp_reset_postdata();
-			return true;
-			}
-	
-		wp_reset_postdata();
-		
-	   //if the current user has the role of an active Help Note.
-		if (  ! empty( $post_types_array ) ) {	
+		//if the current user has the role of an active Help Note.
+		if (  array_filter( (array) $post_types_array )) {	
 			foreach( $post_types_array as $array) {
 				foreach( $array as $active_role=>$active_posttype) {
 					if ($role_based_help_notes->help_notes_current_user_has_role( $active_role )) {
@@ -57,6 +49,23 @@ if ( !function_exists('help_notes_available') ) {
 				}
 			}	
 		}   
+		
+		// option collection  
+		$post_types_array = (array)get_option('rbhn_post_types'); // also Remove any empty array items.
+
+		// General Help Notes
+		$my_query = new WP_Query( array(
+			'post_type'     => array( 'h_general' ),
+			//'post_status'  => ( is_user_logged_in() ? 'publish' : 'publish' ),
+			));
+		
+		if ( $my_query->have_posts() ) {
+			wp_reset_postdata();
+			//die( print_r($my_query) );
+			return true;
+			}
+	
+		wp_reset_postdata();
 		return false;
 	}
 }

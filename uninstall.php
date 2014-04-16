@@ -46,6 +46,12 @@ function rbhn_clean_database() {
 		delete_option('rbhn_deactivate_post-type-switcher');
 		delete_option('rbhn_post_type_archive_in_menu_plugin');
 		delete_option('rbhn_deactivate_post-type-archive-in-menu');
+		
+		// user specific database entries
+		delete_user_meta( get_current_user_id(), 'rbhn_prompt_response', $meta_value );
+		delete_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', $meta_value );
+		delete_user_meta( get_current_user_id(), 'rbhn_start_date', $meta_value );
+		delete_user_meta( get_current_user_id(), 'rbhn_hide_notice', $meta_value );
 
 }
 		
