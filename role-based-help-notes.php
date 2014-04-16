@@ -640,7 +640,7 @@ class RBHN_Role_Based_Help_Notes {
 		if ( help_notes_available() ) {
 			// start meta for a user
 			add_user_meta( get_current_user_id(), 'rbhn_start_date', time(), true );
-			add_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', self::HELP_NOW_DELAY_IN_DAYS, true );
+			add_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', time() + 60*60*24*  self::HELP_NOW_DELAY_IN_DAYS, true );
 		}
 	}
 
@@ -664,11 +664,10 @@ class RBHN_Role_Based_Help_Notes {
 			return;
 
 		if ( current_user_can( 'install_plugins' ) && (( $number_of_help_notes_acitve > 0 ) || get_option('rbhn_general_enabled')) ) {
-
-			$plugin_user_start_date = get_user_meta( get_current_user_id(), 'rbhn_start_date', true );
-			$timeout_days = get_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', true );
-
-			if ( ! empty( $plugin_user_start_date ) && ( time() > ( $plugin_user_start_date + ( 60*60*24* $timeout_days )))) {
+			
+			$next_prompt_time = get_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', true );
+			if ( ( time() > $next_prompt_time )) {
+				$plugin_user_start_date = get_user_meta( get_current_user_id(), 'rbhn_start_date', true );
 				?>
 				<div class="update-nag">
 					
@@ -720,8 +719,8 @@ class RBHN_Role_Based_Help_Notes {
 			update_user_meta( get_current_user_id(), 'rbhn_hide_notice', $response );
 
 			if ( in_array( "not_now", (array_values((array)$user_user_hide_message ))))  {
-				$timeout =  get_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', true ) + self::HELP_NOW_DELAY_IN_DAYS ;
-				update_user_meta( get_current_user_id(), 'rbhn_prompt_timeout' , $timeout );		
+				$next_prompt_time = time() + ( 60*60*24*  self::HELP_NOW_DELAY_IN_DAYS ) ;
+				update_user_meta( get_current_user_id(), 'rbhn_prompt_timeout' , $next_prompt_time );		
 			}
 				
 			wp_redirect( remove_query_arg( 'rbhn_hide_notice' ) );
