@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.2.9.3
+Version: 1.2.9.4
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class RBHN_Role_Based_Help_Notes {
 
-	const HELP_NOW_DELAY_IN_DAYS = 7;
+	const HELP_NOW_DELAY_IN_DAYS = 30;
    
 	/**
 	 * __construct function.
@@ -658,9 +658,8 @@ class RBHN_Role_Based_Help_Notes {
 
 		$number_of_help_notes_acitve 	= ( empty( $help_note_post_types ) ? 0 : count($help_note_post_types) );
 
-		$user_responses =  array_filter( (array)get_user_meta( get_current_user_id(), 'rbhn_prompt_response', true ));	
-
-		if ( in_array(  "done_now", $user_responses )) 
+		$user_responses =  array_filter( (array)get_user_meta( get_current_user_id(), 'rbhn_hide_notice', true ));	
+		if ( in_array(  "done_now", $user_responses ) ) 
 			return;
 
 		if ( current_user_can( 'install_plugins' ) && (( $number_of_help_notes_acitve > 0 ) || get_option('rbhn_general_enabled')) ) {
@@ -683,11 +682,15 @@ class RBHN_Role_Based_Help_Notes {
 					<?php } ?>						
 					</p>
 					<p>
-						<a href='http://wordpress.org/support/view/plugin-reviews/role-based-help-notes' target='_blank'><?php esc_html_e( __("Yes, please take me there.", 'role-based-help-notes-text-domain'));?></a> 
 
+						<?php echo '<a href="' .  esc_url(add_query_arg( array( 'rbhn_hide_notice' => 'doing_now' )))  . '">' .  esc_html__( "Yes, please take me there.", 'role-based-help-notes-extra-text-domain' ) . '</a> '; ?>
+						
 						| <?php echo ' <a href="' .  esc_url(add_query_arg( array( 'rbhn_hide_notice' => 'not_now' )))  . '">' .  esc_html__( "Not right now thanks.", 'role-based-help-notes-extra-text-domain' ) . '</a> ';?>
 						
-						<?php echo '| <a href="' .  esc_url(add_query_arg( array( 'rbhn_hide_notice' => 'done_now' )))  . '">' .  esc_html__( "I've already done this !", 'role-based-help-notes-extra-text-domain' ) . '</a> ';?>
+						<?php
+						if ( in_array(  "not_now", $user_responses ) || in_array(  "doing_now", $user_responses )) { 
+							echo '| <a href="' .  esc_url(add_query_arg( array( 'rbhn_hide_notice' => 'done_now' )))  . '">' .  esc_html__( "I've already done this !", 'role-based-help-notes-extra-text-domain' ) . '</a> ';
+						}?>
 
 					</p>
 				</div>
@@ -707,7 +710,7 @@ class RBHN_Role_Based_Help_Notes {
 		if ( isset($_GET['rbhn_hide_notice']) && $_GET['rbhn_hide_notice'] && current_user_can( 'install_plugins' )) {
 			
 			$user_user_hide_message = array( sanitize_key( $_GET['rbhn_hide_notice'] )) ;				
-			$user_responses =  array_filter( (array)get_user_meta( get_current_user_id(), 'rbhn_prompt_response', true ));	
+			$user_responses =  array_filter( (array)get_user_meta( get_current_user_id(), 'rbhn_hide_notice', true ));	
 
 			if ( ! empty( $user_responses )) {
 				$response = array_unique( array_merge( $user_user_hide_message, $user_responses ));
@@ -718,10 +721,18 @@ class RBHN_Role_Based_Help_Notes {
 			check_admin_referer();	
 			update_user_meta( get_current_user_id(), 'rbhn_hide_notice', $response );
 
+			if ( in_array( "doing_now", (array_values((array)$user_user_hide_message ))))  {
+				$next_prompt_time = time() + ( 60*60*24*  self::HELP_NOW_DELAY_IN_DAYS ) ;
+				update_user_meta( get_current_user_id(), 'rbhn_prompt_timeout' , $next_prompt_time );
+				wp_redirect( 'http://wordpress.org/support/view/plugin-reviews/role-based-help-notes' );
+				exit;					
+			}
+
 			if ( in_array( "not_now", (array_values((array)$user_user_hide_message ))))  {
 				$next_prompt_time = time() + ( 60*60*24*  self::HELP_NOW_DELAY_IN_DAYS ) ;
 				update_user_meta( get_current_user_id(), 'rbhn_prompt_timeout' , $next_prompt_time );		
 			}
+				
 				
 			wp_redirect( remove_query_arg( 'rbhn_hide_notice' ) );
 			exit;		
