@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class RBHN_Role_Based_Help_Notes {
 
-	const HELP_NOW_DELAY_IN_DAYS = 30;
+	
    
 	/**
 	 * __construct function.
@@ -76,6 +76,11 @@ class RBHN_Role_Based_Help_Notes {
 		define( 'HELP_PLUGIN_DIR', plugin_dir_path( HELP_MYPLUGINNAME_PATH ) );
 		define( 'HELP_SETTINGS_PAGE', 'notes-settings');
 		define( 'HELP_MENU_PAGE', 'notes.php');
+		
+		// admin prompt constants
+		define( 'PROMPT_DELAY_IN_DAYS', 30);
+		define( 'PROMPT_ARGUMENT', 'rbhn_hide_notice');
+	
 		
 	}
 
@@ -640,7 +645,7 @@ class RBHN_Role_Based_Help_Notes {
 		if ( help_notes_available() ) {
 			// start meta for a user
 			add_user_meta( get_current_user_id(), 'rbhn_start_date', time(), true );
-			add_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', time() + 60*60*24*  self::HELP_NOW_DELAY_IN_DAYS, true );
+			add_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', time() + 60*60*24*  PROMPT_DELAY_IN_DAYS, true );
 		}
 	}
 
@@ -658,7 +663,7 @@ class RBHN_Role_Based_Help_Notes {
 
 		$number_of_help_notes_acitve 	= ( empty( $help_note_post_types ) ? 0 : count($help_note_post_types) );
 
-		$user_responses =  array_filter( (array)get_user_meta( get_current_user_id(), 'rbhn_hide_notice', true ));	
+		$user_responses =  array_filter( (array)get_user_meta( get_current_user_id(), PROMPT_ARGUMENT, true ));	
 		if ( in_array(  "done_now", $user_responses ) ) 
 			return;
 
@@ -683,13 +688,13 @@ class RBHN_Role_Based_Help_Notes {
 					</p>
 					<p>
 
-						<?php echo '<a href="' .  esc_url(add_query_arg( array( 'rbhn_hide_notice' => 'doing_now' )))  . '">' .  esc_html__( "Yes, please take me there.", 'role-based-help-notes-extra-text-domain' ) . '</a> '; ?>
+						<?php echo '<a href="' .  esc_url(add_query_arg( array( PROMPT_ARGUMENT => 'doing_now' )))  . '">' .  esc_html__( "Yes, please take me there.", 'role-based-help-notes-extra-text-domain' ) . '</a> '; ?>
 						
-						| <?php echo ' <a href="' .  esc_url(add_query_arg( array( 'rbhn_hide_notice' => 'not_now' )))  . '">' .  esc_html__( "Not right now thanks.", 'role-based-help-notes-extra-text-domain' ) . '</a> ';?>
+						| <?php echo ' <a href="' .  esc_url(add_query_arg( array( PROMPT_ARGUMENT => 'not_now' )))  . '">' .  esc_html__( "Not right now thanks.", 'role-based-help-notes-extra-text-domain' ) . '</a> ';?>
 						
 						<?php
 						if ( in_array(  "not_now", $user_responses ) || in_array(  "doing_now", $user_responses )) { 
-							echo '| <a href="' .  esc_url(add_query_arg( array( 'rbhn_hide_notice' => 'done_now' )))  . '">' .  esc_html__( "I've already done this !", 'role-based-help-notes-extra-text-domain' ) . '</a> ';
+							echo '| <a href="' .  esc_url(add_query_arg( array( PROMPT_ARGUMENT => 'done_now' )))  . '">' .  esc_html__( "I've already done this !", 'role-based-help-notes-extra-text-domain' ) . '</a> ';
 						}?>
 
 					</p>
@@ -707,10 +712,10 @@ class RBHN_Role_Based_Help_Notes {
 	 */
 	public function catch_hide_notice() {
 	
-		if ( isset($_GET['rbhn_hide_notice']) && $_GET['rbhn_hide_notice'] && current_user_can( 'install_plugins' )) {
+		if ( isset($_GET[PROMPT_ARGUMENT]) && $_GET[PROMPT_ARGUMENT] && current_user_can( 'install_plugins' )) {
 			
-			$user_user_hide_message = array( sanitize_key( $_GET['rbhn_hide_notice'] )) ;				
-			$user_responses =  array_filter( (array)get_user_meta( get_current_user_id(), 'rbhn_hide_notice', true ));	
+			$user_user_hide_message = array( sanitize_key( $_GET[PROMPT_ARGUMENT] )) ;				
+			$user_responses =  array_filter( (array)get_user_meta( get_current_user_id(), PROMPT_ARGUMENT, true ));	
 
 			if ( ! empty( $user_responses )) {
 				$response = array_unique( array_merge( $user_user_hide_message, $user_responses ));
@@ -719,22 +724,22 @@ class RBHN_Role_Based_Help_Notes {
 			}
 			
 			check_admin_referer();	
-			update_user_meta( get_current_user_id(), 'rbhn_hide_notice', $response );
+			update_user_meta( get_current_user_id(), PROMPT_ARGUMENT, $response );
 
 			if ( in_array( "doing_now", (array_values((array)$user_user_hide_message ))))  {
-				$next_prompt_time = time() + ( 60*60*24*  self::HELP_NOW_DELAY_IN_DAYS ) ;
+				$next_prompt_time = time() + ( 60*60*24*  PROMPT_DELAY_IN_DAYS ) ;
 				update_user_meta( get_current_user_id(), 'rbhn_prompt_timeout' , $next_prompt_time );
 				wp_redirect( 'http://wordpress.org/support/view/plugin-reviews/role-based-help-notes' );
 				exit;					
 			}
 
 			if ( in_array( "not_now", (array_values((array)$user_user_hide_message ))))  {
-				$next_prompt_time = time() + ( 60*60*24*  self::HELP_NOW_DELAY_IN_DAYS ) ;
+				$next_prompt_time = time() + ( 60*60*24*  PROMPT_DELAY_IN_DAYS ) ;
 				update_user_meta( get_current_user_id(), 'rbhn_prompt_timeout' , $next_prompt_time );		
 			}
 				
 				
-			wp_redirect( remove_query_arg( 'rbhn_hide_notice' ) );
+			wp_redirect( remove_query_arg( PROMPT_ARGUMENT ) );
 			exit;		
 		}
 	}	
