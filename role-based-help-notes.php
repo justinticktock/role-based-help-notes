@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.2.9.4
+Version: 1.2.9.5
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 License: GPLv2 or later
@@ -44,6 +44,7 @@ class RBHN_Role_Based_Help_Notes {
 		
 		// Attached to admin_init. Loads the textdomain and the upgrade routine.
 		add_action( 'admin_init', array( $this, 'admin_init' ));
+        add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		
 		// register the selected-active Help Note post types
 		add_action( 'init', array( $this, 'init' ));
@@ -131,7 +132,20 @@ class RBHN_Role_Based_Help_Notes {
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-install-plugins.php' );    	
 		
 	}
+        
+    /**
+	 * Initialise the plugin menu. 
+	 *
+	 * @return void
+	 */
+	public function admin_menu() {
 		
+		// check if no help notes are selected before adding the menu
+		$help_note_post_types =  get_option('rbhn_post_types');
+		if ( array_filter( (array) $help_note_post_types ) || get_option('rbhn_general_enabled') )
+			add_menu_page( __( 'Notes', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'role-based-help-notes-text-domain' ), 'read', HELP_MENU_PAGE, array( &$this, 'menu_page' ), 'dashicons-format-aside', '4.123123123'); 		
+	}
+        
 	/**
 	 * Initialise the plugin by handling upgrades and loading the text domain. 
 	 *
@@ -159,11 +173,6 @@ class RBHN_Role_Based_Help_Notes {
 		}
 			
 		load_plugin_textdomain('role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-
-		// check if no help notes are selected before adding the menu
-		$help_note_post_types =  get_option('rbhn_post_types');
-		if ( array_filter( (array) $help_note_post_types ) || get_option('rbhn_general_enabled') )
-			add_menu_page( __( 'Notes', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'role-based-help-notes-text-domain' ), 'read', HELP_MENU_PAGE, array( &$this, 'menu_page' ), 'dashicons-format-aside', 6 ); 		
 	}
 
 	/**
