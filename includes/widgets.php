@@ -25,7 +25,7 @@ function rbhn_register_widgets() {
     if ( isset( $option ) && !empty( $option ) ) {
 
 		/* Load the user widget file. */
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/widget-users.php' );
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-users-widget.php' );
 
 		/* Register the user widget. */
 		register_widget( 'rbhn_users_widget' );

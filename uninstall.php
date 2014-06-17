@@ -33,22 +33,22 @@ function rbhn_clean_database() {
 		
 		// plugin specific database entries
 		delete_option('rbhn_user_switching');
-		delete_option('rbhn_deactivate_user-switching');
 		delete_option('rbhn_simple_page_ordering');
-		delete_option('rbhn_deactivate_simple-page-ordering');
 		delete_option('rbhn_simple_footnotes_plugin');
-		delete_option('rbhn_deactivate_simple-footnotes');
 		delete_option('rbhn_disable_comments_plugin');
-		delete_option('rbhn_deactivate_disable-comments');
 		delete_option('rbhn_email_post_changes_plugin');
-		delete_option('rbhn_deactivate_email-post-changes');
 		delete_option('rbhn_post_type_switcher_plugin');
-		delete_option('rbhn_deactivate_post-type-switcher');
 		delete_option('rbhn_post_type_archive_in_menu_plugin');
+		
+		delete_option('rbhn_deactivate_user-switching');
+		delete_option('rbhn_deactivate_simple-page-ordering');
+		delete_option('rbhn_deactivate_simple-footnotes');
+		delete_option('rbhn_deactivate_disable-comments');
+		delete_option('rbhn_deactivate_email-post-changes');
+		delete_option('rbhn_deactivate_post-type-switcher');
 		delete_option('rbhn_deactivate_post-type-archive-in-menu');
 		
 		// user specific database entries
-		delete_user_meta( get_current_user_id(), 'rbhn_prompt_response', $meta_value );
 		delete_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', $meta_value );
 		delete_user_meta( get_current_user_id(), 'rbhn_start_date', $meta_value );
 		delete_user_meta( get_current_user_id(), 'rbhn_hide_notice', $meta_value );

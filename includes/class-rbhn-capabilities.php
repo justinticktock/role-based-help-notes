@@ -3,7 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * RBHN_Settings class.
+ * Tabbed_Settings class.
  */
 class RBHN_Capabilities {
 
@@ -68,9 +68,9 @@ class RBHN_Capabilities {
 					$administrator->add_cap( "edit_{$capability_type}" );
 					$administrator->add_cap( "read_{$capability_type}" );
 					$administrator->add_cap( "delete_{$capability_type}" );
-					$administrator->add_cap( "create_{$capability_type}s" );
 					
 					// add administrator roles
+					$administrator->add_cap( "create_{$capability_type}s" );
 					$administrator->add_cap( "edit_{$capability_type}s" );
 					$administrator->add_cap( "edit_others_{$capability_type}s" );
 					$administrator->add_cap( "publish_{$capability_type}s" );
