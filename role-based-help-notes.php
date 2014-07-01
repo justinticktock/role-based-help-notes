@@ -6,6 +6,8 @@ Description: The addition of Custom Post Type to cover site help notes
 Version: 1.2.9.5
 Author: Justin Fletcher
 Author URI: http://justinandco.com
+Text Domain: role-based-help-notes-text-domain
+Domain Path: /languages/
 License: GPLv2 or later
 */
 
@@ -18,6 +20,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class RBHN_Role_Based_Help_Notes {
 
+    public	 $plugin_full_path;
+	public   $plugin_file = 'role-based-help-notes/role-based-help-notes.php';
+    public	 $menu = 'notes-settings';
+	
 	/**
 	 * __construct function.
 	 *
@@ -25,21 +31,19 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	public function __construct() {
-
+			
+		$this->plugin_full_path = plugin_dir_path(__FILE__) . 'role-based-help-notes.php' ;
+		
 		// Set the constants needed by the plugin.
 		add_action( 'plugins_loaded', array( $this, 'constants' ), 1 );
 		
 		/* Load the functions files. */
 		add_action( 'plugins_loaded', array( $this, 'includes' ), 2 );
-		
+			
 		/* Hooks... */
 		
-		// A settings page to the admin acitve plugin listing
-		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'role_based_help_notes_action_links' ));
-
-//		// Attached to set_current_user. Loads the plugin installer CLASS after themes are set-up to stop duplication of the CLASS.
-//		add_action( 'set_current_user', array( $this, 'set_current_user' ));
-		add_action( 'init', array( $this, 'set_current_user' ));
+		// Attached to set_current_user. Loads the plugin installer CLASS after themes are set-up to stop duplication of the CLASS.
+		add_action( 'set_current_user', array( $this, 'set_current_user' ));
 		
 		// register admin side - Loads the textdomain, upgrade routine and menu item.
 		add_action( 'admin_init', array( $this, 'admin_init' ));
@@ -57,10 +61,10 @@ class RBHN_Role_Based_Help_Notes {
 		
 		// Add the Help Note Custom Post Types to the author post listing
 		add_filter( 'pre_get_posts', array( $this, 'rbhn_custom_post_author_archive' ));
-				
-	}
-
 	
+	}
+	
+
 	/**
 	 * Defines constants used by the plugin.
 	 *
@@ -70,7 +74,6 @@ class RBHN_Role_Based_Help_Notes {
 
 		// Define constants
 		define( 'HELP_MYPLUGINNAME_PATH', plugin_dir_path(__FILE__) );
-		define( 'HELP_MYPLUGINNAME_FULL_PATH', HELP_MYPLUGINNAME_PATH . 'role-based-help-notes.php' );
 		define( 'HELP_PLUGIN_DIR', trailingslashit( plugin_dir_path( HELP_MYPLUGINNAME_PATH )));
 		define( 'HELP_MENU_PAGE', 'notes.php');
 
@@ -101,17 +104,6 @@ class RBHN_Role_Based_Help_Notes {
 		
 	}
 
-	
-	/**
-	 * Append new links to the Plugin admin side
-	 *
-	 * @param array $links Current links/urls provided for the plugin admin.
-	 * @return array $links
-	 */
-	public function role_based_help_notes_action_links( $links ) {
-		array_unshift( $links, '<a href="options-general.php?page=' . Tabbed_Settings::$instance->menu . '">' . __( 'Settings' ) . "</a>" );
-		return $links;
-	}
 
 	/**
 	 * Initialise the plugin installs
@@ -131,13 +123,14 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	public function admin_menu() {
-		
-		if ( help_notes_available() ) {
-			// check if no help notes are selected before adding the menu
-			$help_note_post_types =  get_option('rbhn_post_types');
-			if ( array_filter( (array) $help_note_post_types ) || get_option('rbhn_general_enabled') )
+if ( ! help_notes_available() )
+	return; 
+			// check if no help notes are selected before adding the menu ...
+			//   Roles are selected in the settings.
+			//   OR the general Help Notes is selected in the settings.
+			//   OR there are help note posts created and viewable.
+			if ( array_filter( (array)  get_option('rbhn_post_types')) || get_option('rbhn_general_enabled') || help_notes_available() )
 				add_menu_page( __( 'Help Notes', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'role-based-help-notes-text-domain' ), 'read', HELP_MENU_PAGE, array( &$this, 'menu_page' ), 'dashicons-format-aside', '4.123123123');
-		}
 	}
     
 	/**
@@ -155,7 +148,7 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	public function admin_init() {
-		
+
 		$plugin_current_version = get_option( 'rbhn_plugin_version' );
 		$plugin_new_version =  $this->plugin_get_version();
 		
@@ -455,7 +448,9 @@ class RBHN_Role_Based_Help_Notes {
 			'show_in_nav_menus'   => false,
 			'menu_icon'			  => apply_filters( 'rbhn_dashicon', 'dashicons-format-aside'),
 		);
+
 		register_post_type( $post_type_name, $help_args );
+
 	}
 
 	/**
@@ -551,12 +546,29 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return $plugin_version
 	 */	
 	public function plugin_get_version() {
-		$plugin_data = get_plugin_data( HELP_MYPLUGINNAME_FULL_PATH );	
-		$plugin_version = $plugin_data['Version'];	
+		$plugin_data = get_plugin_data( $this->plugin_full_path );	
+		$plugin_version = $plugin_data['Version'];
 		return filter_var($plugin_version, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 	}
-
 	
+	/**
+	 * Returns current plugin filename.
+	 *
+	 * @access public
+	 * @return $plugin_file
+	 */	
+	public function get_plugin_file() {
+		
+		$plugin_data = get_plugin_data( $this->plugin_full_path );	
+		$plugin_name = $plugin_data['Name'];
+		
+		require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+		$plugins = get_plugins();
+		foreach( $plugins as $plugin_file => $plugin_info ) {
+			if ( $plugin_info['Name'] == $plugin_name ) return $plugin_file;
+		}
+		return null;
+	}
 		
 	/**
 	 * Register Plugin Deactivation Hooks for all the currently 
@@ -566,10 +578,10 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return null
 	 */
 	public function deactivation_notice() {
-
-		
+		//global $rbhn_tabbed_settings_instance;
+			//$plugins = $rbhn_tabbed_settings_instance->selected_plugins();
+			$plugins = Tabbed_Settings_Child::selected_plugins();
 			
-			$plugins = selected_plugins();
 //die( print_r($plugins));
 
 			// loop plugins forced active.
@@ -608,7 +620,7 @@ class RBHN_Role_Based_Help_Notes {
 	 */
 	public function action_admin_notices() {
 
-		$plugins = selected_plugins();
+		$plugins = Tabbed_Settings::selected_plugins();
 		//if ( true )
 		//	return;
 //die( var_dump($plugins));
@@ -636,7 +648,7 @@ class RBHN_Role_Based_Help_Notes {
 			?>
 			<div class="error">
 				  <p><?php esc_html_e(sprintf( __( 'Error the %1$s plugin is forced active with ', 'role-based-help-notes-text-domain'), $plugin)); ?>
-				  <a href="options-general.php?page=<?php echo Tabbed_Settings::$instance->menu ?>&tab=rbhn_plugin_extension"> <?php echo esc_html(__( 'Help Note Settings!', 'role-based-help-notes-text-domain')); ?> </a></p>
+				  <a href="options-general.php?page=<?php echo $this->menu ; ?>&tab=plugin_extension"> <?php echo esc_html(__( 'Help Note Settings!', 'role-based-help-notes-text-domain')); ?> </a></p>
 			</div>
 			<?php
 			update_option("rbhn_deactivate_{$plugin}", false); 
@@ -759,5 +771,6 @@ class RBHN_Role_Based_Help_Notes {
  * Init role_based_help_notes class
  */
 $role_based_help_notes = new RBHN_Role_Based_Help_Notes();
+
 
 ?>

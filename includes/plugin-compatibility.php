@@ -30,20 +30,18 @@ function rbhn_bp_enable_root_profiles($val, $user_id ) {
 if ( !function_exists('help_notes_available') ) {
 	function help_notes_available() {
 	
+		global $role_based_help_notes; 
+			
 		// check if no help notes are selected.
 		$help_note_post_types =  get_option('rbhn_post_types');
-	
+
 		if ( ! array_filter( (array) $help_note_post_types ) && ! get_option('rbhn_general_enabled') )
 			return false;
 
-	   
-		global $role_based_help_notes; 
-		// option collection  
-		$post_types_array 		= get_option('rbhn_post_types');
-	
+
 		//if the current user has the role of an active Help Note.
-		if (  array_filter( (array) $post_types_array )) {	
-			foreach( $post_types_array as $array) {
+		if (  array_filter( (array) $help_note_post_types )) {	
+			foreach( $help_note_post_types as $array) {
 				foreach( $array as $active_role=>$active_posttype) {
 					if ($role_based_help_notes->help_notes_current_user_has_role( $active_role )) {
 						return true;

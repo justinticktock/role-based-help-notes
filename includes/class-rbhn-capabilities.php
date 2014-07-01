@@ -3,7 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
- * Tabbed_Settings class.
+ * RBHN_Capabilities class.
  */
 class RBHN_Capabilities {
 

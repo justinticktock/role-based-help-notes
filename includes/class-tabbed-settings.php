@@ -34,8 +34,10 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 	 */
 	class Tabbed_Settings extends Extendible_Tabbed_Settings {
 
-		public static $instance;
-		public $settings = array();	
+//		public static $instance;
+		public static $settings = array();
+//		public static $config = array();
+
 		
 		// the following are configurable externally
         public $menu = '';
@@ -49,7 +51,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 */	 
 		function __construct() {
 
-			self::$instance = $this;
+//			self::$instance = $this;
 
 			// hook priority = 9 to load settings before the class-tgm-plugin-activation.php runs with the same init hook at priority level 10
 			add_action( 'init', array( $this, 'init' ), 9 );
@@ -68,7 +70,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 */
 		public function init() {
 		
-			do_action( 'ticktock_settings_register' );
+			do_action( 'tabbed_settings_register' );
 			// After this point, the settings should be registered and the configuration set.
 			
 		}
@@ -80,6 +82,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */	 
 		public function add_admin_menus() {
+			
 			add_options_page( __( 'Notes', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'role-based-help-notes-text-domain' ), 'manage_options', $this->menu, array( &$this, 'plugin_options_page' ) );
 		}
 
@@ -96,15 +99,18 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
         public function register_tabbed_settings( $settings ) {
 
 			foreach ( $settings as $tab_name => $registered_setting_page ) {
-				$this->settings[$tab_name] = $registered_setting_page;	
+//				$this->settings[$tab_name] = $registered_setting_page;	
+				self::$settings[$tab_name] = $registered_setting_page;	
 			}	
         }
 
         /**
-         * Amend default configuration.
+         * Amend default configuration.  This function strips out the config array elements and stores them 
+         * as a variable within the current Class object $this->"config-element" will be the means to return the 
+         * current configuration stored.
          *
          * @param array $config Array of config options to pass as class properties.
-		 * @return - sets up the CLASS object values $this->config-setting.
+		 * @return - sets up the CLASS object values $this->config.
          */
         public function register_config( $config ) {
 
@@ -117,7 +123,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
                 if ( isset( $config[$key] ) ) {
                     if ( is_array( $config[$key] ) ) {
                         foreach ( $config[$key] as $subkey => $value ) {
-                            $this->{$key}[$subkey] = $value;
+                           $this->{$key}[$subkey] = $value;
                         }
                     } else {
                         $this->$key = $config[$key];
@@ -134,7 +140,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 */
 		public function render_setting_page(){
 
-			foreach ( $this->settings as $options_group => $section  ) {
+			foreach ( self::$settings as $options_group => $section  ) {
 
 				foreach ( $section['settings'] as $option ) {
 					$this->current_section = $section;
@@ -163,9 +169,11 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			global $role_based_help_notes;
 			$tab = isset( $_GET['tab'] ) ? sanitize_key($_GET['tab'] ) : $this->default_tab_key;
 			if ( ! empty( $_GET['settings-updated'] )) {
-				flush_rewrite_rules();
+				do_action( 'tabbed_settings_after_update' );
+////////// >>>>>>  to do next 2 lines	>>>>>>  using the above hook
 				$role_based_help_notes->help_do_on_activation();		// add the active capabilities
 				RBHN_Capabilities::rbhn_clean_inactive_capabilties();	// remove the inactive role capabilities
+				flush_rewrite_rules();
 			}
 			?>
 			<div class="wrap">
@@ -189,9 +197,9 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */	
 		public function hooks_section_callback( $section_passed ){
-			foreach ( $this->settings as $options_group => $section  ) {
-				if (( $section_passed['id'] == $options_group) && ( ! empty( $section['description'] ))) {
-					echo esc_html( $this->settings[$options_group]['description'] );	
+			foreach ( self::$settings as $options_group => $section  ) {
+				if (( $section_passed['id'] == $options_group) && ( ! empty( $section['description'] ))) {	
+					echo esc_html( self::$settings[$options_group]['description'] );	
 				}
 			}
 		 }
@@ -337,59 +345,86 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */
 		public function plugin_options_tabs() {
+		
 			$current_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : $this->default_tab_key;
 
 			screen_icon();
 			echo '<h2 class="nav-tab-wrapper">';
-			foreach ( $this->tabbed_settings as $tab_key => $tab_caption ) {
+			foreach ( self::$settings as $tab_key => $tab_options_array ) {
 				$active = $current_tab == $tab_key ? 'nav-tab-active' : '';
-				echo '<a class="nav-tab ' . $active . '" href="?page=' . $this->menu . '&tab=' . $tab_key . '">' . $tab_caption . '</a>';	
+				echo '<a class="nav-tab ' . $active . '" href="?page=' . $this->menu . '&tab=' . $tab_key . '">' . $tab_options_array['title'] . '</a>';	
 			}
 			echo '</h2>';
 		}
 
+
+
+
+		/**
+		 * selected_plugins function.
+		 *
+		 * @access public
+		 * @return array of plugins selected within the settings page for installation via the TGM_Plugin_Activation class
+		 */
+		public STATIC function selected_plugins() {
+
+			$plugins = array();
+
+			if ( Tabbed_Settings::$settings ) {
+
 		
-        /**
-         * Returns the singleton instance of the class.
-         * @return object The Tabbed_Settings object.
-         */
-        public static function get_instance() {
+				$plugin_array = Tabbed_Settings::$settings['plugin_extension']['settings'];
 
-            if ( ! isset( self::$instance ) && ! ( self::$instance instanceof Tabbed_Settings ) ) {
-                self::$instance = new Tabbed_Settings();
-            }
-				
-            return self::$instance;
+				foreach ( $plugin_array as $plugin ) {
 
-        }
+					if ( get_option( $plugin['name'] ) ) {
+						// change the array element key name from 'label' to 'name' for use by TGM Activation
+						$plugin['option-name'] = $plugin['name'];
+						$plugin['name'] = $plugin['label'];
+						unset($plugin['label']);
+						$plugins[] = $plugin;
+					}
+				}
+			}
+			
+			return $plugins;
+		}
+
+
+		
+		/**
+		 * Returns the *Singleton* instance of this class.
+		 *
+		 * @return Singleton The *Tabbed_Settings* instance.
+		 */
+		public static function get_instance()
+		{
+			static $instance = null;
+			if (null === $instance) {
+				$instance = new static();
+			}
+
+			return $instance;
+		}
 		
 	}
 	
     // Ensure only one instance of the class is ever invoked.
-    $ticktock_settings = Tabbed_Settings::get_instance();
+	Tabbed_Settings::get_instance();
 }
 
 
-if ( ! function_exists( 'ticktock_settings' ) ) {
-    /**
-     * Helper function to register a collection of required plugins.
-     *
-     * @since 2.0.0
-     * @api
-     *
-     * @param array $settings An array of tab page settings arrays.
-     * @param array $config  Optional. An array of configuration values.
-     */
-    function ticktock_settings( $settings, $config = array() ) {
+if ( ! class_exists( 'Tabbed_Settings_Child' ) ) {
 
-		if (  $settings ) {
-            Tabbed_Settings::$instance->register_tabbed_settings( $settings );
-        }
+	/**
+	 * Tabbed_Settings class.
+	 */
+	class Tabbed_Settings_Child extends Tabbed_Settings {
 
-        if ( $config ) {
-            Tabbed_Settings::$instance->register_config( $config );
-        }
-    }
+	}
 }
+
+
+
 
 ?>
