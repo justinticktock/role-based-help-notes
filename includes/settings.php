@@ -5,15 +5,24 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 global $role_based_help_notes;
 add_filter( 'plugin_action_links_' . $role_based_help_notes->plugin_file , 'rbhn_plugin_action_links');
 
-
 // Append new links to the Plugin admin side
 function rbhn_plugin_action_links( $links ) {
 
 	global $role_based_help_notes; 
-	
+
 	$settings_link = '<a href="options-general.php?page=' . $role_based_help_notes->menu . '">' . __( 'Settings' ) . "</a>";
 	array_push( $links, $settings_link );
 	return $links;
+}
+
+add_action( 'tabbed_settings_after_update', 'rbhn_after_settings_update' );
+
+// add action to the post settings update..
+function rbhn_after_settings_update( ) {
+	global $role_based_help_notes;
+	$role_based_help_notes->help_do_on_activation();		// add the active capabilities
+	RBHN_Capabilities::rbhn_clean_inactive_capabilties();	// remove the inactive role capabilities
+	flush_rewrite_rules();	
 }
 
 
@@ -22,6 +31,8 @@ function rbhn_plugin_action_links( $links ) {
 $rbhn_config = array(
 				'default_tab_key' => 'rbhn_general',		// Default settings tab, opened on first settings page open.
 				'menu' => $role_based_help_notes->menu ,    // menu options page slug name.
+				'menu_title' => $role_based_help_notes->menu_title,    		// menu options page slug name.
+				'page_title' => $role_based_help_notes->page_title,    		// menu options page title.
 				);
 
 				
@@ -69,7 +80,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 															),					
 														),
 							),
-							'plugin_extension' => array(
+							'rbhn_plugin_extension' => array(
 									'title' 		=> __( 'Plugin Extensions', 'role-based-help-notes-text-domain' ),
 									'description' 	=> __( 'These settings are optional.  Selection of any suggested plugin here will prompt you through the installation.  The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall.', 'role-based-help-notes-text-domain' ),					
 									'settings' 		=> array(
@@ -81,6 +92,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 																'desc'		=> __( 'This is a useful plugin for Administrators to set multiple WordPress roles to users', 'role-based-help-notes-text-domain' ),
 																'type'      => 'field_plugin_checkbox_option',
 																// the following are for tgmpa_register activation of the plugin
+																'plugin_dir'			=> HELP_PLUGIN_DIR,
 																'slug'      			=> 'user-role-editor', 
 																'required'              => false,
 																'force_deactivation' 	=> false,
@@ -94,6 +106,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 																'desc'		=> __( 'This is a useful plugin for Administrators to define Menus to be visible for users according to their allocated roles.', 'role-based-help-notes-text-domain' ),
 																'type'      => 'field_plugin_checkbox_option',
 																// the following are for tgmpa_register activation of the plugin
+																'plugin_dir'			=> HELP_PLUGIN_DIR,
 																'slug'      			=> 'menu-items-visibility-control', 
 																'required'              => false,
 																'force_deactivation' 	=> false,
@@ -107,6 +120,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 																'desc'		=> __( 'This is a useful plugin for Administrators to test the accessibility of users with different roles, you can simply switch to their account to check how the Help Notes appear for them.', 'role-based-help-notes-text-domain' ),
 																'type'      => 'field_plugin_checkbox_option',
 																// the following are for tgmpa_register activation of the plugin
+																'plugin_dir'			=> HELP_PLUGIN_DIR,
 																'slug'      			=> 'user-switching', 
 																'required'              => false,
 																'force_deactivation' 	=> false,
@@ -120,6 +134,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 																'desc'		=> __( 'Once installed go you can drag pages up/down within the admin side to re-order Help Notes.', 'role-based-help-notes-text-domain' ),
 																'type'      => 'field_plugin_checkbox_option',
 																// the following are for tgmpa_register activation of the plugin
+																'plugin_dir'			=> HELP_PLUGIN_DIR,
 																'slug'      			=> 'simple-page-ordering', 
 																'required'              => false,
 																'force_deactivation' 	=> false,
@@ -133,6 +148,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 																'desc'		=> __( "Once installed go you can use the 'ref' shortcode for example... [ref]Add footnote text here[/ref] within your posts.", 'role-based-help-notes-text-domain' ),
 																'type'      => 'field_plugin_checkbox_option',
 																// the following are for tgmpa_register activation of the plugin
+																'plugin_dir'			=> HELP_PLUGIN_DIR,
 																'slug'      			=> 'simple-footnotes',
 																'required'              => false,
 																'force_deactivation' 	=> false,
@@ -146,6 +162,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 																'desc'		=> __( 'Comments are of less value for Help Notes and this plugin will allow you to easily remove comments from use.', 'role-based-help-notes-text-domain' ),
 																'type'      => 'field_plugin_checkbox_option',
 																// the following are for tgmpa_register activation of the plugin
+																'plugin_dir'			=> HELP_PLUGIN_DIR,
 																'slug'      			=> 'disable-comments',
 																'required'              => false,
 																'force_deactivation' 	=> false,
@@ -159,6 +176,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 																'desc'		=> __( 'Once installed go to [Settings]...[Email Post Changes] to use the plugin and notify specific users of changes to Help Notes by email.', 'role-based-help-notes-text-domain' ),
 																'type'      => 'field_plugin_checkbox_option',
 																// the following are for tgmpa_register activation of the plugin
+																'plugin_dir'			=> HELP_PLUGIN_DIR,
 																'slug'      			=> 'email-post-changes',
 																'required'              => false,
 																'force_deactivation' 	=> false,
@@ -172,6 +190,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 																'desc'		=> __( "This plugin will allow users with two or more roles the ability to change the role assigned to a help note.  Once installed you will find a new selection/edit option in the 'Publish' area.", 'role-based-help-notes-text-domain' ),
 																'type'      => 'field_plugin_checkbox_option',
 																// the following are for tgmpa_register activation of the plugin
+																'plugin_dir'			=> HELP_PLUGIN_DIR,
 																'slug'      			=> 'post-type-switcher', 
 																'required'              => false,
 																'force_deactivation' 	=> false,
@@ -185,6 +204,7 @@ $rbhn_settings = 	apply_filters( 'rbhn_settings',
 																'desc'		=> __( "Once installed go to [Appearance]...[Menus] and locate the 'Archives' metabox for use in your theme menus.", 'role-based-help-notes-text-domain' ),
 																'type'      => 'field_plugin_checkbox_option',
 																// the following are for tgmpa_register activation of the plugin
+																'plugin_dir'			=> HELP_PLUGIN_DIR,
 																'slug'      			=> 'post-type-archive-in-menu', 
 																'required'              => false,
 																'force_deactivation' 	=> false,
@@ -204,9 +224,12 @@ if ( ! isset( $rbhn_tabbed_settings_instance )) {
 	// Include the Tabbed_Settings class.
 	require_once( dirname( __FILE__ ) . '/class-tabbed-settings.php' );
 	
-	$rbhn_tabbed_settings_instance = Tabbed_Settings_Child::get_instance();
-	$rbhn_tabbed_settings_instance->register_tabbed_settings( $rbhn_settings );
-	$rbhn_tabbed_settings_instance->register_config( $rbhn_config );
+	$rbhn_tabbed_settings_instance = new Tabbed_Settings( $rbhn_settings, $rbhn_config );
+//	$rbhn_tabbed_settings_instance->register_tabbed_settings( $rbhn_settings );
+//	$rbhn_tabbed_settings_instance->register_config( $rbhn_config );
+
+
+//echo( var_dump($rbhn_tabbed_settings_instance));	
 }
 
 

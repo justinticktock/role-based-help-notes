@@ -22,7 +22,15 @@ class RBHN_Role_Based_Help_Notes {
 
     public	 $plugin_full_path;
 	public   $plugin_file = 'role-based-help-notes/role-based-help-notes.php';
+	
+	// Settings page slug	
     public	 $menu = 'notes-settings';
+	
+	// Settings Admin Menu Title
+    public	 $menu_title = 'Help Notes';
+	
+	// Settings Page Title
+    public	 $page_title = 'Help Notes';
 	
 	/**
 	 * __construct function.
@@ -159,12 +167,12 @@ if ( ! help_notes_available() )
 		
 			$plugin_current_version = isset( $plugin_current_version ) ? $plugin_current_version : 0;
 
-			$this->rbhn_upgrade( $plugin_current_version );
+			$this->upgrade( $plugin_current_version );
 
 			// set default options if not already set..
-			$this->help_do_on_activation();
+			$this->plugin_do_on_activation();
 			
-			// Update the option again after rbhn_upgrade() changes and set the current plugin revision	
+			// Update the option again after upgrade() changes and set the current plugin revision	
 			update_option('rbhn_plugin_version', $plugin_new_version ); 
 		}
 			
@@ -177,7 +185,7 @@ if ( ! help_notes_available() )
 	 * @param float $current_plugin_version the local plugin version prior to an update 
 	 * @return void
 	 */
-	public function rbhn_upgrade( $current_plugin_version ) {
+	public function upgrade( $current_plugin_version ) {
 		
 		// move current database stored values into the next structure
 		if ( $current_plugin_version < '1.2.8' ) {
@@ -521,7 +529,7 @@ if ( ! help_notes_available() )
 	 * @access public
 	 * @return $settings
 	 */	
-	public function help_do_on_activation() {
+	public function plugin_do_on_activation() {
 
 		// Record plugin activation date.
 		add_option('rbhn_install_date',  time() ); 
@@ -578,9 +586,13 @@ if ( ! help_notes_available() )
 	 * @return null
 	 */
 	public function deactivation_notice() {
+	
+		$plugins = array();
 		//global $rbhn_tabbed_settings_instance;
 			//$plugins = $rbhn_tabbed_settings_instance->selected_plugins();
-			$plugins = Tabbed_Settings_Child::selected_plugins();
+//$plugins = Tabbed_Settings::selected_plugins();
+//		global $rbhn_tabbed_settings_instance;
+//		$plugins = $rbhn_tabbed_settings_instance->selected_plugins();
 			
 //die( print_r($plugins));
 
@@ -619,8 +631,11 @@ if ( ! help_notes_available() )
 	 * @return null
 	 */
 	public function action_admin_notices() {
+		$plugins = array();	
+//$plugins = Tabbed_Settings::selected_plugins();
+//		global $rbhn_tabbed_settings_instance;
+//		$plugins = $rbhn_tabbed_settings_instance->selected_plugins();
 
-		$plugins = Tabbed_Settings::selected_plugins();
 		//if ( true )
 		//	return;
 //die( var_dump($plugins));
@@ -648,7 +663,7 @@ if ( ! help_notes_available() )
 			?>
 			<div class="error">
 				  <p><?php esc_html_e(sprintf( __( 'Error the %1$s plugin is forced active with ', 'role-based-help-notes-text-domain'), $plugin)); ?>
-				  <a href="options-general.php?page=<?php echo $this->menu ; ?>&tab=plugin_extension"> <?php echo esc_html(__( 'Help Note Settings!', 'role-based-help-notes-text-domain')); ?> </a></p>
+				  <a href="options-general.php?page=<?php echo $this->menu ; ?>&tab=rbhn_plugin_extension"> <?php echo esc_html(__( 'Help Note Settings!', 'role-based-help-notes-text-domain')); ?> </a></p>
 			</div>
 			<?php
 			update_option("rbhn_deactivate_{$plugin}", false); 

@@ -7,24 +7,26 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Everything is pulled into this Class to allow for extendibility with including
  * new callouts that are required on a plugin by plugin basis.
  */
-Class Extendible_Tabbed_Settings  {
+if ( ! class_exists( 'Extendible_Tabbed_Settings' ) ) { 
+	Class Extendible_Tabbed_Settings  {
 
-    private $handlers = array();
-	
-    public function registerHandler($handler) {
-        $this->handlers[] = $handler;
-    }
+		private $handlers = array();
+		
+		public function registerHandler($handler) {
+			$this->handlers[] = $handler;
+		}
 
-    public function __call($method, $arguments) {
-        foreach ($this->handlers as $handler) {
-            if (method_exists($handler, $method)) {
-                return call_user_func_array(
-                    array($handler, $method),
-                    $arguments
-                );
-            }
-        }
-    }
+		public function __call($method, $arguments) {
+			foreach ($this->handlers as $handler) {
+				if (method_exists($handler, $method)) {
+					return call_user_func_array(
+						array($handler, $method),
+						$arguments
+					);
+				}
+			}
+		}
+	}
 }
 
 if ( ! class_exists( 'Tabbed_Settings' ) ) {
@@ -35,12 +37,14 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 	class Tabbed_Settings extends Extendible_Tabbed_Settings {
 
 //		public static $instance;
-		public static $settings = array();
-//		public static $config = array();
+//		public $settings = array();
+//		public $config = array();
 
-		
+
 		// the following are configurable externally
         public $menu = '';
+        public $menu_title = '';
+        public $page_title = '';
 		public $default_tab_key = '';
 
 		/**
@@ -49,7 +53,13 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @access public
 		 * @return void
 		 */	 
-		function __construct() {
+		function __construct( $settings, $config ) {
+
+		//	$settings = $settings ;
+		
+			$this->settings = $settings;
+//			$this->config = $config;
+			$this->register_config( $config );
 
 //			self::$instance = $this;
 
@@ -82,8 +92,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */	 
 		public function add_admin_menus() {
-			
-			add_options_page( __( 'Notes', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'role-based-help-notes-text-domain' ), 'manage_options', $this->menu, array( &$this, 'plugin_options_page' ) );
+			add_options_page( __( $this->page_title, 'role-based-help-notes-text-domain' ), __( $this->menu_title, 'role-based-help-notes-text-domain' ), 'manage_options', $this->menu, array( $this, 'plugin_options_page' ) );
 		}
 
         /**
@@ -99,8 +108,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
         public function register_tabbed_settings( $settings ) {
 
 			foreach ( $settings as $tab_name => $registered_setting_page ) {
-//				$this->settings[$tab_name] = $registered_setting_page;	
-				self::$settings[$tab_name] = $registered_setting_page;	
+				$this->settings[$tab_name] = $registered_setting_page;	
+//				self::$settings[$tab_name] = $registered_setting_page;	
 			}	
         }
 
@@ -117,6 +126,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
             $keys = array( 
 						'default_tab_key',
 						'menu',
+						'menu_title',
+						'page_title',
 					);
 
             foreach ( $keys as $key ) {
@@ -140,20 +151,23 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 */
 		public function render_setting_page(){
 
-			foreach ( self::$settings as $options_group => $section  ) {
-
-				foreach ( $section['settings'] as $option ) {
-					$this->current_section = $section;
-					
-					if ( isset( $option['std'] ) )
-						add_option( $option['name'], $option['std'] );
+			foreach ( $this->settings as $options_group => $section  ) {
+//die( var_dump($section));
+				if ( isset( $section['settings'] )) {
+					foreach ( $section['settings'] as $option ) {
+//						$this->current_section = $section;
 						
-					$this->tabbed_settings[$options_group] = $section['title'];
-					register_setting( $options_group, $option['name'] );
-					add_settings_section( $options_group, $section['title'], array( $this, 'hooks_section_callback' ), $options_group );
-					
-					$callback_type = ( $option['type'] ? $option['type'] : "field_default_option" );
-					add_settings_field( $option['name'].'_setting-id', $option['label'], array( $this, $callback_type ), $options_group, $options_group, array( 'option' => $option )  );	
+						if ( isset( $option['std'] ) )
+							add_option( $option['name'], $option['std'] );
+						
+						$sanitize_callback = ( isset( $option['sanitize_callback'] ) ? $option['sanitize_callback'] : "" );
+//						$this->tabbed_settings[$options_group] = $section['title'];
+						register_setting( $options_group, $option['name'], $sanitize_callback );
+						add_settings_section( $options_group, $section['title'], array( $this, 'hooks_section_callback' ), $options_group );
+						
+						$callback_type = ( isset($option['type']) ? $option['type'] : "field_default_option" );
+						add_settings_field( $option['name'].'_setting-id', $option['label'], array( $this, $callback_type ), $options_group, $options_group, array( 'option' => $option )  );	
+					}
 				}
 			}
 		}
@@ -166,14 +180,14 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */		 
 		public function plugin_options_page() {
-			global $role_based_help_notes;
+//			global $role_based_help_notes;
 			$tab = isset( $_GET['tab'] ) ? sanitize_key($_GET['tab'] ) : $this->default_tab_key;
 			if ( ! empty( $_GET['settings-updated'] )) {
 				do_action( 'tabbed_settings_after_update' );
 ////////// >>>>>>  to do next 2 lines	>>>>>>  using the above hook
-				$role_based_help_notes->help_do_on_activation();		// add the active capabilities
-				RBHN_Capabilities::rbhn_clean_inactive_capabilties();	// remove the inactive role capabilities
-				flush_rewrite_rules();
+//				$role_based_help_notes->help_do_on_activation();		// add the active capabilities
+//				RBHN_Capabilities::rbhn_clean_inactive_capabilties();	// remove the inactive role capabilities
+//				flush_rewrite_rules();
 			}
 			?>
 			<div class="wrap">
@@ -197,9 +211,9 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */	
 		public function hooks_section_callback( $section_passed ){
-			foreach ( self::$settings as $options_group => $section  ) {
+			foreach ( $this->settings as $options_group => $section  ) {
 				if (( $section_passed['id'] == $options_group) && ( ! empty( $section['description'] ))) {	
-					echo esc_html( self::$settings[$options_group]['description'] );	
+					echo esc_html( $this->settings[$options_group]['description'] );	
 				}
 			}
 		 }
@@ -257,9 +271,11 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */
 		public function field_plugin_checkbox_option( array $args  ) {
+		
+
 			$option   = $args['option'];
 			$filename = ( isset( $option['filename'] ) ? $option['filename'] : $option['slug'] );
-			$plugin_main_file =  trailingslashit( HELP_PLUGIN_DIR . $option['slug'] ) .  $option['slug'] . '.php' ;
+			$plugin_main_file =  trailingslashit( $option['plugin_dir']. $option['slug'] ) .  $option['slug'] . '.php' ;
 			$value = get_option( $option['name'] );
 			
 			if ( is_plugin_active_for_network( $option['slug'] . '/' . $filename . '.php' )) {
@@ -350,7 +366,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 			screen_icon();
 			echo '<h2 class="nav-tab-wrapper">';
-			foreach ( self::$settings as $tab_key => $tab_options_array ) {
+			foreach ( $this->settings as $tab_key => $tab_options_array ) {
 				$active = $current_tab == $tab_key ? 'nav-tab-active' : '';
 				echo '<a class="nav-tab ' . $active . '" href="?page=' . $this->menu . '&tab=' . $tab_key . '">' . $tab_options_array['title'] . '</a>';	
 			}
@@ -366,15 +382,17 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @access public
 		 * @return array of plugins selected within the settings page for installation via the TGM_Plugin_Activation class
 		 */
-		public STATIC function selected_plugins() {
+		public function selected_plugins() {
 
 			$plugins = array();
-
-			if ( Tabbed_Settings::$settings ) {
-
+			
+//			if ( Tabbed_Settings::$settings ) {
+//			if ( isset( $this->settings )) {
+			if ( isset( $this->$settings )) {
 		
-				$plugin_array = Tabbed_Settings::$settings['plugin_extension']['settings'];
-
+//				$plugin_array = Tabbed_Settings::$settings['plugin_extension']['settings'];
+				$plugin_array = $this->settings['plugin_extension']['settings'];
+				
 				foreach ( $plugin_array as $plugin ) {
 
 					if ( get_option( $plugin['name'] ) ) {
@@ -389,42 +407,11 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			
 			return $plugins;
 		}
-
-
-		
-		/**
-		 * Returns the *Singleton* instance of this class.
-		 *
-		 * @return Singleton The *Tabbed_Settings* instance.
-		 */
-		public static function get_instance()
-		{
-			static $instance = null;
-			if (null === $instance) {
-				$instance = new static();
-			}
-
-			return $instance;
-		}
 		
 	}
 	
     // Ensure only one instance of the class is ever invoked.
-	Tabbed_Settings::get_instance();
+	//Tabbed_Settings::get_instance();
 }
-
-
-if ( ! class_exists( 'Tabbed_Settings_Child' ) ) {
-
-	/**
-	 * Tabbed_Settings class.
-	 */
-	class Tabbed_Settings_Child extends Tabbed_Settings {
-
-	}
-}
-
-
-
 
 ?>
