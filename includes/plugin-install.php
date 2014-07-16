@@ -5,15 +5,13 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 // Include the TGM_Plugin_Activation class.
 require_once( dirname( __FILE__ ) . '/class-tgm-plugin-activation.php' );
 
+
 add_action( 'tgmpa_register', 'rbhn_tgmpa_register' );
 
 
 function rbhn_tgmpa_register( ) {
 
-	$plugins =  array();
-//	$plugins = Tabbed_Settings::selected_plugins();
-//	global $rbhn_tabbed_settings_instance;
-//	$plugins = $rbhn_tabbed_settings_instance->selected_plugins();
+	$plugins = RBHN_Settings::get_instance()->selected_plugins();
 	
 	$theme_text_domain = 'role-based-help-notes-text-domain';
 
@@ -51,6 +49,7 @@ function rbhn_tgmpa_register( ) {
 	tgmpa( $plugins, $config );
 
 }
+
 
 
 ?>

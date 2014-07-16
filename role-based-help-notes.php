@@ -19,7 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Main Class which inits the CPTs and plugin
  */
 class RBHN_Role_Based_Help_Notes {
-
+	
+	// Refers to a single instance of this class.
+    private static $instance = null;
+	
     public	 $plugin_full_path;
 	public   $plugin_file = 'role-based-help-notes/role-based-help-notes.php';
 	
@@ -38,8 +41,8 @@ class RBHN_Role_Based_Help_Notes {
 	 * @access public
 	 * @return void
 	 */
-	public function __construct() {
-			
+	private function __construct() {
+	
 		$this->plugin_full_path = plugin_dir_path(__FILE__) . 'role-based-help-notes.php' ;
 		
 		// Set the constants needed by the plugin.
@@ -97,10 +100,10 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	function includes() {
-	
+
 		// settings 
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings.php' );  
-
+		
 		// custom post type capabilities
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-capabilities.php' );  
 
@@ -343,7 +346,7 @@ if ( ! help_notes_available() )
 	 * @return void
 	 */		
 	function rbhn_custom_post_author_archive( $query ) {
-		global $role_based_help_notes;
+		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
 		
 		if( !is_admin() && $query->is_main_query() && empty( $query->query_vars['suppress_filters'] ) ) {
 
@@ -523,6 +526,31 @@ if ( ! help_notes_available() )
 		return $post_type_name;
 	}
 
+
+	/**
+	 * Add capabilities and Flush your rewrite rules for plugin activation.
+	 *
+	 * @access public
+	 * @return $settings
+	 */	
+	public function help_do_on_activation() {
+
+		// Record plugin activation date.
+		add_option('rbhn_install_date',  time() ); 
+		
+		// create the plugin_version store option if not already present.
+		$plugin_version = $this->plugin_get_version();
+		update_option('rbhn_plugin_version', $plugin_version ); 
+
+		// create the tracking enabled capabilities option if not already present.
+		update_option( 'rbhn_caps_created', get_option( 'rbhn_caps_created', array() )); 
+		
+		// Add the selected role capabilities for use with the role help notes
+		RBHN_Capabilities::rbhn_add_role_caps();
+
+		flush_rewrite_rules();
+	}
+	
 	/**
 	 * Add capabilities and Flush your rewrite rules for plugin activation.
 	 *
@@ -586,23 +614,17 @@ if ( ! help_notes_available() )
 	 * @return null
 	 */
 	public function deactivation_notice() {
-	
-		$plugins = array();
-		//global $rbhn_tabbed_settings_instance;
-			//$plugins = $rbhn_tabbed_settings_instance->selected_plugins();
-//$plugins = Tabbed_Settings::selected_plugins();
-//		global $rbhn_tabbed_settings_instance;
-//		$plugins = $rbhn_tabbed_settings_instance->selected_plugins();
-			
-//die( print_r($plugins));
 
-			// loop plugins forced active.
+		$plugins = RBHN_Settings::get_instance()->selected_plugins();
+
 			foreach ( $plugins as $plugin ) {
-				$plugin_file = HELP_PLUGIN_DIR . $plugin["slug"] . '\\' . $plugin['slug'] . '.php' ;
-//die( var_dump($plugin_file));
-				register_deactivation_hook( $plugin_file, array( 'RBHN_Role_Based_Help_Notes', 'on_deactivation' ) );
+			
+				$filename = ( isset( $plugin['filename'] ) ? $plugin['filename'] : $plugin['slug'] );
+				$plugin_main_file =  trailingslashit( $plugin['plugin_dir']. $plugin['slug'] ) .  $filename . '.php' ;			
+
+				register_deactivation_hook( $plugin_main_file, array( 'RBHN_Role_Based_Help_Notes', 'on_deactivation' ) );
 			}
-//		}
+
 	}
 
 	/**
@@ -631,19 +653,11 @@ if ( ! help_notes_available() )
 	 * @return null
 	 */
 	public function action_admin_notices() {
-		$plugins = array();	
-//$plugins = Tabbed_Settings::selected_plugins();
-//		global $rbhn_tabbed_settings_instance;
-//		$plugins = $rbhn_tabbed_settings_instance->selected_plugins();
+	
+		$plugins = RBHN_Settings::get_instance()->selected_plugins();
 
-		//if ( true )
-		//	return;
-//die( var_dump($plugins));
-		// for each extension plugin enabled (forced active) add a error message for deactivation.
 		foreach ( $plugins as $plugin ) {
 			$this->action_admin_plugin_forced_active_notices( $plugin["slug"] );
-//die( var_dump($plugin["slug"] ));
-			
 		}
 		
 		// Prompt for rating
@@ -780,12 +794,28 @@ if ( ! help_notes_available() )
 			exit;		
 		}
 	}	
+
+	/**
+     * Creates or returns an instance of this class.
+     *
+     * @return   A single instance of this class.
+     */
+    public static function get_instance() {
+ 
+        if ( null == self::$instance ) {
+            self::$instance = new self;
+        }
+ 
+        return self::$instance;
+ 
+    } // end get_instance;
 }
 
 /**
  * Init role_based_help_notes class
  */
-$role_based_help_notes = new RBHN_Role_Based_Help_Notes();
+RBHN_Role_Based_Help_Notes::get_instance();
+//$role_based_help_notes = new RBHN_Role_Based_Help_Notes();
 
 
 ?>

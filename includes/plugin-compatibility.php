@@ -30,7 +30,7 @@ function rbhn_bp_enable_root_profiles($val, $user_id ) {
 if ( !function_exists('help_notes_available') ) {
 	function help_notes_available() {
 	
-		global $role_based_help_notes; 
+		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance(); 
 			
 		// check if no help notes are selected.
 		$help_note_post_types =  get_option('rbhn_post_types');

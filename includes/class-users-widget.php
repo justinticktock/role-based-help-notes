@@ -27,7 +27,7 @@ class RBHN_Users_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
-		global $role_based_help_notes;
+		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
 
        // drop out if not a single Help Note page or Help Hote Archive page.
        // or the General Help Note Type

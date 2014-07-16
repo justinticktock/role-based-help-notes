@@ -56,7 +56,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		function __construct( $settings, $config ) {
 
 		//	$settings = $settings ;
-		
+
 			$this->settings = $settings;
 //			$this->config = $config;
 			$this->register_config( $config );
@@ -152,7 +152,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		public function render_setting_page(){
 
 			foreach ( $this->settings as $options_group => $section  ) {
-//die( var_dump($section));
+
 				if ( isset( $section['settings'] )) {
 					foreach ( $section['settings'] as $option ) {
 //						$this->current_section = $section;
@@ -275,9 +275,9 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 			$option   = $args['option'];
 			$filename = ( isset( $option['filename'] ) ? $option['filename'] : $option['slug'] );
-			$plugin_main_file =  trailingslashit( $option['plugin_dir']. $option['slug'] ) .  $option['slug'] . '.php' ;
+			$plugin_main_file =  trailingslashit( $option['plugin_dir']. $option['slug'] ) .  $filename . '.php' ;
 			$value = get_option( $option['name'] );
-			
+
 			if ( is_plugin_active_for_network( $option['slug'] . '/' . $filename . '.php' )) {
 				?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" disabled="disabled" checked="checked"/> <?php
 			} else {
@@ -374,8 +374,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		}
 
 
-
-
 		/**
 		 * selected_plugins function.
 		 *
@@ -385,12 +383,16 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		public function selected_plugins() {
 
 			$plugins = array();
-			
-//			if ( Tabbed_Settings::$settings ) {
-//			if ( isset( $this->settings )) {
-			if ( isset( $this->$settings )) {
-		
-//				$plugin_array = Tabbed_Settings::$settings['plugin_extension']['settings'];
+//die( var_dump($this->settings));
+		//			if ( Tabbed_Settings::$settings ) {
+		//			if ( isset( $this->settings )) {
+		//			if ( isset( $this->$settings )) {
+		//			if ( Tabbed_Settings::$settings ) {
+			if ( isset( $this->settings ) ) {
+
+		//		$plugin_array = Tabbed_Settings::$settings['plugin_extension']['settings'];
+		//		$plugin_array = $this->settings['plugin_extension']['settings'];
+		//		$rbhn_tabbed_settings_instance = RBHN_Settings::get_instance();
 				$plugin_array = $this->settings['plugin_extension']['settings'];
 				
 				foreach ( $plugin_array as $plugin ) {
@@ -403,6 +405,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 						$plugins[] = $plugin;
 					}
 				}
+//die( var_dump($plugins));
 			}
 			
 			return $plugins;
