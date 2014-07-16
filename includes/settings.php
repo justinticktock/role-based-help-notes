@@ -2,12 +2,10 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-
-$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
-
-add_filter( 'plugin_action_links_' . $role_based_help_notes->plugin_file , 'rbhn_plugin_action_links');
-
 // Append new links to the Plugin admin side
+
+add_filter( 'plugin_action_links_' . RBHN_Role_Based_Help_Notes::get_instance()->plugin_file , 'rbhn_plugin_action_links');
+
 function rbhn_plugin_action_links( $links ) {
 
 	$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
@@ -17,18 +15,20 @@ function rbhn_plugin_action_links( $links ) {
 	return $links;
 }
 
+
+// add action after the settings save hook.
 add_action( 'tabbed_settings_after_update', 'rbhn_after_settings_update' );
 
-// add action to the post settings update..
 function rbhn_after_settings_update( ) {
+
 	$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
 	$role_based_help_notes->help_do_on_activation();		// add the active capabilities
 	RBHN_Capabilities::rbhn_clean_inactive_capabilties();	// remove the inactive role capabilities
 	flush_rewrite_rules();	
+	
 }
 
 
-// Plugin Settings Declared here..
 
 /**
  * RBHN_Settings class.
@@ -39,8 +39,6 @@ class RBHN_Settings {
 	
 	// Refers to a single instance of this class.
     private static $instance = null;
-
-
 	
 	/**
 	 * __construct function.
@@ -49,9 +47,7 @@ class RBHN_Settings {
 	 * @return void
 	 */
 	private function __construct() {
-	
 	}
-	
 	
 	/**
      * Creates or returns an instance of this class.
@@ -329,9 +325,6 @@ class RBHN_Settings_Additional_Methods {
 }
 
 
-
-
-
 // Include the Tabbed_Settings class.
 require_once( dirname( __FILE__ ) . '/class-tabbed-settings.php' );
 
@@ -340,9 +333,5 @@ require_once( dirname( __FILE__ ) . '/class-tabbed-settings.php' );
 RBHN_Settings::get_instance()->registerHandler( new RBHN_Settings_Additional_Methods() );
 
 
-
-
-	
-	
 	
 ?>
