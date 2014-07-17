@@ -296,12 +296,12 @@ if ( ! help_notes_available() )
 		// option collection  
 		$general_help_enabled 	= get_option('rbhn_general_enabled');
 		$post_types_array 		= get_option('rbhn_post_types');
-			
+
 	   if ( isset( $general_help_enabled ) && ! empty( $general_help_enabled ) ) {
-		
+
 			$active_posttypes[] = "h_general"; 
 		}
-		
+	
 		if (  ! empty($post_types_array ) ) {	
 			foreach( $post_types_array as $array) {
 				foreach( $array as $active_role=>$active_posttype) {
@@ -311,6 +311,7 @@ if ( ! help_notes_available() )
 				}
 			}	
 		}
+
 		return $active_posttypes;
 	}
 
@@ -403,6 +404,14 @@ if ( ! help_notes_available() )
 				}
 			}
 		}
+		
+
+		// Add the HelpNotesExtra Email Methods to the Settings CLASS
+		if (class_exists( 'RBHNE_Settings' )) {
+			RBHN_Settings::get_instance()->registerHandler( new RBHNE_Settings_Additional_Methods() );
+		}
+		
+		
 	}
 
 	/**
@@ -808,7 +817,7 @@ if ( ! help_notes_available() )
  
         return self::$instance;
  
-    } // end get_instance;
+    }
 }
 
 /**
