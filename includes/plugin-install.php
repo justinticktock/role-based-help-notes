@@ -11,7 +11,7 @@ add_action( 'tgmpa_register', 'rbhn_tgmpa_register' );
 
 function rbhn_tgmpa_register( ) {
 
-	$plugins = RBHN_Settings::get_instance()->selected_plugins();
+	$plugins = RBHN_Settings::get_instance()->selected_plugins( 'rbhn_plugin_extension' );
 	
 	$theme_text_domain = 'role-based-help-notes-text-domain';
 

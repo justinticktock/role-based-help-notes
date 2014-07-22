@@ -380,20 +380,13 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @access public
 		 * @return array of plugins selected within the settings page for installation via the TGM_Plugin_Activation class
 		 */
-		public function selected_plugins() {
+		public function selected_plugins( $plugin_extension_tab_name ) {
 
 			$plugins = array();
-//die( var_dump($this->settings));
-		//			if ( Tabbed_Settings::$settings ) {
-		//			if ( isset( $this->settings )) {
-		//			if ( isset( $this->$settings )) {
-		//			if ( Tabbed_Settings::$settings ) {
+
 			if ( isset( $this->settings ) ) {
 
-		//		$plugin_array = Tabbed_Settings::$settings['plugin_extension']['settings'];
-		//		$plugin_array = $this->settings['plugin_extension']['settings'];
-		//		$rbhn_tabbed_settings_instance = RBHN_Settings::get_instance();
-				$plugin_array = $this->settings['plugin_extension']['settings'];
+				$plugin_array = $this->settings[$plugin_extension_tab_name]['settings'];
 				
 				foreach ( $plugin_array as $plugin ) {
 
@@ -405,7 +398,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 						$plugins[] = $plugin;
 					}
 				}
-//die( var_dump($plugins));
+
 			}
 			
 			return $plugins;

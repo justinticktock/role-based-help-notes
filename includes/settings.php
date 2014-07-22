@@ -109,7 +109,7 @@ class RBHN_Settings {
 																		),					
 																	),
 										),
-										'plugin_extension' => array(
+										'rbhn_plugin_extension' => array(
 												'title' 		=> __( 'Plugin Extensions', 'role-based-help-notes-text-domain' ),
 												'description' 	=> __( 'These settings are optional.  Selection of any suggested plugin here will prompt you through the installation.  The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall.', 'role-based-help-notes-text-domain' ),					
 												'settings' 		=> array(
@@ -245,14 +245,14 @@ class RBHN_Settings {
 									)
 								);
 
-							
+					
         if ( null == self::$instance ) {
             self::$instance = new Tabbed_Settings( $settings, $config );
         }
  
         return self::$instance;
  
-    } // end get_instance;
+    }
 }
 
 

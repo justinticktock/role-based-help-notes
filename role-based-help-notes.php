@@ -102,7 +102,8 @@ class RBHN_Role_Based_Help_Notes {
 	function includes() {
 
 		// settings 
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings.php' );  
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings-ssl.php' ); 
+		require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings.php' );   
 		
 		// custom post type capabilities
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-capabilities.php' );  
@@ -315,6 +316,22 @@ if ( ! help_notes_available() )
 		return $active_posttypes;
 	}
 
+	public function is_single_help_note( ) {
+	
+       // drop out if not a single Help Note page or Help Hote Archive page.
+       // or the General Help Note Type
+       $ssl_help_notes = $this->active_help_notes();
+       $exclude_help_notes = array('h_general');
+       $ssl_help_notes = array_diff($ssl_help_notes, $exclude_help_notes);
+       
+        if ( ! in_array( get_post_type(),  $ssl_help_notes ) || is_archive() ) {
+            return false; 
+		} else {
+            return true; 
+		}
+			
+	}
+	
     /**
 	 * Returns the array of active Help Notes roles or if a post_type is provided the single role associated.
 	 *
@@ -584,6 +601,8 @@ if ( ! help_notes_available() )
 		flush_rewrite_rules();
 	}
 
+
+		
 	/**
 	 * Returns current plugin version.
 	 *
@@ -624,7 +643,7 @@ if ( ! help_notes_available() )
 	 */
 	public function deactivation_notice() {
 
-		$plugins = RBHN_Settings::get_instance()->selected_plugins();
+		$plugins = RBHN_Settings::get_instance()->selected_plugins( 'rbhn_plugin_extension' );
 
 			foreach ( $plugins as $plugin ) {
 			
@@ -663,7 +682,7 @@ if ( ! help_notes_available() )
 	 */
 	public function action_admin_notices() {
 	
-		$plugins = RBHN_Settings::get_instance()->selected_plugins();
+		$plugins = RBHN_Settings::get_instance()->selected_plugins( 'rbhn_plugin_extension' );
 
 		foreach ( $plugins as $plugin ) {
 			$this->action_admin_plugin_forced_active_notices( $plugin["slug"] );
@@ -821,7 +840,7 @@ if ( ! help_notes_available() )
 }
 
 /**
- * Init role_based_help_notes class
+ * Init role_based_help_notes
  */
 RBHN_Role_Based_Help_Notes::get_instance();
 
