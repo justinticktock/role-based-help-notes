@@ -1,5 +1,15 @@
 <?php
+/**
+ * Plugin tabbed settings option class for WordPress themes.
+ *
+ * @package   class-tabbed-settings.php
+ * @version   1.1
+ * @author    Justin Fletcher <justin@justinandco.com>
+ * @copyright Copyright (c) 2014, Justin Fletcher
+ * @license   http://opensource.org/licenses/gpl-2.0.php GPL v2 or later
+ */
 
+ 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 
@@ -26,6 +36,7 @@ if ( ! class_exists( 'Extendible_Tabbed_Settings' ) ) {
 				}
 			}
 		}
+		
 	}
 }
 
@@ -42,6 +53,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 
 		// the following are configurable externally
+        public $menu_access_capability = '';
+        public $menu_parent = '';
         public $menu = '';
         public $menu_title = '';
         public $page_title = '';
@@ -67,7 +80,9 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			add_action( 'init', array( $this, 'init' ), 9 );
 			
 			add_action( 'admin_init', array( $this, 'render_setting_page' ) );
+
 			add_action( 'admin_menu', array( $this, 'add_admin_menus' ) );
+
 			add_action( 'do_settings_sections', array( $this, 'hooks_section_callback' ) );
 
 		}
@@ -92,8 +107,11 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */	 
 		public function add_admin_menus() {
-			add_options_page( __( $this->page_title, 'role-based-help-notes-text-domain' ), __( $this->menu_title, 'role-based-help-notes-text-domain' ), 'manage_options', $this->menu, array( $this, 'plugin_options_page' ) );
+
+			add_submenu_page( $this->menu_parent, $this->page_title, $this->menu_title, $this->menu_access_capability, $this->menu, array( &$this, 'plugin_options_page' ));
+			
 		}
+
 
         /**
          * Add individual tabbed_settings to our collection of settings.
@@ -125,6 +143,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
             $keys = array( 
 						'default_tab_key',
+						'menu_parent',
+						'menu_access_capability',
 						'menu',
 						'menu_title',
 						'page_title',
@@ -171,6 +191,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 				}
 			}
 		}
+		
+
 
 		/**
 		 * Settings page rendering it checks for active tab and replaces key with the related
@@ -184,10 +206,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			$tab = isset( $_GET['tab'] ) ? sanitize_key($_GET['tab'] ) : $this->default_tab_key;
 			if ( ! empty( $_GET['settings-updated'] )) {
 				do_action( 'tabbed_settings_after_update' );
-////////// >>>>>>  to do next 2 lines	>>>>>>  using the above hook
-//				$role_based_help_notes->help_do_on_activation();		// add the active capabilities
-//				RBHN_Capabilities::rbhn_clean_inactive_capabilties();	// remove the inactive role capabilities
-//				flush_rewrite_rules();
 			}
 			?>
 			<div class="wrap">

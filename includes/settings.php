@@ -59,12 +59,15 @@ class RBHN_Settings {
 		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
 		
 		$config = array(
-						'default_tab_key' => 'rbhn_general',		// Default settings tab, opened on first settings page open.
-						'menu' => $role_based_help_notes->menu ,    // menu options page slug name.
-						'menu_title' => $role_based_help_notes->menu_title,    		// menu options page slug name.
-						'page_title' => $role_based_help_notes->page_title,    		// menu options page title.
-						);
-								
+				'default_tab_key' => 'rbhn_general',					// Default settings tab, opened on first settings page open.
+				'menu_parent' => 'options-general.php',    		// menu options page slug name.
+				'menu_access_capability' => 'manage_options',    					// menu options page slug name.
+				'menu' => $role_based_help_notes->menu,    					// menu options page slug name.
+				'menu_title' => $role_based_help_notes->menu_title,    		// menu options page slug name.
+				'page_title' => $role_based_help_notes->page_title,    		// menu options page title.
+				);
+				
+				
 		$settings = 	apply_filters( 'rbhn_settings', 
 									array(								
 										'rbhn_general' => array(

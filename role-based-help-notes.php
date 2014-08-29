@@ -11,6 +11,8 @@ Domain Path: /languages/
 License: GPLv2 or later
 */
 
+
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
@@ -102,7 +104,6 @@ class RBHN_Role_Based_Help_Notes {
 	function includes() {
 
 		// settings 
-		require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings-ssl.php' ); 
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings.php' );   
 		
 		// custom post type capabilities
