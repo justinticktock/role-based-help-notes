@@ -3,7 +3,7 @@
  * Plugin tabbed settings option class for WordPress themes.
  *
  * @package   class-tabbed-settings.php
- * @version   1.1
+ * @version   1.1.1
  * @author    Justin Fletcher <justin@justinandco.com>
  * @copyright Copyright (c) 2014, Justin Fletcher
  * @license   http://opensource.org/licenses/gpl-2.0.php GPL v2 or later
@@ -202,7 +202,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */		 
 		public function plugin_options_page() {
-//			global $role_based_help_notes;
+			
 			$tab = isset( $_GET['tab'] ) ? sanitize_key($_GET['tab'] ) : $this->default_tab_key;
 			if ( ! empty( $_GET['settings-updated'] )) {
 				do_action( 'tabbed_settings_after_update' );
@@ -262,7 +262,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			$option	= $args['option'];
 			$value	= intval( get_option( $option['name'] ));
 			?>
-			<form action="<?php bloginfo('url'); ?>" method="get">
+			<form action="<?php site_url(); ?>" method="get">
 			<?php wp_dropdown_pages(array(
 										'show_option_none' => __( "- None -", 'role-based-help-notes-text-domain' ), 
 										'option_none_value' => '0', 
@@ -326,11 +326,17 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */
 		public function field_textarea_option( array $args  ) {
-			$option   = $args['option'];
-			$value = get_option( $option['name'] );
 
-			?><textarea id="setting-<?php echo esc_html( $option['name'] ); ?>" cols="50" rows="3" name="<?php echo esc_html( $option['name'] ); ?>" ><?php echo esc_textarea( $value ); ?></textarea><?php
-			
+			$option   = $args['option'];		
+			$defaults = array( 	
+						'columns' => "40",
+						'rows' => "3",
+						);
+				
+			$option = wp_parse_args( $option, $defaults );
+			$value = get_option( $option['name'] );
+			?><textarea id="setting-<?php echo esc_html( $option['name'] ); ?>" cols=<?php echo $option['columns']; ?> rows=<?php echo $option['rows']; ?> name="<?php echo esc_html( $option['name'] ); ?>" ><?php echo esc_textarea( $value ); ?></textarea><?php
+
 			if ( ! empty( $option['desc'] ))
 				echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';
 		}
