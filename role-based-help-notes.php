@@ -3,14 +3,13 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.3
+Version: 1.3.0.1
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 Text Domain: role-based-help-notes-text-domain
 Domain Path: /languages/
 License: GPLv2 or later
 */
-
 
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -74,7 +73,7 @@ class RBHN_Role_Based_Help_Notes {
 		
 		// Add the Help Note Custom Post Types to the author post listing
 		add_filter( 'pre_get_posts', array( $this, 'rbhn_custom_post_author_archive' ));
-	
+
 	}
 	
 
@@ -136,14 +135,21 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	public function admin_menu() {
-if ( ! help_notes_available() )
-	return; 
-			// check if no help notes are selected before adding the menu ...
-			//   Roles are selected in the settings.
-			//   OR the general Help Notes is selected in the settings.
-			//   OR there are help note posts created and viewable.
-			if ( array_filter( (array)  get_option('rbhn_post_types')) || get_option('rbhn_general_enabled') || help_notes_available() )
+		
+		if ( ! help_notes_available() )
+			return; 
+		
+		// check if no help notes are selected before adding the menu ...
+		//   Roles are selected in the settings.
+		//   OR the general Help Notes is selected in the settings.
+		//   OR there are help note posts created and viewable.
+		if ( array_filter( (array)  get_option('rbhn_post_types')) || get_option('rbhn_general_enabled') || help_notes_available() ) {
+			// Only add the new top level menu if the current user has the 'edit_posts' which is required for the 'Add New' as WordPress default to use this capaility when the 
+			// post types are added as a sub-menu.
+			if ( current_user_can( 'edit_posts' ) ) {
 				add_menu_page( __( 'Help Notes', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'role-based-help-notes-text-domain' ), 'read', HELP_MENU_PAGE, array( &$this, 'menu_page' ), 'dashicons-format-aside', '4.123123123');
+			}
+		}
 	}
     
 	/**
@@ -192,65 +198,11 @@ if ( ! help_notes_available() )
 	 */
 	public function upgrade( $current_plugin_version ) {
 		
-		// move current database stored values into the next structure
-		if ( $current_plugin_version < '1.2.8' ) {
+		// Upgrade path..
+		if ( $current_plugin_version < '1.1.1' ) {
 
-			//rbhn_caps_created
-			$db_help_note_caps_created = get_option( 'help_note_caps_created' );
-			if ( ! empty( $db_help_note_caps_created ));
-				update_option( 'rbhn_caps_created', (array) $db_help_note_caps_created );
-
-			$settings_options = get_option( 'help_note_option' );
-		
-			//rbhn_plugin_version
-			if ( ! empty( $settings_options['help_notes_version'] ));
-				update_option( 'rbhn_plugin_version', $settings_options['help_notes_version'] );
-
-			//rbhn_general_enabled
-			if ( ! empty( $settings_options['help_note_general_enabled'] ));
-				update_option( 'rbhn_general_enabled', $settings_options['help_note_general_enabled'] );
-				
-			//rbhn_post_types
-			if ( ! empty( $settings_options['help_note_post_types'] ));
-				update_option( 'rbhn_post_types', (array) $settings_options['help_note_post_types'] );
-				
-			//rbhn_contents_page
-			if ( ! empty( $settings_options['help_note_contents_page'] ));
-				update_option( 'rbhn_contents_page', $settings_options['help_note_contents_page'] );
-				
-			//rbhn_user_widget_enabled
-			if ( ! empty( $settings_options['user_widget_enabled'] ));
-				update_option( 'rbhn_user_widget_enabled', $settings_options['user_widget_enabled'] );
-				
-			//rbhn_simple_page_ordering
-			if ( ! empty( $settings_options['help_note_simple_page_ordering'] ));
-				update_option( 'rbhn_simple_page_ordering', $settings_options['help_note_simple_page_ordering'] );
-				
-			//rbhn_simple_footnotes_plugin
-			if ( ! empty( $settings_options['help_note_simple_footnotes_plugin'] ));
-				update_option( 'rbhn_simple_footnotes_plugin', $settings_options['help_note_simple_footnotes_plugin'] );
-				
-			//rbhn_disable_comments_plugin
-			if ( ! empty( $settings_options['help_note_disable_comments_plugin'] ));
-				update_option( 'rbhn_disable_comments_plugin', $settings_options['help_note_disable_comments_plugin'] );
-				
-			//rbhn_email_post_changes_plugin
-			if ( ! empty( $settings_options['help_note_email_post_changes_plugin'] ));
-				update_option( 'rbhn_email_post_changes_plugin', $settings_options['help_note_email_post_changes_plugin'] );
-				
-			//rbhn_post_type_switcher_plugin
-			if ( ! empty( $settings_options['help_note_post_type_switcher_plugin'] ));
-				update_option( 'rbhn_post_type_switcher_plugin', $settings_options['help_note_post_type_switcher_plugin'] );
-				
-			//rbhn_post_type_archive_in_menu_plugin
-			if ( ! empty( $settings_options['help_note_menu_plugin'] ));
-				update_option( 'rbhn_post_type_archive_in_menu_plugin', $settings_options['help_note_menu_plugin'] );
-				
-			// remove old options from DB
-			delete_option('rbhn_update_request');
-			delete_option('help_note_option');
-			delete_option('help_note_caps_created');
-
+			//do some upgrade thing..
+			
 		}
 	}
 	
@@ -463,19 +415,27 @@ if ( ! help_notes_available() )
 		
 		if ($role_key == "general" ) {
 			$help_capabilitytype    = 'post';
+			$explicitly_mapped_caps	= array();
 		} else {
-			$help_capabilitytype    = $post_type_name;	
+			$help_capabilitytype    = $post_type_name;
+			$explicitly_mapped_caps = array( 'create_posts' 	=> 'create_' . $help_capabilitytype . 's' );
 		};
 		
+		// only place the help notes under the main menu if the current user has the default 'edit_posts' capability this is mapped to the create_posts capability by
+		// wordpress as default.  There is an issue with the fixing of a custom post type to as a submenu WordPress drops the create_posts capabilty as the 'Add New' menu is not available
+		// the global $submenu variable is then missing the create_posts capability which in turn is used with user_can_access_admin_page(). This is a work round.
+		$user_parent_menu =  ( current_user_can( 'edit_posts' ) ? HELP_MENU_PAGE : true );
+
 		$help_args = array(
 			'labels'              => $help_labels,
 			'public'              => true, 
 			'publicly_queryable'  => true,
 			'exclude_from_search' => false,
 			'show_ui'             => true,
-			'show_in_menu'        => HELP_MENU_PAGE,
+			'show_in_menu'        => $user_parent_menu,
 			'show_in_admin_bar'   => true,
-			'capability_type'     => $help_capabilitytype,
+			'capability_type'     => $help_capabilitytype,	
+			'capabilities'        => $explicitly_mapped_caps,
 			'map_meta_cap'        => true,
 			'hierarchical'        => true,
 			'supports'            => array( 'title', 'editor', 'comments', 'thumbnail', 'page-attributes' , 'revisions', 'author' ),

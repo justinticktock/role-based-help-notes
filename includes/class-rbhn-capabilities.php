@@ -1,5 +1,6 @@
 <?php
 
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
@@ -186,28 +187,23 @@ class RBHN_Capabilities {
 	 * @return void
 	 */
 	public function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
-
-		// drop out if not a specific post
-		if ( empty($args[0]) ) 
-			return $caps;    
 		
 		// option collection to collect active Help Note roles.  
 		$post_types_array = get_option('rbhn_post_types');
 		
 		if (  ! empty( $post_types_array ) ) { 
-
-			$help_note_found = false;
 			
+			$help_note_found = false;
+						
 			foreach( $post_types_array as $active_role=>$active_posttype) {
 
 				$capability_type = $active_posttype;
-				
+
 				if ( 'edit_' . array_shift($capability_type) == $cap || 'delete_' . array_shift($capability_type) == $cap || 'read_' . array_shift($capability_type) == $cap  ) {
-						
+
 
 					$post = get_post( $args[0] );
-					$post_type = $capability_type;
-
+					$post_type = get_post_type_object( $post->post_type );
 
 					/* Set an empty array for the caps. */
 					$caps = array();
@@ -226,6 +222,7 @@ class RBHN_Capabilities {
 					$caps[] = $post_type->cap->edit_posts;
 				else
 					$caps[] = $post_type->cap->edit_others_posts;	
+
 			}
 					
 			/* If deleting a help note, assign the required capability. */
