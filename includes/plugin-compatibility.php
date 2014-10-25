@@ -23,13 +23,15 @@ function rbhn_bp_enable_root_profiles($val, $user_id ) {
 }
 
 /**
- * conditional function provided to checks if the current visitor has available Help Notes
- * @return bool True if Help Notes are available for the site front-end, false if not logged or no Help Notes are available.
- * Used also in other plugins - like “Menu Items Visibility Control” plugin.
+ * Function provided to check if the current visitor has available Help Notes
+ * @return False if no help notes are available for the current user, otherwise and array of help_note post types available.
+ * Can be used also in other plugins - like “Menu Items Visibility Control” plugin.
  */
 if ( !function_exists('help_notes_available') ) {
 	function help_notes_available() {
-	
+		
+		$helpnote_post_types = array();
+		
 		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance(); 
 			
 		// check if no help notes are selected.
@@ -38,13 +40,12 @@ if ( !function_exists('help_notes_available') ) {
 		if ( ! array_filter( (array) $help_note_post_types ) && ! get_option('rbhn_general_enabled') )
 			return false;
 
-
 		//if the current user has the role of an active Help Note.
 		if (  array_filter( (array) $help_note_post_types )) {	
 			foreach( $help_note_post_types as $array) {
 				foreach( $array as $active_role=>$active_posttype) {
 					if ($role_based_help_notes->help_notes_current_user_has_role( $active_role )) {
-						return true;
+						$helpnote_post_types[] = $active_posttype;
 					}				
 				}
 			}	
@@ -56,12 +57,19 @@ if ( !function_exists('help_notes_available') ) {
 			));
 
 		if ( $my_query->have_posts() ) {
-			wp_reset_postdata();
-			return true;
+			$helpnote_post_types[] = 'h_general';
 			}
 			
 		wp_reset_postdata();
-		return false;
+		
+		
+
+		$helpnote_post_types = array_filter( $helpnote_post_types );
+		if ( ! empty( $helpnote_post_types )) {
+			return $helpnote_post_types;
+		} else {
+			return false;
+		}
 	}
 }
 ?>

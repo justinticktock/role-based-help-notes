@@ -10,7 +10,9 @@
  */
 
  
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 
 /**
@@ -202,11 +204,13 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */		 
 		public function plugin_options_page() {
-			
+
 			$tab = isset( $_GET['tab'] ) ? sanitize_key($_GET['tab'] ) : $this->default_tab_key;
-			if ( ! empty( $_GET['settings-updated'] )) {
+			//if ( ! empty( $_GET['settings-updated'] )) {
+			if ( isset( $_GET['settings-updated'] )) {
 				do_action( 'tabbed_settings_after_update' );
 			}
+
 			?>
 			<div class="wrap">
 				<?php $this->plugin_options_tabs(); ?>

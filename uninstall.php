@@ -110,7 +110,8 @@ function rbhn_role_caps_uninstall( $role_key ) {
 			"delete_others_{$capability_type}s",
 			"edit_private_{$capability_type}s",
 			"edit_published_{$capability_type}s",
-			"create_{$capability_type}s"
+			"create_{$capability_type}s",
+			"manage_categories_{$capability_type}"		
 			);
 
     global $wp_roles;
