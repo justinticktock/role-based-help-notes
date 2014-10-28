@@ -96,10 +96,17 @@ class RBHN_Settings {
 																	array(
 																		'name' 		=> 'rbhn_contents_page',
 																		'std' 		=> '0',
-																		'label' 	=> __( 'Contents Page', 'contents_page' ),
+																		'label' 	=> __( 'Contents Page', 'role-based-help-notes-text-domain' ),
 																		'desc'		=> __( 'If you wish to create a contents page add a new page and select it here so that the Help Note Contents are displayed.', 'role-based-help-notes-text-domain' ),
 																		'type'      => 'field_page_select_list_option',
-																		),
+																		),			
+																	array(
+																		'name' 		=> 'rbhn_welcome_page',
+																		'std' 		=> '0',
+																		'label' 	=> __( 'Welcome Page', 'role-based-help-notes-text-domain' ),
+																		'desc'		=> __( 'If you create a custom welcome page select it here so that the Help Note Contents are displayed for the admin Help Notes Menu Page.', 'role-based-help-notes-text-domain' ),
+																		'type'      => 'field_page_select_list_option',
+																		),															
 																),
 										),
 										'rbhn_roles' => array(
@@ -289,6 +296,7 @@ class RBHN_Settings_Additional_Methods {
 	 * @return void
 	 */
 	public function field_help_notes_post_types_option( array $args  ) {
+	
 		$option   = $args['option'];
 		
 		//  loop through the site roles and create a custom post for each
@@ -378,7 +386,7 @@ class RBHN_Settings_Additional_Methods {
 	 * @access public
 	 * @return void
 	 */
-	public function rbhn_role_active($role, $active_helpnote_roles) {
+	public function rbhn_role_active( $role, $active_helpnote_roles ) {
 
 		foreach ($active_helpnote_roles as $active_role=>$active_posttype) {
 				if (! empty($active_posttype["$role"])) {

@@ -3,10 +3,12 @@
  * Plugin tabbed settings option class for WordPress themes.
  *
  * @package   class-tabbed-settings.php
- * @version   1.1.1
+ * @version   1.1.3
  * @author    Justin Fletcher <justin@justinandco.com>
  * @copyright Copyright (c) 2014, Justin Fletcher
  * @license   http://opensource.org/licenses/gpl-2.0.php GPL v2 or later
+ *
+ * The text domain must be manually replaced with the required plugin text domain.
  */
 
  
@@ -187,7 +189,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 						register_setting( $options_group, $option['name'], $sanitize_callback );
 						add_settings_section( $options_group, $section['title'], array( $this, 'hooks_section_callback' ), $options_group );
 						
-						$callback_type = ( isset($option['type']) ? $option['type'] : "field_default_option" );
+						$callback_type = ( isset( $option['type'] ) ? $option['type'] : "field_default_option" );
 						add_settings_field( $option['name'].'_setting-id', $option['label'], array( $this, $callback_type ), $options_group, $options_group, array( 'option' => $option )  );	
 					}
 				}
@@ -205,9 +207,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 */		 
 		public function plugin_options_page() {
 
-			$tab = isset( $_GET['tab'] ) ? sanitize_key($_GET['tab'] ) : $this->default_tab_key;
-			//if ( ! empty( $_GET['settings-updated'] )) {
-			if ( isset( $_GET['settings-updated'] )) {
+			$tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : $this->default_tab_key;
+			if ( isset( $_GET['settings-updated'] )) {		
 				do_action( 'tabbed_settings_after_update' );
 			}
 
@@ -263,28 +264,30 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * @return void
 		 */
 		public function field_page_select_list_option( array $args  ) {
+		
 			$option	= $args['option'];
-			$value	= intval( get_option( $option['name'] ));
-			?>
-			<form action="<?php site_url(); ?>" method="get">
-			<?php wp_dropdown_pages(array(
-										'show_option_none' => __( "- None -", 'role-based-help-notes-text-domain' ), 
-										'option_none_value' => '0', 
-										'sort_order'   => 'ASC',
-										'sort_column'  => 'post_title',
-										'hierarchical'  => 0,
-										'echo'          => 1,
-										'selected'     => $value,
-										'name'          => $option['name']
-										)); ?>
-			</form>
+			
+			?><label for="<?php echo $option['name']; ?>"><?php 
+			wp_dropdown_pages( array( 
+									'name' => $option['name'],
+									'id'         	=> 'setting-' . $option['name'],
+									'echo' => 1, 
+									'hierarchical'  => 0,
+									'sort_order'   	=> 'ASC',
+									'sort_column'  	=> 'post_title',
+									'show_option_none' => _x( "- None -", 'text for no selection', 'role-based-help-notes-text-domain' ), 
+									'option_none_value' => '0', 
+									'selected' => get_option( $option['name'] ) 
+									) 
+								); ?>
+			</label>
 
+			
 			<?php
 			if ( ! empty( $option['desc'] ))
 				echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';		
 		}
-
-
+	
 		/**
 		 * field_plugin_checkbox_option 
 		 *
@@ -308,11 +311,11 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 			if ( ! file_exists( $plugin_main_file ) ) {
 				echo esc_html__( 'Enable to prompt installation and force active.', 'role-based-help-notes-text-domain' ) . ' ( ';
-				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  esc_html__( "Install", 'role-based-help-notes-text-domain' ) . " </a> | " ;
+				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  _x( 'Install', 'Install the Plugin', 'role-based-help-notes-text-domain' ) . " </a> | " ;
 				
 			} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) &&  ! is_plugin_active_for_network( $option['slug'] . '/' . $option['slug'] . '.php' )) {
 				echo esc_html__(  'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
-				if ( ! $value ) echo '<a href="plugins.php?s=' . esc_html( $option['label'] )	 . '">' .  esc_html__( "Deactivate", 'role-based-help-notes-text-domain' ) . "</a> | " ;	
+				if ( ! $value ) echo '<a href="plugins.php?s=' . esc_html( $option['label'] )	 . '">' .  _x( 'Deactivate', 'deactivate the plugin', 'role-based-help-notes-text-domain' ) . "</a> | " ;	
 			} else {
 				echo esc_html__(  'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
 			}
