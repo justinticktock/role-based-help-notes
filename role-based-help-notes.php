@@ -196,7 +196,7 @@ class RBHN_Role_Based_Help_Notes {
 		// Admin notice hide prompt notice catch
 		$this->catch_hide_notice();
 
-		if ( empty($plugin_current_version) || $plugin_current_version < $plugin_new_version ) {
+		if ( empty( $plugin_current_version ) || $plugin_current_version < $plugin_new_version ) {
 		
 			$plugin_current_version = isset( $plugin_current_version ) ? $plugin_current_version : 0;
 
@@ -210,6 +210,14 @@ class RBHN_Role_Based_Help_Notes {
 		}
 			
 		load_plugin_textdomain('role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		
+		
+		// De-register help note post types for the email_post_changes plugin
+		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'email_post_changes' )) {
+			$this->deregister_helpnote_for_settings_page_of_email_post_changes_plugin();
+		}		
+		
+				
 	}
 
 	/**
@@ -353,10 +361,8 @@ class RBHN_Role_Based_Help_Notes {
 			$active_posttypes[] = "h_general"; 
 		}
 
-
-		
-		if (  ! empty($post_types_array ) ) {	
-			foreach( $post_types_array as $array) {
+		if (  ! empty( $post_types_array ) ) {	
+			foreach( $post_types_array as $array ) {
 				foreach( $array as $active_role=>$h_posttype ) {
 					if ( $this->help_notes_current_user_has_role( $active_role , $user_id )) {
 						$active_posttypes[] = $h_posttype;
@@ -642,9 +648,9 @@ if ( isset( $_GET['post_type'] ))
 	 * @param string $role_key current suggested Help Notes post type name
 	 * @return $post_type_name
 	 */	
-	public function clean_post_type_name($role_key) {
+	public function clean_post_type_name( $role_key ) {
 		// limit to 20 characters length for the WP limitation of custom post type names
-		$post_type_name = sanitize_key('h_' . substr($role_key , -18)); 
+		$post_type_name = sanitize_key( 'h_' . substr( $role_key , -18 )); 
 		return $post_type_name;
 	}
 
@@ -948,6 +954,44 @@ if ( isset( $_GET['post_type'] ))
 		}
 	}	
 
+	
+
+	public function deregister_helpnote_for_settings_page_of_email_post_changes_plugin() {
+
+		// collect the email-post-changes options for the active post_types
+		$email_post_types_options = (array) get_option( 'email_post_changes' );
+		$email_notes_selection = (array) get_option( 'rbhne_email_change_notification' );
+
+		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
+		$site_help_notes = $role_based_help_notes->site_help_notes();
+		$site_help_notes_cpts = array_values( $site_help_notes );
+		
+		//remove general help notes so the it remains pickable in the email_post_changes plugin settings. 
+		$pos = array_search('h_general', $site_help_notes_cpts);
+		unset( $site_help_notes_cpts[$pos] );
+		
+		foreach ( $site_help_notes_cpts as $post_type ) {
+			$this->unregister_post_type( $post_type );
+		}
+
+		
+	}
+
+	/**
+     * function to de-register custom post types
+     *
+     * @return rue on success.
+     */	
+	private function unregister_post_type( $post_type ) {
+		global $wp_post_types;
+		if ( isset( $wp_post_types[ $post_type ] ) ) {
+			unset( $wp_post_types[ $post_type ] );
+			return true;
+		}
+		return false;
+	}
+
+	
 	/**
      * Creates or returns an instance of this class.
      *
@@ -958,9 +1002,7 @@ if ( isset( $_GET['post_type'] ))
         if ( null == self::$instance ) {
             self::$instance = new self;
         }
- 
         return self::$instance;
- 
     }
 }
 		

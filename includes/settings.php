@@ -116,7 +116,7 @@ class RBHN_Settings {
 																	array(
 																		'name' 		=> 'rbhn_post_types',
 																		'std' 		=> array(),
-																		'label' 	=> __( 'Help Note Post Types', 'role-based-help-notes-text-domain' ),
+																		'label' 	=> __( 'Help Notes', 'role-based-help-notes-text-domain' ),
 																		'desc'		=> '',
 																		'type'      => 'field_help_notes_post_types_option'
 																		),					
@@ -216,7 +216,7 @@ class RBHN_Settings {
 																			'std' 		=> false,
 																			'label' 	=> 'Email Post Changes',
 																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'Once installed go to [Settings]...[Email Post Changes] to use the plugin and notify specific users of changes to Help Notes by email.', 'role-based-help-notes-text-domain' ),
+																			'desc'		=> __( 'Allows for emailing of the standard Post, Page and General Help notes. For email of changes to all other Help notes purchase and download the role-based-help-notes-extra plugin.', 'role-based-help-notes-text-domain' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
