@@ -3,38 +3,37 @@
  * Plugin tabbed settings option class for WordPress themes.
  *
  * @package   class-tabbed-settings.php
- * @version   1.1.3
+ * @version   1.1.4
  * @author    Justin Fletcher <justin@justinandco.com>
- * @copyright Copyright (c) 2014, Justin Fletcher
+ * @copyright Copyright ( c ) 2014, Justin Fletcher
  * @license   http://opensource.org/licenses/gpl-2.0.php GPL v2 or later
  *
  * The text domain must be manually replaced with the required plugin text domain.
  */
 
  
-if ( ! defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' )) {
 	exit; // Exit if accessed directly
 }
-
 
 /**
  * Everything is pulled into this Class to allow for extendibility with including
  * new callouts that are required on a plugin by plugin basis.
  */
-if ( ! class_exists( 'Extendible_Tabbed_Settings' ) ) { 
+if ( ! class_exists( 'Extendible_Tabbed_Settings' )) { 
 	Class Extendible_Tabbed_Settings  {
 
 		private $handlers = array();
 		
-		public function registerHandler($handler) {
+		public function registerHandler( $handler ) {
 			$this->handlers[] = $handler;
 		}
 
-		public function __call($method, $arguments) {
-			foreach ($this->handlers as $handler) {
-				if (method_exists($handler, $method)) {
+		public function __call( $method, $arguments ) {
+			foreach ( $this->handlers as $handler ) {
+				if ( method_exists( $handler, $method )) {
 					return call_user_func_array(
-						array($handler, $method),
+						array( $handler, $method ),
 						$arguments
 					);
 				}
@@ -44,7 +43,7 @@ if ( ! class_exists( 'Extendible_Tabbed_Settings' ) ) {
 	}
 }
 
-if ( ! class_exists( 'Tabbed_Settings' ) ) {
+if ( ! class_exists( 'Tabbed_Settings' )) {
 
 	/**
 	 * Tabbed_Settings class.
@@ -72,22 +71,17 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 */	 
 		function __construct( $settings, $config ) {
 
-		//	$settings = $settings ;
-
 			$this->settings = $settings;
-//			$this->config = $config;
 			$this->register_config( $config );
-
-//			self::$instance = $this;
 
 			// hook priority = 9 to load settings before the class-tgm-plugin-activation.php runs with the same init hook at priority level 10
 			add_action( 'init', array( $this, 'init' ), 9 );
 			
-			add_action( 'admin_init', array( $this, 'render_setting_page' ) );
+			add_action( 'admin_init', array( $this, 'render_setting_page' ));
 
-			add_action( 'admin_menu', array( $this, 'add_admin_menus' ) );
+			add_action( 'admin_menu', array( $this, 'add_admin_menus' ));
 
-			add_action( 'do_settings_sections', array( $this, 'hooks_section_callback' ) );
+			add_action( 'do_settings_sections', array( $this, 'hooks_section_callback' ));
 
 		}
 
@@ -131,7 +125,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 			foreach ( $settings as $tab_name => $registered_setting_page ) {
 				$this->settings[$tab_name] = $registered_setting_page;	
-//				self::$settings[$tab_name] = $registered_setting_page;	
 			}	
         }
 
@@ -155,8 +148,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 					);
 
             foreach ( $keys as $key ) {
-                if ( isset( $config[$key] ) ) {
-                    if ( is_array( $config[$key] ) ) {
+                if ( isset( $config[$key] )) {
+                    if ( is_array( $config[$key] )) {
                         foreach ( $config[$key] as $subkey => $value ) {
                            $this->{$key}[$subkey] = $value;
                         }
@@ -179,18 +172,16 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 				if ( isset( $section['settings'] )) {
 					foreach ( $section['settings'] as $option ) {
-//						$this->current_section = $section;
 						
-						if ( isset( $option['std'] ) )
+						if ( isset( $option['std'] ))
 							add_option( $option['name'], $option['std'] );
 						
 						$sanitize_callback = ( isset( $option['sanitize_callback'] ) ? $option['sanitize_callback'] : "" );
-//						$this->tabbed_settings[$options_group] = $section['title'];
 						register_setting( $options_group, $option['name'], $sanitize_callback );
 						add_settings_section( $options_group, $section['title'], array( $this, 'hooks_section_callback' ), $options_group );
 						
 						$callback_type = ( isset( $option['type'] ) ? $option['type'] : "field_default_option" );
-						add_settings_field( $option['name'].'_setting-id', $option['label'], array( $this, $callback_type ), $options_group, $options_group, array( 'option' => $option )  );	
+						add_settings_field( $option['name'].'_setting-id', $option['label'], array( $this, $callback_type ), $options_group, $options_group, array( 'option' => $option ));	
 					}
 				}
 			}
@@ -235,7 +226,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 */	
 		public function hooks_section_callback( $section_passed ){
 			foreach ( $this->settings as $options_group => $section  ) {
-				if (( $section_passed['id'] == $options_group) && ( ! empty( $section['description'] ))) {	
+				if (( $section_passed['id'] == $options_group ) && ( ! empty( $section['description'] ))) {	
 					echo esc_html( $this->settings[$options_group]['description'] );	
 				}
 			}
@@ -309,9 +300,9 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 				?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php 
 			}
 
-			if ( ! file_exists( $plugin_main_file ) ) {
+			if ( ! file_exists( $plugin_main_file )) {
 				echo esc_html__( 'Enable to prompt installation and force active.', 'role-based-help-notes-text-domain' ) . ' ( ';
-				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  _x( 'Install', 'Install the Plugin', 'role-based-help-notes-text-domain' ) . " </a> | " ;
+				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' )) . '">' .  _x( 'Install', 'Install the Plugin', 'role-based-help-notes-text-domain' ) . " </a> | " ;
 				
 			} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) &&  ! is_plugin_active_for_network( $option['slug'] . '/' . $option['slug'] . '.php' )) {
 				echo esc_html__(  'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
@@ -415,17 +406,17 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 			$plugins = array();
 
-			if ( isset( $this->settings ) ) {
+			if ( isset( $this->settings )) {
 
 				$plugin_array = $this->settings[$plugin_extension_tab_name]['settings'];
 				
 				foreach ( $plugin_array as $plugin ) {
 
-					if ( get_option( $plugin['name'] ) ) {
+					if ( get_option( $plugin['name'] )) {
 						// change the array element key name from 'label' to 'name' for use by TGM Activation
 						$plugin['option-name'] = $plugin['name'];
 						$plugin['name'] = $plugin['label'];
-						unset($plugin['label']);
+						unset( $plugin['label'] );
 						$plugins[] = $plugin;
 					}
 				}
@@ -437,8 +428,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		
 	}
 	
-    // Ensure only one instance of the class is ever invoked.
-	//Tabbed_Settings::get_instance();
 }
 
 ?>

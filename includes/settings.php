@@ -1,13 +1,13 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' )) {
 	exit; // Exit if accessed directly
 }
 
 
 // Append new links to the Plugin admin side
 
-add_filter( 'plugin_action_links_' . RBHN_Role_Based_Help_Notes::get_instance()->plugin_file , 'rbhn_plugin_action_links');
+add_filter( 'plugin_action_links_' . RBHN_Role_Based_Help_Notes::get_instance()->plugin_file , 'rbhn_plugin_action_links' );
 
 function rbhn_plugin_action_links( $links ) {
 
@@ -22,7 +22,7 @@ function rbhn_plugin_action_links( $links ) {
 // add action after the settings save hook.
 add_action( 'tabbed_settings_after_update', 'rbhn_after_settings_update' );
 
-function rbhn_after_settings_update( ) {
+function rbhn_after_settings_update() {
 
 	$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
 	$role_based_help_notes->help_do_on_activation();		// add the active capabilities
@@ -30,8 +30,6 @@ function rbhn_after_settings_update( ) {
 	flush_rewrite_rules();	
 
 }
-
-
 
 /**
  * RBHN_Settings class.
@@ -86,7 +84,7 @@ class RBHN_Settings {
 																		'type'      => 'field_checkbox_option'
 																		),
 																	array(
-																		'name' 		=> 'rbhn_user_widget_enabled',
+																		'name' 		=> 'rbhn_widgets_enabled',
 																		'std' 		=> false,
 																		'label' 	=> _x( 'Widgets', 'settings title for enabling the widgets for help notes.', 'role-based-help-notes-text-domain' ),
 																		'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
@@ -216,7 +214,7 @@ class RBHN_Settings {
 																			'std' 		=> false,
 																			'label' 	=> 'Email Post Changes',
 																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'Allows for emailing of the standard Post, Page and General Help notes. For email of changes to all other Help notes purchase and download the role-based-help-notes-extra plugin.', 'role-based-help-notes-text-domain' ),
+																			'desc'		=> __( 'Allows for emailing of the standard General Help notes only along with Post, Page and other custom post types you have.  To email all other Help notes changes automatically to all members of a role purchase and download the role-based-help-notes-extra plugin.', 'role-based-help-notes-text-domain' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -239,20 +237,6 @@ class RBHN_Settings {
 																			'force_deactivation' 	=> false,
 																			'force_activation'      => true,		
 																			),					
-																		array(
-																			'name' 		=> 'rbhn_post_type_archive_in_menu_plugin',
-																			'std' 		=> false,
-																			'label' 	=> 'Post type archive in menu',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( "Once installed go to [Appearance]...[Menus] and locate the 'Archives' metabox for use in your theme menus.", 'role-based-help-notes-text-domain' ),
-																			'type'      => 'field_plugin_checkbox_option',
-																			// the following are for tgmpa_register activation of the plugin
-																			'plugin_dir'			=> HELP_PLUGIN_DIR,
-																			'slug'      			=> 'post-type-archive-in-menu', 
-																			'required'              => false,
-																			'force_deactivation' 	=> false,
-																			'force_activation'      => true,		
-																			),
 																		),
 										),
 /*										
@@ -304,7 +288,7 @@ class RBHN_Settings_Additional_Methods {
 		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
 		$value = get_option( $option['name'] );
 		
-		if ( ! isset( $wp_roles ) )
+		if ( ! isset( $wp_roles ))
 		$wp_roles = new WP_Roles();
 
 		$roles = $wp_roles->get_names(); 
@@ -315,7 +299,7 @@ class RBHN_Settings_Additional_Methods {
 			$id = sanitize_key( $role_key );
 			
 			$post_type_name = $role_based_help_notes->clean_post_type_name( $role_key );
-			$role_active = $this->rbhn_role_active( $role_key, (array) $value )
+			$role_active = $this->rbhn_role_active( $role_key, ( array ) $value )
 
 			// Render the output  
 			?> 
@@ -349,7 +333,7 @@ class RBHN_Settings_Additional_Methods {
 		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
 		$value = get_option( $option['name'] );
 		
-		if ( ! isset( $wp_roles ) )
+		if ( ! isset( $wp_roles ))
 		$wp_roles = new WP_Roles();
 
 		$roles = $wp_roles->get_names(); 
@@ -360,7 +344,7 @@ class RBHN_Settings_Additional_Methods {
 			$id = sanitize_key( $role_key );
 			
 			$post_type_name = $role_based_help_notes->clean_post_type_name( $role_key );
-			$role_active = $this->rbhn_role_active( $role_key, (array) $value )
+			$role_active = $this->rbhn_role_active( $role_key, ( array ) $value )
 
 			// Render the output  
 			?> 
@@ -388,8 +372,8 @@ class RBHN_Settings_Additional_Methods {
 	 */
 	public function rbhn_role_active( $role, $active_helpnote_roles ) {
 
-		foreach ($active_helpnote_roles as $active_role=>$active_posttype) {
-				if (! empty($active_posttype["$role"])) {
+		foreach ( $active_helpnote_roles as $active_role=>$active_posttype ) {
+				if (! empty( $active_posttype["$role"] )) {
 					return true;
 				}
 		}
@@ -403,7 +387,7 @@ require_once( dirname( __FILE__ ) . '/class-tabbed-settings.php' );
 
 // Create new tabbed settings object for this plugin..
 // and Include additional functions that are required.
-RBHN_Settings::get_instance()->registerHandler( new RBHN_Settings_Additional_Methods() );
+RBHN_Settings::get_instance()->registerHandler( new RBHN_Settings_Additional_Methods());
 
 
 	

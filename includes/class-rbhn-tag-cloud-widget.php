@@ -1,7 +1,7 @@
 <?php
 
 
-if ( ! defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' )) {
 	exit; // Exit if accessed directly
 }
 
@@ -17,7 +17,7 @@ class RBHN_Tag_Cloud_Widget extends WP_Widget {
 	function __construct() {
 		parent::__construct(
 			'rbhn_tag_cloud_widget', // Base ID
-			__('Help Note Tag Cloud', 'role-based-help-notes-text-domain'), // Name
+			__( 'Help Note Tag Cloud', 'role-based-help-notes-text-domain' ), // Name
 			array( 'description' => __( 'A Tag Cloud Widget', 'role-based-help-notes-text-domain' ), ) // Args
 		);
 	}
@@ -36,8 +36,8 @@ class RBHN_Tag_Cloud_Widget extends WP_Widget {
        // drop out if not a single Help Note page or Help Hote Archive page.
        // or the General Help Note Type
        $show_widget_help_notes = $role_based_help_notes->active_help_notes();
-       $exclude_help_notes = array('h_general');
-       $show_widget_help_notes = array_diff($show_widget_help_notes, $exclude_help_notes);
+       $exclude_help_notes = array( 'h_general' );
+       $show_widget_help_notes = array_diff( $show_widget_help_notes, $exclude_help_notes );
        
         if ( ! in_array( get_post_type(),  $show_widget_help_notes ))
             return; 
@@ -46,14 +46,14 @@ class RBHN_Tag_Cloud_Widget extends WP_Widget {
 		$help_note_object = get_post_type_object( $post_type );
 		$help_note_name = $help_note_object->labels->menu_name;
 		
-		if ( empty( $instance['title'] ) ) {
-			$title = sprintf( _x( '%1$s Topics', 'the topics tag cloud for a single role' , 'role-based-help-notes-text-domain'), $help_note_name);
+		if ( empty( $instance['title'] )) {
+			$title = sprintf( _x( '%1$s Topics', 'the topics tag cloud for a single role' , 'role-based-help-notes-text-domain' ), $help_note_name );
 		} else {
 			$title = $instance['title'];
 		}
 		
 		echo $args['before_widget'];
-		if ( ! empty( $title ) )
+		if ( ! empty( $title ))
 			echo $args['before_title'] . $title . $args['after_title'];
  /*       
 		if ( $title )
@@ -61,7 +61,7 @@ class RBHN_Tag_Cloud_Widget extends WP_Widget {
 */
 		echo '<div class="tagcloud">';
 
-		wp_tag_cloud( apply_filters( 'rbhn_tag_cloud_widget_args', array( 'taxonomy' => $post_type . 'topics' ) ) );
+		wp_tag_cloud( apply_filters( 'rbhn_tag_cloud_widget_args', array( 'taxonomy' => $post_type . 'topics' )));
 
 		echo "</div>";
 
@@ -88,7 +88,7 @@ class RBHN_Tag_Cloud_Widget extends WP_Widget {
 		<p>
 		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-		<?php echo __('Leave Blank for a dynamic cloud title which includes the Role.', 'role-based-help-notes-text-domain'); ?></p>
+		<?php echo __( 'Leave Blank for a dynamic cloud title which includes the Role.', 'role-based-help-notes-text-domain' ); ?></p>
 		<?php 
 	}
 
@@ -104,7 +104,7 @@ class RBHN_Tag_Cloud_Widget extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 		$instance = array();
-		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance['title'] = ( ! empty( $new_instance['title'] )) ? strip_tags( $new_instance['title'] ) : '';
 
 		return $instance;
 	}

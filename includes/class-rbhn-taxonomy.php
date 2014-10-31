@@ -1,6 +1,6 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) {
+if ( ! defined( 'ABSPATH' )) {
 	exit; // Exit if accessed directly
 }
 
@@ -16,7 +16,7 @@ class RBHN_TAX {
 	 * @access public
 	 * @return void
 	 */	 
-	function __construct( $args = array() ) {
+	function __construct( $args = array()) {
 
 		// Parse default and new args.
 		$defaults = array(
@@ -46,9 +46,9 @@ class RBHN_TAX {
 		//hook into the init action and call create_book_taxonomies when it fires
 		add_action( 'init', array( $this, 'create_hierarchical_taxonomy' ), 0 );
 		
-		add_action('restrict_manage_posts', array( $this, 'restrict_posttype_by_taxonomy') );
+		add_action( 'restrict_manage_posts', array( $this, 'restrict_posttype_by_taxonomy' ));
 
-		add_filter('parse_query', array( $this, 'convert_id_to_term_in_query') );
+		add_filter( 'parse_query', array( $this, 'convert_id_to_term_in_query' ));
 		
 	}
 
@@ -89,7 +89,7 @@ class RBHN_TAX {
 		$q_vars = &$query->query_vars;
 	
 		if ( $pagenow == 'edit.php' && isset( $q_vars['post_type'] ) && $q_vars['post_type'] == $this->args['post_type'] && isset( $q_vars[$this->args['taxonomy']] ) && is_numeric( $q_vars[$this->args['taxonomy']] ) && $q_vars[$this->args['taxonomy']] != 0 ) {	
-			$term = get_term_by('id', $q_vars[$this->args['taxonomy']], $this->args['taxonomy']);
+			$term = get_term_by( 'id', $q_vars[$this->args['taxonomy']], $this->args['taxonomy'] );
 			$q_vars[$this->args['taxonomy']] = $term->slug;
 		}
 	}
@@ -118,37 +118,32 @@ $args = array(
 							) 
 			);
 							
-//new RBHN_TAX( $args );
-
-
-	$post_types_array	= get_option('rbhn_post_types');
+	$post_types_array	= get_option( 'rbhn_post_types' );
 
 	//  loop through the site roles and create a topics taxonomy for each
 	global $wp_roles;
 	
 	// Load roles if not set
-	if ( ! isset( $wp_roles ) )
+	if ( ! isset( $wp_roles ))
 		$wp_roles = new WP_Roles();
 
 	$roles = $wp_roles->get_names();
 
-	if (  ! empty( $post_types_array ) ) {
+	if (  ! empty( $post_types_array )) {
 		foreach( $post_types_array as $array ) {	
-			foreach( $array as $active_role=>$active_posttype) {
+			foreach( $array as $active_role=>$active_posttype ) {
 				if ( array_key_exists ( $active_role, $roles )) {
 					if ( $this->help_notes_current_user_has_role( $active_role )) {
-						//call_user_func_array( array( $this, 'help_register_posttype' ), array( $active_role, $roles[$active_role], $active_posttype ) ); 
 						
-						//var_dump($roles);
 						$tax_args = array(								
 										'post_type' => $active_posttype, 
 										'taxonomy' => $active_posttype . 'topics',
 										'manage_capability' => 'manage_categories_' . $active_posttype,
 										'page_title' => _x( 'New Topics', 'Title of the New Taxonomy Page', 'role-based-help-notes-text-domain' ),
-										'menu_title' => sprintf( __( '%1$s Topics', 'role-based-help-notes-text-domain'), $roles[$active_role] ) ,
+										'menu_title' => sprintf( __( '%1$s Topics', 'role-based-help-notes-text-domain' ), $roles[$active_role] ),
 										'labels' => array( 
 															//'name' => _x( 'Topics', 'taxonomy plural name for title', 'role-based-help-notes-text-domain' ),
-															'name' => sprintf( __( 'Topics for the %1$s role', 'role-based-help-notes-text-domain'), $roles[$active_role] ) ,
+															'name' => sprintf( __( 'Topics for the %1$s role', 'role-based-help-notes-text-domain' ), $roles[$active_role] ),
 															'singular_name' => _x( 'Topic', 'taxonomy singular name', 'role-based-help-notes-text-domain' ),
 															'search_items' =>  __( 'Search Topics', 'role-based-help-notes-text-domain' ),
 															'all_items' => __( 'All Topics', 'role-based-help-notes-text-domain' ),
@@ -158,7 +153,7 @@ $args = array(
 															'update_item' => __( 'Update Topic', 'role-based-help-notes-text-domain' ),
 															'add_new_item' => __( 'Add New Topic', 'role-based-help-notes-text-domain' ),
 															'new_item_name' => __( 'New Topic Name', 'role-based-help-notes-text-domain' ),
-															'menu_name' => sprintf( __( '%1$s Topics', 'role-based-help-notes-text-domain'), $roles[$active_role]) ,
+															'menu_name' => sprintf( __( '%1$s Topics', 'role-based-help-notes-text-domain' ), $roles[$active_role] ),
 														) 
 										);
 
