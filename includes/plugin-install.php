@@ -1,6 +1,6 @@
 <?php
 
-if ( ! defined( 'ABSPATH' )) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
@@ -9,9 +9,9 @@ require_once( dirname( __FILE__ ) . '/class-tgm-plugin-activation.php' );
 
 add_action( 'tgmpa_register', 'rbhn_tgmpa_register' );
 
-function rbhn_tgmpa_register() {
+function rbhn_tgmpa_register( ) {
 
-	$plugins = RBHN_Settings::get_instance()->selected_plugins( 'rbhn_plugin_extension' );
+	$plugins = RBHN_Settings::get_instance( )->selected_plugins( 'rbhn_plugin_extension' );
 	
 	$config = array(
 			'default_path' => '',                      // Default absolute path to pre-packaged plugins.

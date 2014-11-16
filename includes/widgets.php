@@ -1,6 +1,6 @@
 <?php
 
-if ( ! defined( 'ABSPATH' )) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
@@ -18,13 +18,13 @@ add_action( 'widgets_init', 'rbhn_register_widgets' );
  * Registers widgets for the plugin.
  *
  */
-function rbhn_register_widgets() {
+function rbhn_register_widgets( ) {
 
     // option collection  
 	$option = get_option( 'rbhn_widgets_enabled' );  
 
     /* If the user widget are enabled. */    
-    if ( isset( $option ) && !empty( $option )) {
+    if ( isset( $option ) && !empty( $option ) ) {
 
 		/* Load the user widget file. */
 		require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-users-widget.php' );

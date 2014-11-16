@@ -1,27 +1,27 @@
 <?php
 
 //if uninstall not called from WordPress exit
-if ( !defined( 'WP_UNINSTALL_PLUGIN' ))
-	exit ();
+if ( !defined( 'WP_UNINSTALL_PLUGIN' ) )
+	exit ( );
 	
-if ( is_multisite()) {
+if ( is_multisite( ) ) {
     global $wpdb;
     $blogs = $wpdb->get_results( "SELECT blog_id FROM {$wpdb->blogs}", ARRAY_a );
     if ( $blogs ) {
         foreach( $blogs as $blor ) {
             switch_to_blog( $blog['blog_id'] );
-            rbhn_capabilities_clean_up();
-			rbhn_clean_database();
+            rbhn_capabilities_clean_up( );
+			rbhn_clean_database( );
         }
-        restore_current_blog();
+        restore_current_blog( );
     }
 } else {
-		rbhn_capabilities_clean_up();
-		rbhn_clean_database();
+		rbhn_capabilities_clean_up( );
+		rbhn_clean_database( );
 }
 		
 // remove all database entries for currently active blog on uninstall.
-function rbhn_clean_database() {
+function rbhn_clean_database( ) {
 		
 		delete_option( 'rbhn_plugin_version' );
 		delete_option( 'rbhn_caps_created' );
@@ -52,24 +52,24 @@ function rbhn_clean_database() {
 		delete_option( 'rbhn_deactivate_post-type-archive-in-menu' );
 		
 		// user specific database entries
-		delete_user_meta( get_current_user_id(), 'rbhn_prompt_timeout', $meta_value );
-		delete_user_meta( get_current_user_id(), 'rbhn_start_date', $meta_value );
-		delete_user_meta( get_current_user_id(), 'rbhn_hide_notice', $meta_value );
+		delete_user_meta( get_current_user_id( ), 'rbhn_prompt_timeout', $meta_value );
+		delete_user_meta( get_current_user_id( ), 'rbhn_start_date', $meta_value );
+		delete_user_meta( get_current_user_id( ), 'rbhn_hide_notice', $meta_value );
 
 }
 		
 // remove capabilities on uninstall.
-function rbhn_capabilities_clean_up() {
+function rbhn_capabilities_clean_up( ) {
 
     global $wp_roles;
  
-    if ( ! isset( $wp_roles ))
-        $wp_roles = new WP_Roles();
+    if ( ! isset( $wp_roles ) )
+        $wp_roles = new WP_Roles( );
             
-    $roles = $wp_roles->get_names();
+    $roles = $wp_roles->get_names( );
 
     // loop through the roles to create the capability list that needs to be cleaned out
-	foreach( $roles as $role_key=>$role_name )  
+	foreach( $roles as $role_key=>$role_name ) 
     {
         rbhn_role_caps_uninstall( $role_key );
     }
@@ -80,7 +80,7 @@ function rbhn_role_caps_uninstall( $role_key ) {
 
 	$post_types_array = get_option( 'rbhn_post_types' );
 	
-    if (  ! empty( $post_types_array )) {
+    if ( ! empty( $post_types_array ) ) {
 	    foreach( $post_types_array as $array ) {
 			
 			foreach( $array as $active_role=>$active_posttype ) {
@@ -94,7 +94,7 @@ function rbhn_role_caps_uninstall( $role_key ) {
 	}
 	
 	// if no post type found drop out.
-	if ( empty( $capability_type ))
+	if ( empty( $capability_type ) )
 		return;
 
 	$delete_caps = array(
@@ -117,10 +117,10 @@ function rbhn_role_caps_uninstall( $role_key ) {
 
     global $wp_roles;
  
-    if ( ! isset( $wp_roles ))
-        $wp_roles = new WP_Roles();
+    if ( ! isset( $wp_roles ) )
+        $wp_roles = new WP_Roles( );
 		
-	$users = get_users();
+	$users = get_users( );
 	$administrator      = get_role( 'administrator' );
 	
 	// loop through the capability list.

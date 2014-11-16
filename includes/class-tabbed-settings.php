@@ -12,7 +12,7 @@
  */
 
  
-if ( ! defined( 'ABSPATH' )) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
@@ -20,10 +20,10 @@ if ( ! defined( 'ABSPATH' )) {
  * Everything is pulled into this Class to allow for extendibility with including
  * new callouts that are required on a plugin by plugin basis.
  */
-if ( ! class_exists( 'Extendible_Tabbed_Settings' )) { 
+if ( ! class_exists( 'Extendible_Tabbed_Settings' ) ) { 
 	Class Extendible_Tabbed_Settings  {
 
-		private $handlers = array();
+		private $handlers = array( );
 		
 		public function registerHandler( $handler ) {
 			$this->handlers[] = $handler;
@@ -31,7 +31,7 @@ if ( ! class_exists( 'Extendible_Tabbed_Settings' )) {
 
 		public function __call( $method, $arguments ) {
 			foreach ( $this->handlers as $handler ) {
-				if ( method_exists( $handler, $method )) {
+				if ( method_exists( $handler, $method ) ) {
 					return call_user_func_array(
 						array( $handler, $method ),
 						$arguments
@@ -43,7 +43,7 @@ if ( ! class_exists( 'Extendible_Tabbed_Settings' )) {
 	}
 }
 
-if ( ! class_exists( 'Tabbed_Settings' )) {
+if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 	/**
 	 * Tabbed_Settings class.
@@ -51,8 +51,8 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 	class Tabbed_Settings extends Extendible_Tabbed_Settings {
 
 //		public static $instance;
-//		public $settings = array();
-//		public $config = array();
+//		public $settings = array( );
+//		public $config = array( );
 
 
 		// the following are configurable externally
@@ -77,11 +77,11 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 			// hook priority = 9 to load settings before the class-tgm-plugin-activation.php runs with the same init hook at priority level 10
 			add_action( 'init', array( $this, 'init' ), 9 );
 			
-			add_action( 'admin_init', array( $this, 'render_setting_page' ));
+			add_action( 'admin_init', array( $this, 'render_setting_page' ) );
 
-			add_action( 'admin_menu', array( $this, 'add_admin_menus' ));
+			add_action( 'admin_menu', array( $this, 'add_admin_menus' ) );
 
-			add_action( 'do_settings_sections', array( $this, 'hooks_section_callback' ));
+			add_action( 'do_settings_sections', array( $this, 'hooks_section_callback' ) );
 
 		}
 
@@ -91,7 +91,7 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 		 * @access private
 		 * @return void
 		 */
-		public function init() {
+		public function init( ) {
 		
 			do_action( 'tabbed_settings_register' );
 			// After this point, the settings should be registered and the configuration set.
@@ -104,9 +104,9 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 		 * @access public
 		 * @return void
 		 */	 
-		public function add_admin_menus() {
+		public function add_admin_menus( ) {
 
-			add_submenu_page( $this->menu_parent, $this->page_title, $this->menu_title, $this->menu_access_capability, $this->menu, array( &$this, 'plugin_options_page' ));
+			add_submenu_page( $this->menu_parent, $this->page_title, $this->menu_title, $this->menu_access_capability, $this->menu, array( &$this, 'plugin_options_page' ) );
 			
 		}
 
@@ -148,8 +148,8 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 					);
 
             foreach ( $keys as $key ) {
-                if ( isset( $config[$key] )) {
-                    if ( is_array( $config[$key] )) {
+                if ( isset( $config[$key] ) ) {
+                    if ( is_array( $config[$key] ) ) {
                         foreach ( $config[$key] as $subkey => $value ) {
                            $this->{$key}[$subkey] = $value;
                         }
@@ -166,14 +166,14 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 		 * @access public
 		 * @return void
 		 */
-		public function render_setting_page(){
+		public function render_setting_page( ){
 
 			foreach ( $this->settings as $options_group => $section  ) {
 
-				if ( isset( $section['settings'] )) {
+				if ( isset( $section['settings'] ) ) {
 					foreach ( $section['settings'] as $option ) {
 						
-						if ( isset( $option['std'] ))
+						if ( isset( $option['std'] ) )
 							add_option( $option['name'], $option['std'] );
 						
 						$sanitize_callback = ( isset( $option['sanitize_callback'] ) ? $option['sanitize_callback'] : "" );
@@ -181,7 +181,7 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 						add_settings_section( $options_group, $section['title'], array( $this, 'hooks_section_callback' ), $options_group );
 						
 						$callback_type = ( isset( $option['type'] ) ? $option['type'] : "field_default_option" );
-						add_settings_field( $option['name'].'_setting-id', $option['label'], array( $this, $callback_type ), $options_group, $options_group, array( 'option' => $option ));	
+						add_settings_field( $option['name'].'_setting-id', $option['label'], array( $this, $callback_type ), $options_group, $options_group, array( 'option' => $option ) );	
 					}
 				}
 			}
@@ -196,21 +196,21 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 		 * @access public
 		 * @return void
 		 */		 
-		public function plugin_options_page() {
+		public function plugin_options_page( ) {
 
 			$tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : $this->default_tab_key;
-			if ( isset( $_GET['settings-updated'] )) {		
+			if ( isset( $_GET['settings-updated'] ) ) {		
 				do_action( 'tabbed_settings_after_update' );
 			}
 
 			?>
 			<div class="wrap">
-				<?php $this->plugin_options_tabs(); ?>
+				<?php $this->plugin_options_tabs( ); ?>
 				<form method="post" action="options.php">
 					<?php wp_nonce_field( 'update-options-nonce', 'update-options' ); ?>
 					<?php settings_fields( $tab ); ?>
 					<?php do_settings_sections( $tab ); ?>
-					<?php submit_button(); ?>
+					<?php submit_button( ); ?>
 				</form>
 			</div>
 			<?php
@@ -226,7 +226,7 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 		 */	
 		public function hooks_section_callback( $section_passed ){
 			foreach ( $this->settings as $options_group => $section  ) {
-				if (( $section_passed['id'] == $options_group ) && ( ! empty( $section['description'] ))) {	
+				if ( ( $section_passed['id'] == $options_group ) && ( ! empty( $section['description'] ) ) ) {	
 					echo esc_html( $this->settings[$options_group]['description'] );	
 				}
 			}
@@ -243,8 +243,8 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 			$option   = $args['option'];
 			$value = get_option( $option['name'] );
 			?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php echo esc_html( $option['cb_label'] ); ?></label><?php
-			if ( ! empty( $option['desc'] ))
-			echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';
+			if ( ! empty( $option['desc'] ) )
+			echo ' <p class="description">' .  $option['desc'] . '</p>';
 		}
 
 		/**
@@ -275,8 +275,8 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 
 			
 			<?php
-			if ( ! empty( $option['desc'] ))
-				echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';		
+			if ( ! empty( $option['desc'] ) )
+				echo ' <p class="description">' . $option['desc'] . '</p>';		
 		}
 	
 		/**
@@ -294,26 +294,26 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 			$plugin_main_file =  trailingslashit( $option['plugin_dir']. $option['slug'] ) .  $filename . '.php' ;
 			$value = get_option( $option['name'] );
 
-			if ( is_plugin_active_for_network( $option['slug'] . '/' . $filename . '.php' )) {
+			if ( is_plugin_active_for_network( $option['slug'] . '/' . $filename . '.php' ) ) {
 				?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" disabled="disabled" checked="checked"/> <?php
 			} else {
 				?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php 
 			}
 
-			if ( ! file_exists( $plugin_main_file )) {
+			if ( ! file_exists( $plugin_main_file ) ) {
 				echo esc_html__( 'Enable to prompt installation and force active.', 'role-based-help-notes-text-domain' ) . ' ( ';
-				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' )) . '">' .  _x( 'Install', 'Install the Plugin', 'role-based-help-notes-text-domain' ) . " </a> | " ;
+				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  _x( 'Install', 'Install the Plugin', 'role-based-help-notes-text-domain' ) . " </a> | " ;
 				
-			} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) &&  ! is_plugin_active_for_network( $option['slug'] . '/' . $option['slug'] . '.php' )) {
-				echo esc_html__(  'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
+			} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) &&  ! is_plugin_active_for_network( $option['slug'] . '/' . $option['slug'] . '.php' ) ) {
+				echo esc_html__( 'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
 				if ( ! $value ) echo '<a href="plugins.php?s=' . esc_html( $option['label'] )	 . '">' .  _x( 'Deactivate', 'deactivate the plugin', 'role-based-help-notes-text-domain' ) . "</a> | " ;	
 			} else {
-				echo esc_html__(  'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
+				echo esc_html__( 'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
 			}
 			echo ' <a href="http://wordpress.org/plugins/' . esc_html( $option['slug'] ) . '">' .  esc_html__( "wordpress.org", 'role-based-help-notes-text-domain' ) . " </a> )" ;		
 			?></label><?php
-			if ( ! empty( $option['desc'] ))
-				echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';
+			if ( ! empty( $option['desc'] ) )
+				echo ' <p class="description">' .  $option['desc']  . '</p>';
 		}	
 
 		/**
@@ -335,8 +335,8 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 			$value = get_option( $option['name'] );
 			?><textarea id="setting-<?php echo esc_html( $option['name'] ); ?>" cols=<?php echo $option['columns']; ?> rows=<?php echo $option['rows']; ?> name="<?php echo esc_html( $option['name'] ); ?>" ><?php echo esc_textarea( $value ); ?></textarea><?php
 
-			if ( ! empty( $option['desc'] ))
-				echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';
+			if ( ! empty( $option['desc'] ) )
+				echo ' <p class="description">' . $option['desc'] . '</p>';
 		}
 
 		/**
@@ -354,7 +354,7 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 					echo '<option value="' . esc_attr( $key ) . '" ' . selected( $value, $key, false ) . '>' . esc_html( $name ) . '</option>';
 			?></select><?php
 
-			if ( ! empty( $option['desc'] ))
+			if ( ! empty( $option['desc'] ) )
 				echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';
 		}
 		
@@ -370,8 +370,8 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 			$value = get_option( $option['name'] );
 			?><input id="setting-<?php echo esc_html( $option['name'] ); ?>" class="regular-text" type="text" name="<?php echo esc_html( $option['name'] ); ?>" value="<?php esc_attr_e( $value ); ?>" /><?php
 
-			if ( ! empty( $option['desc'] ))
-				echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';
+			if ( ! empty( $option['desc'] ) )
+				echo ' <p class="description">' . $option['desc'] . '</p>';
 		}
 		
 		/**
@@ -382,11 +382,11 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 		 * @access public
 		 * @return void
 		 */
-		public function plugin_options_tabs() {
+		public function plugin_options_tabs( ) {
 		
 			$current_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : $this->default_tab_key;
 
-			screen_icon();
+			screen_icon( );
 			echo '<h2 class="nav-tab-wrapper">';
 			foreach ( $this->settings as $tab_key => $tab_options_array ) {
 				$active = $current_tab == $tab_key ? 'nav-tab-active' : '';
@@ -404,15 +404,15 @@ if ( ! class_exists( 'Tabbed_Settings' )) {
 		 */
 		public function selected_plugins( $plugin_extension_tab_name ) {
 
-			$plugins = array();
+			$plugins = array( );
 
-			if ( isset( $this->settings )) {
+			if ( isset( $this->settings ) ) {
 
 				$plugin_array = $this->settings[$plugin_extension_tab_name]['settings'];
 				
 				foreach ( $plugin_array as $plugin ) {
 
-					if ( get_option( $plugin['name'] )) {
+					if ( get_option( $plugin['name'] ) ) {
 						// change the array element key name from 'label' to 'name' for use by TGM Activation
 						$plugin['option-name'] = $plugin['name'];
 						$plugin['name'] = $plugin['label'];

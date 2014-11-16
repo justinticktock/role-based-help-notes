@@ -1,17 +1,17 @@
 <?php
 
-if ( ! defined( 'ABSPATH' )) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 
 // Append new links to the Plugin admin side
 
-add_filter( 'plugin_action_links_' . RBHN_Role_Based_Help_Notes::get_instance()->plugin_file , 'rbhn_plugin_action_links' );
+add_filter( 'plugin_action_links_' . RBHN_Role_Based_Help_Notes::get_instance( )->plugin_file , 'rbhn_plugin_action_links' );
 
 function rbhn_plugin_action_links( $links ) {
 
-	$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
+	$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
 
 	$settings_link = '<a href="options-general.php?page=' . $role_based_help_notes->menu . '">' . __( 'Settings' ) . "</a>";
 	array_push( $links, $settings_link );
@@ -22,12 +22,12 @@ function rbhn_plugin_action_links( $links ) {
 // add action after the settings save hook.
 add_action( 'tabbed_settings_after_update', 'rbhn_after_settings_update' );
 
-function rbhn_after_settings_update() {
+function rbhn_after_settings_update( ) {
 
-	$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
-	$role_based_help_notes->help_do_on_activation();		// add the active capabilities
-	RBHN_Capabilities::rbhn_clean_inactive_capabilties();	// remove the inactive role capabilities
-	flush_rewrite_rules();	
+	$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
+	$role_based_help_notes->help_do_on_activation( );		// add the active capabilities
+	RBHN_Capabilities::rbhn_clean_inactive_capabilties( );	// remove the inactive role capabilities
+	flush_rewrite_rules( );	
 
 }
 
@@ -47,7 +47,7 @@ class RBHN_Settings {
 	 * @access public
 	 * @return void
 	 */
-	private function __construct() {
+	private function __construct( ) {
 	}
 	
 	/**
@@ -55,9 +55,9 @@ class RBHN_Settings {
      *
      * @return   A single instance of this class.
      */
-    public static function get_instance() {
+    public static function get_instance( ) {
 
-		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
+		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
 		
 		$config = array(
 				'default_tab_key' => 'rbhn_general',					// Default settings tab, opened on first settings page open.
@@ -113,7 +113,7 @@ class RBHN_Settings {
 											'settings' 		=> array(					
 																	array(
 																		'name' 		=> 'rbhn_post_types',
-																		'std' 		=> array(),
+																		'std' 		=> array( ),
 																		'label' 	=> __( 'Help Notes', 'role-based-help-notes-text-domain' ),
 																		'desc'		=> '',
 																		'type'      => 'field_help_notes_post_types_option'
@@ -214,7 +214,7 @@ class RBHN_Settings {
 																			'std' 		=> false,
 																			'label' 	=> 'Email Post Changes',
 																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'Allows for emailing of the standard General Help notes only along with Post, Page and other custom post types you have.  To email all other Help notes changes automatically to all members of a role purchase and download the role-based-help-notes-extra plugin.', 'role-based-help-notes-text-domain' ),
+																			'desc'		=> __( 'Allows for emailing of the standard General Help notes only along with Post, Page and other custom post types you have.  To email all other Help note changes automatically, tighter control is necessary for security reasons, for this you can purchase and download the <a href="//justinandco.com/plugins/role-based-help-notes-extra/" target="_blank">role-based-help-notes-extra plugin</a>.', 'role-based-help-notes-text-domain' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -239,21 +239,6 @@ class RBHN_Settings {
 																			),					
 																		),
 										),
-/*										
-										'rbhn_taxonomy' => array(
-											'title' 		=> _x( 'Taxonomy', 'Taxonomy general name', 'role-based-help-notes-text-domain' ),
-											'description' 	=> __( 'List the taxonomies that you wish to include for each Role.', 'role-based-help-notes-text-domain' ),
-											'settings' 		=> array(					
-																	array(
-																		'name' 		=> 'rbhn_taxonomies',
-																		'std' 		=> array(),
-																		'label' 	=> __( 'Help Note Taxonomies', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> '',
-																		//'type'      => 'field_help_notes_taxonomy_options'
-																		),					
-																	),
-										),
-*/
 									)
 								);
 
@@ -285,13 +270,13 @@ class RBHN_Settings_Additional_Methods {
 		
 		//  loop through the site roles and create a custom post for each
 		global $wp_roles;
-		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
+		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
 		$value = get_option( $option['name'] );
 		
-		if ( ! isset( $wp_roles ))
-		$wp_roles = new WP_Roles();
+		if ( ! isset( $wp_roles ) )
+		$wp_roles = new WP_Roles( );
 
-		$roles = $wp_roles->get_names(); 
+		$roles = $wp_roles->get_names( ); 
 		?><ul><?php 
 		asort( $roles );
 		foreach( $roles as $role_key=>$role_name )
@@ -313,7 +298,7 @@ class RBHN_Settings_Additional_Methods {
 			</label></li>
 			<?php 
 		}?></ul><?php 
-		if ( ! empty( $option['desc'] ))
+		if ( ! empty( $option['desc'] ) )
 			echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';		
 	}
 	
@@ -330,13 +315,13 @@ class RBHN_Settings_Additional_Methods {
 		
 		//  loop through the site roles and create a custom post for each
 		global $wp_roles;
-		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance();
+		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
 		$value = get_option( $option['name'] );
 		
-		if ( ! isset( $wp_roles ))
-		$wp_roles = new WP_Roles();
+		if ( ! isset( $wp_roles ) )
+		$wp_roles = new WP_Roles( );
 
-		$roles = $wp_roles->get_names(); 
+		$roles = $wp_roles->get_names( ); 
 		?><ul><?php 
 		asort( $roles );
 		foreach( $roles as $role_key=>$role_name )
@@ -358,7 +343,7 @@ class RBHN_Settings_Additional_Methods {
 			</label></li>
 			<?php 
 		}?></ul><?php 
-		if ( ! empty( $option['desc'] ))
+		if ( ! empty( $option['desc'] ) )
 			echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';		
 	}
 	
@@ -373,7 +358,7 @@ class RBHN_Settings_Additional_Methods {
 	public function rbhn_role_active( $role, $active_helpnote_roles ) {
 
 		foreach ( $active_helpnote_roles as $active_role=>$active_posttype ) {
-				if (! empty( $active_posttype["$role"] )) {
+				if (! empty( $active_posttype["$role"] ) ) {
 					return true;
 				}
 		}
@@ -387,7 +372,7 @@ require_once( dirname( __FILE__ ) . '/class-tabbed-settings.php' );
 
 // Create new tabbed settings object for this plugin..
 // and Include additional functions that are required.
-RBHN_Settings::get_instance()->registerHandler( new RBHN_Settings_Additional_Methods());
+RBHN_Settings::get_instance( )->registerHandler( new RBHN_Settings_Additional_Methods( ) );
 
 
 	

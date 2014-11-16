@@ -1,6 +1,6 @@
 <?php
 
-if ( ! defined( 'ABSPATH' )) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
@@ -16,7 +16,7 @@ class RBHN_TAX {
 	 * @access public
 	 * @return void
 	 */	 
-	function __construct( $args = array()) {
+	function __construct( $args = array( ) ) {
 
 		// Parse default and new args.
 		$defaults = array(
@@ -46,26 +46,27 @@ class RBHN_TAX {
 		//hook into the init action and call create_book_taxonomies when it fires
 		add_action( 'init', array( $this, 'create_hierarchical_taxonomy' ), 0 );
 		
-		add_action( 'restrict_manage_posts', array( $this, 'restrict_posttype_by_taxonomy' ));
+		add_action( 'restrict_manage_posts', array( $this, 'restrict_posttype_by_taxonomy' ) );
 
-		add_filter( 'parse_query', array( $this, 'convert_id_to_term_in_query' ));
+		add_filter( 'parse_query', array( $this, 'convert_id_to_term_in_query' ) );
 		
 	}
 
-	public function create_hierarchical_taxonomy() {
+	public function create_hierarchical_taxonomy( ) {
 
 		// register the taxonomy
-		register_taxonomy(	$this->args['taxonomy'], array( $this->args['post_type'] ), array(
+		register_taxonomy(	$this->args['taxonomy'], array( $this->args['post_type'] ), apply_filters( 'rbhn_taxonomy_args', array(
 							'hierarchical' => true,
 							'labels' => $this->args['labels'],
 							'show_ui' => true,
+							'show_in_nav_menus' => false,
 							'show_admin_column' => true,
 							'query_var' => true,
 							'rewrite' => array( 'slug' => $this->args['taxonomy'] ),
-		));
+		) ) );
 	}
 	
-	public function restrict_posttype_by_taxonomy() {
+	public function restrict_posttype_by_taxonomy( ) {
 			global $typenow;		
 			if ( $typenow == $this->args['post_type'] ) {
 				$selected = isset( $_GET[$this->args['taxonomy']] ) ? $_GET[$this->args['taxonomy']] : '';
@@ -78,7 +79,7 @@ class RBHN_TAX {
 					'selected' => $selected,
 					'show_count' => true,
 					'hide_empty' => true,
-				));
+				) );
 			};
 		}
 
@@ -124,16 +125,16 @@ $args = array(
 	global $wp_roles;
 	
 	// Load roles if not set
-	if ( ! isset( $wp_roles ))
-		$wp_roles = new WP_Roles();
+	if ( ! isset( $wp_roles ) )
+		$wp_roles = new WP_Roles( );
 
-	$roles = $wp_roles->get_names();
+	$roles = $wp_roles->get_names( );
 
-	if (  ! empty( $post_types_array )) {
+	if ( ! empty( $post_types_array ) ) {
 		foreach( $post_types_array as $array ) {	
 			foreach( $array as $active_role=>$active_posttype ) {
-				if ( array_key_exists ( $active_role, $roles )) {
-					if ( $this->help_notes_current_user_has_role( $active_role )) {
+				if ( array_key_exists ( $active_role, $roles ) ) {
+					if ( $this->help_notes_current_user_has_role( $active_role ) ) {
 						
 						$tax_args = array(								
 										'post_type' => $active_posttype, 

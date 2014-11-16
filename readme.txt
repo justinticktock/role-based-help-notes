@@ -15,7 +15,7 @@ Do you want to give users a private area to share information based on a role th
 
 ...this plugin allows you to quickly create a custom post type for user roles.  This allows users, with a specific role, the ability to create and edit their own 'help notes' providing a private set of notes for use.  It can be used for anything else that fits with that role ( e.g. creating and sharing ideas within teams, minutes-of-meetings, formal notes... etc.).
 
-To add new roles to the basic WordPress roles (Administrator, Editor, Subscriber ..etc ) you will need to use another plugin refer to [Roles_and_Capabilities]( http://codex.wordpress.org/Roles_and_Capabilities#Resources ) and Resources.. Plugins.  You can then use one of these plugins ( e.g. [User Role Editor]( http://wordpress.org/extend/plugins/user-role-editor/ "User Role Editor" )) to allocate users to multiple roles.
+To add new roles to the basic WordPress roles (Administrator, Editor, Subscriber ..etc ) you will need to use another plugin refer to [Roles_and_Capabilities]( http://codex.wordpress.org/Roles_and_Capabilities#Resources ) and Resources.. Plugins.  You can then use one of these plugins ( e.g. [User Role Editor]( http://wordpress.org/extend/plugins/user-role-editor/ "User Role Editor" ) ) to allocate users to multiple roles.
 
 So if you want to quickly give a group a private area to share and post ideas/notes ..
 1. Create a new role.
