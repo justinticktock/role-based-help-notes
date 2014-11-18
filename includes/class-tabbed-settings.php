@@ -5,7 +5,7 @@
  * @package   class-tabbed-settings.php
  * @version   1.1.4
  * @author    Justin Fletcher <justin@justinandco.com>
- * @copyright Copyright ( c ) 2014, Justin Fletcher
+ * @copyright Copyright 2014, Justin Fletcher
  * @license   http://opensource.org/licenses/gpl-2.0.php GPL v2 or later
  *
  * The text domain must be manually replaced with the required plugin text domain.

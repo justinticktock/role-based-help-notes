@@ -102,7 +102,7 @@ class RBHN_Settings {
 																		'name' 		=> 'rbhn_welcome_page',
 																		'std' 		=> '0',
 																		'label' 	=> __( 'Welcome Page', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> __( 'If you create a custom welcome page select it here so that the Help Note Contents are displayed for the admin Help Notes Menu Page.', 'role-based-help-notes-text-domain' ),
+																		'desc'		=> __( 'A welcome page has been created and used for your menu landing page, you can edit the page directly to customise or select "- None -" to deactivate.', 'role-based-help-notes-text-domain' ),
 																		'type'      => 'field_page_select_list_option',
 																		),															
 																),

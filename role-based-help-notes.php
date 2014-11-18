@@ -76,25 +76,7 @@ class RBHN_Role_Based_Help_Notes {
 		
 		// Add the Help Note Custom Post Types to the author post listing
 		add_filter( 'pre_get_posts', array( $this, 'rbhn_custom_post_author_archive' ) );
-		
-		// run on login 
-		//add_action( 'wp_login', array( $this, 'wp_login' ) , 10, 2 );
 
-	}
-
-	/**
-	 * Runs after User Login and flushes the permalinks.  This is necessary as HelpNotes
-	 * are not available to everyone ( even site Admin's ) so the last time the permalinks settings
-	 * where saved some Help Notes may well have been not present and this will cause issues for 
-	 * the current users if they have access to these.
-	 *
-	 * @return void
-	 */
-	public function wp_login( $user_login, $user ) {
-	
-		//users logged in and saving the Permalink Settings will fight each other.  we need to confirm that all site Help Notes ( cpt ) are registered when the rules are flushed at login say of a user with the abilty to save permalinks.  Its not necessary to do the flush for every user if they can't actually do the save of permalink.
-		flush_rewrite_rules( );
-		//die( );
 	}
 	
 	/**
@@ -290,7 +272,7 @@ class RBHN_Role_Based_Help_Notes {
 
 		if ( ! get_option( 'rbhn_welcome_page' ) ) {
 		
-			$content = '<iframe style="border: 0;" src="//justinandco.com/plugins/help-notes-splash-screen/" width="100%" height="1000"></iframe>';
+			$content = '<iframe style="border: 0;" src="//justinandco.com/helpnotewelcome/" width="100%" height="1000"></iframe>';
 			
 			$post = array(
 						  'post_content'	=> $content,
@@ -381,12 +363,8 @@ class RBHN_Role_Based_Help_Notes {
 		//$post_types_array 		= array_values( $post_types_array );
 		
 		foreach( $post_types_array_set as $array=>$h_posttype ) {
-		
 				$enabled_posttypes = array_merge( $enabled_posttypes, array_values( $h_posttype ) );				
 		}
-
-
-
 		
 	   if ( isset( $general_help_enabled ) && ! empty( $general_help_enabled ) ) {
 
@@ -538,11 +516,9 @@ class RBHN_Role_Based_Help_Notes {
 			foreach( $post_types_array as $array ) {	
 				foreach( $array as $active_role=>$active_posttype ) {
 					if ( array_key_exists ( $active_role, $roles ) ) {
-						// add all available notes for correct permalink settings when saved by an administrator with the required capability
-						// the site Admin will therefore see all HelpNotes.
-						//if ( $this->help_notes_current_user_has_role( $active_role ) ) {
-							call_user_func_array( array( $this, 'help_register_posttype' ), array( $active_role, $roles[$active_role], $active_posttype ) ); 
-						//}
+						// notes always created for correct permalink settings when saved even when a role is not given to the user saving the permalinks, 
+						// capabilities will be used to limit access to Notes. 
+						call_user_func_array( array( $this, 'help_register_posttype' ), array( $active_role, $roles[$active_role], $active_posttype ) ); 
 					} 
 				}
 			}

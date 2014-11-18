@@ -68,30 +68,12 @@ class RBHN_Capabilities {
 					$role->add_cap( "manage_categories_{$capability_type}" );
 					
 					
-// As of 12/11/2014 help notes are created all the time so Admins are no-longer given access.
-// they must be in a role to get the Help Notes.
-// For Super-Admins on a multi-site Network installation all Help Notes will be available
-// For Administrators Help Notes will only be availble if the role is given.
+					// As of 12/11/2014 help notes are created all the time so Admins are no-longer given access by default 
+					// they must be in a role to get the Help Notes.  This is for the flush of permalinks to save correctly
+					// For Super-Admins on a multi-site Network installation all Help Notes will be available.
+					// For Administrators Help Notes will only be availble if the role is given.
 
-					// add administrator roles
-					// don't allocate any of the three primitive capabilities to a users role
-//					$administrator->add_cap( "edit_{$capability_type}" );
-//					$administrator->add_cap( "read_{$capability_type}" );
-//					$administrator->add_cap( "delete_{$capability_type}" );
-					
-					// add administrator roles
-//					$administrator->add_cap( "edit_{$capability_type}s" );
-//					$administrator->add_cap( "edit_others_{$capability_type}s" );
-//					$administrator->add_cap( "publish_{$capability_type}s" );
-//					$administrator->add_cap( "read_private_{$capability_type}s" );
-//					$administrator->add_cap( "delete_{$capability_type}s" );
-//					$administrator->add_cap( "delete_private_{$capability_type}s" );
-//					$administrator->add_cap( "delete_published_{$capability_type}s" );
-//					$administrator->add_cap( "delete_others_{$capability_type}s" );
-//					$administrator->add_cap( "edit_private_{$capability_type}s" );
-//					$administrator->add_cap( "edit_published_{$capability_type}s" );
-//					$administrator->add_cap( "create_{$capability_type}s" );
-//					$administrator->add_cap( "manage_categories_{$capability_type}" );
+
 				}
 			}
 		}
