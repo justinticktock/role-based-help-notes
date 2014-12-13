@@ -121,7 +121,7 @@ class RBHN_Settings {
 																	),
 										),
 										'rbhn_plugin_extension' => array(
-												'title' 		=> __( 'Plugin Extensions', 'role-based-help-notes-text-domain' ),
+												'title' 		=> __( 'Plugin Suggestions', 'role-based-help-notes-text-domain' ),
 												'description' 	=> __( 'These settings are optional.  Selection of any suggested plugin here will prompt you through the installation.  The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall.', 'role-based-help-notes-text-domain' ),					
 												'settings' 		=> array(
 																		array(
@@ -273,10 +273,13 @@ class RBHN_Settings_Additional_Methods {
 		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
 		$value = get_option( $option['name'] );
 		
-		if ( ! isset( $wp_roles ) )
-		$wp_roles = new WP_Roles( );
+		if ( ! isset( $wp_roles ) ) {
+			$wp_roles = new WP_Roles( );
+		}
 
-		$roles = $wp_roles->get_names( ); 
+		$roles = $wp_roles->get_names( );
+		unset( $wp_roles );
+		
 		?><ul><?php 
 		asort( $roles );
 		foreach( $roles as $role_key=>$role_name )
@@ -318,10 +321,13 @@ class RBHN_Settings_Additional_Methods {
 		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
 		$value = get_option( $option['name'] );
 		
-		if ( ! isset( $wp_roles ) )
-		$wp_roles = new WP_Roles( );
+		if ( ! isset( $wp_roles ) ) {
+			$wp_roles = new WP_Roles( );
+		}
 
-		$roles = $wp_roles->get_names( ); 
+		$roles = $wp_roles->get_names( );
+		unset( $wp_roles );
+		
 		?><ul><?php 
 		asort( $roles );
 		foreach( $roles as $role_key=>$role_name )

@@ -3,7 +3,7 @@
  * Plugin tabbed settings option class for WordPress themes.
  *
  * @package   class-tabbed-settings.php
- * @version   1.1.4
+ * @version   1.1.5
  * @author    Justin Fletcher <justin@justinandco.com>
  * @copyright Copyright 2014, Justin Fletcher
  * @license   http://opensource.org/licenses/gpl-2.0.php GPL v2 or later
@@ -296,6 +296,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 			if ( is_plugin_active_for_network( $option['slug'] . '/' . $filename . '.php' ) ) {
 				?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" disabled="disabled" checked="checked"/> <?php
+				//unset in plugin settings to not always lock the plugin active via the network.
+				update_option( $option['name'], false );
 			} else {
 				?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php 
 			}
@@ -310,11 +312,11 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			} else {
 				echo esc_html__( 'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
 			}
-			echo ' <a href="http://wordpress.org/plugins/' . esc_html( $option['slug'] ) . '">' .  esc_html__( "wordpress.org", 'role-based-help-notes-text-domain' ) . " </a> )" ;		
+			echo ' <a href="http://wordpress.org/plugins/' . esc_html( $option['slug'] ) . '">' .  esc_html__( "wordpress.org", 'user-upgrade-capability' ) . " </a> )" ;		
 			?></label><?php
 			if ( ! empty( $option['desc'] ) )
 				echo ' <p class="description">' .  $option['desc']  . '</p>';
-		}	
+		}
 
 		/**
 		 * field_textarea_option 

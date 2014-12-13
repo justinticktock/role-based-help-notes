@@ -115,8 +115,9 @@ class RBHN_Capabilities {
 
 		global $wp_roles;
 		
-		if ( ! isset( $wp_roles ) )
+		if ( ! isset( $wp_roles ) ) {
 			$wp_roles = new WP_Roles( );
+		}
 			
 		$users 			= get_users( );
 		$administrator	= get_role( 'administrator' );
@@ -137,6 +138,7 @@ class RBHN_Capabilities {
 			$administrator->remove_cap( $cap );
 			
 		}
+		unset( $wp_roles );
 	}
 
 	/**

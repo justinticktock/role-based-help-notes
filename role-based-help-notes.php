@@ -46,7 +46,7 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	private function __construct( ) {
-	
+
 		$this->plugin_full_path = plugin_dir_path(__FILE__) . 'role-based-help-notes.php' ;
 		
 		// Set the constants needed by the plugin.
@@ -185,6 +185,8 @@ class RBHN_Role_Based_Help_Notes {
 	 */
 	public function admin_init( ) {
 	
+		$this->action_init_store_user_meta( );
+	
 		$plugin_current_version = get_option( 'rbhn_plugin_version' );
 		$plugin_new_version =  $this->plugin_get_version( );
 		
@@ -208,11 +210,15 @@ class RBHN_Role_Based_Help_Notes {
 		
 		
 		// De-register help note post types for the email_post_changes plugin
-		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'email_post_changes' ) ) {
-			$this->deregister_helpnote_for_settings_page_of_email_post_changes_plugin( );
+		global $pagenow;
+		if ( is_admin() && 																											// de-register help notes if not on the front of site
+			! ( isset( $_GET['page'] ) && ( ( $_GET['page'] == 'notes-settings' ) || ( $_GET['page'] == HELP_MENU_PAGE ) ) )  && 	// de-register help notes if on the Help Notes Menu page or in Help Notes settings
+			! ( isset( $_GET['post_type'] ) && in_array( $_GET['post_type'], $this->enabled_help_notes() ) ) && 					// de-register help notes if not on a Help Note page in admin
+			! ( $pagenow == 'options-permalink.php' ) &&																			// de-register help notes if not on the permalink settings page
+			! ( $pagenow == 'post.php' ) ) {																 						// de-register help notes if not on admin post pages
+			
+			$this->deregister_helpnote_for_protection( );
 		}		
-		
-				
 	}
 
 	/**
@@ -316,16 +322,17 @@ class RBHN_Role_Based_Help_Notes {
 	 */		
 	public function site_help_notes( ) {	
 	
-		//  loop through the site roles and create a custom post for each
 		global $wp_roles;
 		
 		$general_help_enabled 	= get_option( 'rbhn_general_enabled' );
 		
-		if ( ! isset( $wp_roles ) )
-		$wp_roles = new WP_Roles( );
+		if ( ! isset( $wp_roles ) ) {
+			$wp_roles = new WP_Roles( );
+		}
 
 		$roles = $wp_roles->get_names( ); 
 		asort( $roles );
+		unset( $wp_roles );
 		
 		$site_help_notes = array( );
 		
@@ -358,13 +365,14 @@ class RBHN_Role_Based_Help_Notes {
 		// option collection  
 		$general_help_enabled 	= get_option( 'rbhn_general_enabled' );
 		$post_types_array_set 	= get_option( 'rbhn_post_types' );
-
 		$enabled_posttypes		= array( );
-		//$post_types_array 		= array_values( $post_types_array );
-		
-		foreach( $post_types_array_set as $array=>$h_posttype ) {
-				$enabled_posttypes = array_merge( $enabled_posttypes, array_values( $h_posttype ) );				
+
+		if ( $post_types_array_set ) {
+			foreach( $post_types_array_set as $array=>$h_posttype ) {
+					$enabled_posttypes = array_merge( $enabled_posttypes, array_values( $h_posttype ) );				
+			}		
 		}
+
 		
 	   if ( isset( $general_help_enabled ) && ! empty( $general_help_enabled ) ) {
 
@@ -391,11 +399,12 @@ class RBHN_Role_Based_Help_Notes {
 		global $wp_roles;
 		
 		// Load roles if not set
-		if ( ! isset( $wp_roles ) )
+		if ( ! isset( $wp_roles ) ) {
 			$wp_roles = new WP_Roles( );
+		}
 
 		$roles = $wp_roles->get_names( );
-
+		unset( $wp_roles );
 
 		// option collection  
 		$general_help_enabled 	= get_option( 'rbhn_general_enabled' );
@@ -414,7 +423,7 @@ class RBHN_Role_Based_Help_Notes {
 				}
 			}	
 		}
-
+		
 		return $active_posttypes;
 	}
 	
@@ -489,8 +498,6 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	public function init( ) {
-
-		$this->action_init_store_user_meta( );
 		
 		// option collection  
 		$general_help_enabled 	= get_option( 'rbhn_general_enabled' );
@@ -511,6 +518,7 @@ class RBHN_Role_Based_Help_Notes {
 			$wp_roles = new WP_Roles( );
 
 		$roles = $wp_roles->get_names( );
+		unset( $wp_roles );
 
 		if ( ! empty( $post_types_array ) ) {
 			foreach( $post_types_array as $array ) {	
@@ -612,7 +620,7 @@ class RBHN_Role_Based_Help_Notes {
 	 */	
 	public function rbhn_add_post_content( $content ) {
 		
-		global $post;
+		//global $post;
 
 		// drop out if not a page
 		if ( 'page' != get_post_type( ) )
@@ -836,9 +844,9 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return null
 	 */
 	public function action_init_store_user_meta( ) {
-		
-		if ( help_notes_available( ) ) {
-			// start meta for a user
+
+		// start meta for a user
+		if ( current_user_can( 'install_plugins' ) ) {
 			add_user_meta( get_current_user_id( ), 'rbhn_start_date', time( ), true );
 			add_user_meta( get_current_user_id( ), 'rbhn_prompt_timeout', time( ) + 60*60*24*  PROMPT_DELAY_IN_DAYS, true );
 		}
@@ -864,7 +872,7 @@ class RBHN_Role_Based_Help_Notes {
 		if ( current_user_can( 'install_plugins' ) && ( $number_of_help_notes_acitve > 0 ) || get_option( 'rbhn_general_enabled' ) ) {
 			
 			$next_prompt_time = get_user_meta( get_current_user_id( ), 'rbhn_prompt_timeout', true );
-			if ( time( ) > $next_prompt_time ) {
+			if ( $next_prompt_time && ( time( ) > $next_prompt_time ) ) {
 				$plugin_user_start_date = get_user_meta( get_current_user_id( ), 'rbhn_start_date', true );
 				?>
 				<div class="update-nag">
@@ -940,20 +948,15 @@ class RBHN_Role_Based_Help_Notes {
 
 	
 
-	public function deregister_helpnote_for_settings_page_of_email_post_changes_plugin( ) {
-
-		// collect the email-post-changes options for the active post_types
-		$email_post_types_options = ( array ) get_option( 'email_post_changes' );
-		$email_notes_selection = ( array ) get_option( 'rbhne_email_change_notification' );
+	public function deregister_helpnote_for_protection( ) {
 
 		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
 		$site_help_notes = $role_based_help_notes->site_help_notes( );
 		$site_help_notes_cpts = array_values( $site_help_notes );
 		
-		//remove general help notes so the it remains pickable in the email_post_changes plugin settings. 
-		$pos = array_search( 'h_general', $site_help_notes_cpts );
-		unset( $site_help_notes_cpts[$pos] );
-		
+		//remove general help notes so the it remains pick-able in the email_post_changes plugin settings. 
+		$site_help_notes_cpts = array_diff( $site_help_notes_cpts, array( 'h_general' ) );
+			
 		foreach ( $site_help_notes_cpts as $post_type ) {
 			$this->unregister_post_type( $post_type );
 		}
