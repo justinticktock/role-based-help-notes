@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.3.1
+Version: 1.3.1.1
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 Text Domain: role-based-help-notes-text-domain
@@ -55,8 +55,6 @@ class RBHN_Role_Based_Help_Notes {
 		/* Load the functions files. */
 		add_action( 'plugins_loaded', array( $this, 'includes' ), 2 );
 			
-		/* Hooks... */
-		
 		// Attached to set_current_user. Loads the plugin installer CLASS after themes are set-up to stop duplication of the CLASS.
 		add_action( 'set_current_user', array( $this, 'set_current_user' ) );
 		
@@ -193,7 +191,8 @@ class RBHN_Role_Based_Help_Notes {
 		// Admin notice hide prompt notice catch
 		$this->catch_hide_notice( );
 
-		if ( empty( $plugin_current_version ) || $plugin_current_version < $plugin_new_version ) {
+		//if ( empty( $plugin_current_version ) || $plugin_current_version < $plugin_new_version ) {
+		if ( version_compare( $plugin_current_version, $plugin_new_version, '<' ) ) {
 		
 			$plugin_current_version = isset( $plugin_current_version ) ? $plugin_current_version : 0;
 
@@ -207,18 +206,7 @@ class RBHN_Role_Based_Help_Notes {
 		}
 			
 		load_plugin_textdomain( 'role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-		
-		
-		// De-register help note post types for the email_post_changes plugin
-		global $pagenow;
-		if ( is_admin() && 																											// de-register help notes if not on the front of site
-			! ( isset( $_GET['page'] ) && ( ( $_GET['page'] == 'notes-settings' ) || ( $_GET['page'] == HELP_MENU_PAGE ) ) )  && 	// de-register help notes if on the Help Notes Menu page or in Help Notes settings
-			! ( isset( $_GET['post_type'] ) && in_array( $_GET['post_type'], $this->enabled_help_notes() ) ) && 					// de-register help notes if not on a Help Note page in admin
-			! ( $pagenow == 'options-permalink.php' ) &&																			// de-register help notes if not on the permalink settings page
-			! ( $pagenow == 'post.php' ) ) {																 						// de-register help notes if not on admin post pages
 			
-			$this->deregister_helpnote_for_protection( );
-		}		
 	}
 
 	/**
@@ -302,14 +290,14 @@ class RBHN_Role_Based_Help_Notes {
 	 */
 	public function help_notes_current_user_has_role( $role, $user_id = null ) {
 	 
-		if ( is_numeric( $user_id ) )
-		$user = get_userdata( $user_id );
-		else
+		if ( is_numeric( $user_id ) ) {
+			$user = get_userdata( $user_id );
+		} else {
 			$user = wp_get_current_user( );
-	 
-		if ( empty( $user ) )
-		return false;
-	 
+		}
+		if ( empty( $user ) ) {
+			return false;
+		}
 		return in_array( $role, ( array ) $user->roles );
 	}
 
@@ -512,6 +500,7 @@ class RBHN_Role_Based_Help_Notes {
 		
 		//  loop through the site roles and create a custom post for each
 		global $wp_roles;
+		global $pagenow;
 		
 		// Load roles if not set
 		if ( ! isset( $wp_roles ) )
@@ -524,9 +513,17 @@ class RBHN_Role_Based_Help_Notes {
 			foreach( $post_types_array as $array ) {	
 				foreach( $array as $active_role=>$active_posttype ) {
 					if ( array_key_exists ( $active_role, $roles ) ) {
+						// register Help Notes custom post type
 						// notes always created for correct permalink settings when saved even when a role is not given to the user saving the permalinks, 
-						// capabilities will be used to limit access to Notes. 
-						call_user_func_array( array( $this, 'help_register_posttype' ), array( $active_role, $roles[$active_role], $active_posttype ) ); 
+						// capabilities will be used to limit access to Notes on the front end.
+						if	( ( ! is_admin() && ( $this->help_notes_current_user_has_role( $active_role ) ) ) ||									// register help notes if on the front of site only if user has capability
+							( isset( $_GET['page'] ) && ( ( $_GET['page'] == 'notes-settings' ) || ( $_GET['page'] == HELP_MENU_PAGE ) ) )   || // register if on the Help Notes Menu page or in Help Notes settings
+							( isset( $_GET['post_type'] ) && in_array( $_GET['post_type'], $this->enabled_help_notes() ) )  ||					// register if not on a Help Note page in admin
+							( $pagenow == 'options-permalink.php' )  ||																			// register if not on the permalink settings page
+							( $pagenow == 'post.php' ) ) {																						// register if on admin post pages
+							
+							call_user_func_array( array( $this, 'help_register_posttype' ), array( $active_role, $roles[$active_role], $active_posttype ) ); 
+						}					
 					} 
 				}
 			}
@@ -944,40 +941,7 @@ class RBHN_Role_Based_Help_Notes {
 			wp_redirect( remove_query_arg( PROMPT_ARGUMENT ) );
 			exit;		
 		}
-	}	
-
-	
-
-	public function deregister_helpnote_for_protection( ) {
-
-		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
-		$site_help_notes = $role_based_help_notes->site_help_notes( );
-		$site_help_notes_cpts = array_values( $site_help_notes );
-		
-		//remove general help notes so the it remains pick-able in the email_post_changes plugin settings. 
-		$site_help_notes_cpts = array_diff( $site_help_notes_cpts, array( 'h_general' ) );
-			
-		foreach ( $site_help_notes_cpts as $post_type ) {
-			$this->unregister_post_type( $post_type );
-		}
-
-		
 	}
-
-	/**
-     * function to de-register custom post types
-     *
-     * @return rue on success.
-     */	
-	private function unregister_post_type( $post_type ) {
-		global $wp_post_types;
-		if ( isset( $wp_post_types[ $post_type ] ) ) {
-			unset( $wp_post_types[ $post_type ] );
-			return true;
-		}
-		return false;
-	}
-
 	
 	/**
      * Creates or returns an instance of this class.
