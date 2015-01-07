@@ -49,7 +49,7 @@ class RBHN_TAX {
 		add_action( 'restrict_manage_posts', array( $this, 'restrict_posttype_by_taxonomy' ) );
 
 		add_filter( 'parse_query', array( $this, 'convert_id_to_term_in_query' ) );
-		
+	
 	}
 
 	public function create_hierarchical_taxonomy( ) {
@@ -71,6 +71,7 @@ class RBHN_TAX {
 	}
 	
 	public function restrict_posttype_by_taxonomy( ) {
+
 			global $typenow;		
 			if ( $typenow == $this->args['post_type'] ) {
 				$selected = isset( $_GET[$this->args['taxonomy']] ) ? $_GET[$this->args['taxonomy']] : '';

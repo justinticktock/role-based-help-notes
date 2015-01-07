@@ -71,7 +71,7 @@ class RBHN_Capabilities {
 					// As of 12/11/2014 help notes are created all the time so Admins are no-longer given access by default 
 					// they must be in a role to get the Help Notes.  This is for the flush of permalinks to save correctly
 					// For Super-Admins on a multi-site Network installation all Help Notes will be available.
-					// For Administrators Help Notes will only be availble if the role is given.
+					// For Administrators Help Notes will only be available if the role is given.
 
 
 				}
