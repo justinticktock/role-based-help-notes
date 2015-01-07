@@ -97,14 +97,28 @@ class RBHN_Settings {
 																		'label' 	=> __( 'Contents Page', 'role-based-help-notes-text-domain' ),
 																		'desc'		=> __( 'If you wish to create a contents page add a new page and select it here so that the Help Note Contents are displayed.', 'role-based-help-notes-text-domain' ),
 																		'type'      => 'field_page_select_list_option',
-																		),			
+																		),
 																	array(
 																		'name' 		=> 'rbhn_welcome_page',
 																		'std' 		=> '0',
 																		'label' 	=> __( 'Welcome Page', 'role-based-help-notes-text-domain' ),
 																		'desc'		=> __( 'A welcome page has been created and used for your menu landing page, you can edit the page directly to customise or select "- None -" to deactivate.', 'role-based-help-notes-text-domain' ),
 																		'type'      => 'field_page_select_list_option',
-																		),															
+																		),
+																	array(
+																		'name' 		=> 'rbhn_show_contents_page_shortcut',
+																		'std' 		=> '0',
+																		//'label' 	=> __( 'Contents Page Link', 'role-based-help-notes-text-domain' ),
+																		'desc'		=> __( 'Add a button to the welcome page to go direct to the site contents page.', 'role-based-help-notes-text-domain' ),
+																		'type'      => 'field_checkbox_option',
+																		),
+																	array(
+																		'name' 		=> 'rbhn_make_clickable',
+																		'std' 		=> '0',
+																		'label' 	=> __( 'Click-able Links', 'role-based-help-notes-text-domain' ),
+																		'desc'		=> __( 'Turn valid URLs into click able text.', 'role-based-help-notes-text-domain' ),
+																		'type'      => 'field_checkbox_option',
+																		),	
 																),
 										),
 										'rbhn_roles' => array(
@@ -113,7 +127,7 @@ class RBHN_Settings {
 											'settings' 		=> array(					
 																	array(
 																		'name' 		=> 'rbhn_post_types',
-																		'std' 		=> array( ),
+																		'std' 		=> true,
 																		'label' 	=> __( 'Help Notes', 'role-based-help-notes-text-domain' ),
 																		'desc'		=> '',
 																		'type'      => 'field_help_notes_post_types_option'
@@ -241,7 +255,20 @@ class RBHN_Settings {
 										),
 									)
 								);
+/*
 
+// try wp_list_pluck
+// ref http://laserred.co/2013/08/top-ten-unknown-wordpress-functions/
+
+		if ( get_option( 'rbhn_contents_page' ) != 0 ) {
+			foreach( $settings as $key => $value ) {
+				if( $value['name'] === 'rbhn_show_contents_page_shortcut' ) {
+					unset( $settings[$key] );
+					break;
+				}
+			}
+		}
+*/
         if ( null == self::$instance ) {
             self::$instance = new Tabbed_Settings( $settings, $config );
         }

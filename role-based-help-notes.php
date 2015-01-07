@@ -75,6 +75,7 @@ class RBHN_Role_Based_Help_Notes {
 		// Add the Help Note Custom Post Types to the author post listing
 		add_filter( 'pre_get_posts', array( $this, 'rbhn_custom_post_author_archive' ) );
 
+
 	}
 	
 	/**
@@ -165,10 +166,17 @@ class RBHN_Role_Based_Help_Notes {
 		
 			$welcome_post = get_post( $welcome_page_id ) ;
 			$welcome_content = $welcome_post->post_content ;
+			$contents_page_id = get_option( 'rbhn_contents_page' ) ;
 			
 			echo "<h1>" . $welcome_post->post_title . "</h1>";
 			
+			// Add short cut link to site front end contents page
+			if ( ( get_option( 'rbhn_contents_page' ) != 0 ) && ( get_option( 'rbhn_show_contents_page_shortcut' ) ) ) {
+				echo '<button class="readmorebtn" onclick="' . esc_attr('window.location="' . get_permalink( $contents_page_id ) . '"') . '">Contents page</button>';
+			}
+		
 			echo $welcome_content;
+			
 		} else {
 			echo "<h1>" . __( 'Help Notes', 'role-based-help-notes-text-domain' ) . "</h1>";
 			
@@ -417,7 +425,7 @@ class RBHN_Role_Based_Help_Notes {
 	
 	public function is_single_help_note( ) {
 	
-       // drop out if not a single Help Note page or Help Hote Archive page.
+       // drop out if not a single Help Note page or Help Note Archive page.
        // or the General Help Note Type
        $ssl_help_notes = $this->active_help_notes( );
        $exclude_help_notes = array( 'h_general' );
@@ -516,7 +524,7 @@ class RBHN_Role_Based_Help_Notes {
 						// register Help Notes custom post type
 						// notes always created for correct permalink settings when saved even when a role is not given to the user saving the permalinks, 
 						// capabilities will be used to limit access to Notes on the front end.
-						if	( ( ! is_admin() && ( $this->help_notes_current_user_has_role( $active_role ) ) ) ||									// register help notes if on the front of site only if user has capability
+						if	( ( ! is_admin() && ( $this->help_notes_current_user_has_role( $active_role ) ) ) ||								// register help notes if on the front of site only if user has capability
 							( isset( $_GET['page'] ) && ( ( $_GET['page'] == 'notes-settings' ) || ( $_GET['page'] == HELP_MENU_PAGE ) ) )   || // register if on the Help Notes Menu page or in Help Notes settings
 							( isset( $_GET['post_type'] ) && in_array( $_GET['post_type'], $this->enabled_help_notes() ) )  ||					// register if not on a Help Note page in admin
 							( $pagenow == 'options-permalink.php' )  ||																			// register if not on the permalink settings page
@@ -616,13 +624,7 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return $content
 	 */	
 	public function rbhn_add_post_content( $content ) {
-		
-		//global $post;
 
-		// drop out if not a page
-		if ( 'page' != get_post_type( ) )
-			return $content;
-			
 		if ( ( get_option( 'rbhn_contents_page' ) != "0" ) && is_page( get_option( 'rbhn_contents_page' ) ) && is_main_query( ) ) {
 			
 			$active_role_notes = $this->active_help_notes( );
@@ -654,9 +656,15 @@ class RBHN_Role_Based_Help_Notes {
 			}
 			
 		}
+		
+		// if selected in settings turn valid url text strings into clickable text.
+		if ( get_option( 'rbhn_make_clickable' ) && $this->is_single_help_note() ) {
+			$content = make_clickable( $content ) ; 
+		}
+		
 		return $content;
 	}
-
+	
 	/**
 	 * Returns a cleaned custom post type name.
 	 *
