@@ -171,8 +171,8 @@ class RBHN_Role_Based_Help_Notes {
 			echo "<h1>" . $welcome_post->post_title . "</h1>";
 			
 			// Add short cut link to site front end contents page
-			if ( ( get_option( 'rbhn_contents_page' ) != 0 ) && ( get_option( 'rbhn_show_contents_page_shortcut' ) ) ) {
-				echo '<button class="readmorebtn" onclick="' . esc_attr('window.location="' . get_permalink( $contents_page_id ) . '"') . '">Contents page</button>';
+			if ( get_option( 'rbhn_contents_page' ) != 0 ) {
+				echo '<button class="readmorebtn" onclick="' . esc_attr('window.location="' . get_permalink( $contents_page_id ) . '"') . '">Contents page</button></BR></BR>';
 			}
 		
 			echo $welcome_content;

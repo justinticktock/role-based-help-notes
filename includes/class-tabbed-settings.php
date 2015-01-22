@@ -5,7 +5,7 @@
  * @package   class-tabbed-settings.php
  * @version   1.1.5
  * @author    Justin Fletcher <justin@justinandco.com>
- * @copyright Copyright 2014, Justin Fletcher
+ * @copyright Copyright ( c ) 2014, Justin Fletcher
  * @license   http://opensource.org/licenses/gpl-2.0.php GPL v2 or later
  *
  * The text domain must be manually replaced with the required plugin text domain.
@@ -50,11 +50,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 	 */
 	class Tabbed_Settings extends Extendible_Tabbed_Settings {
 
-//		public static $instance;
-//		public $settings = array( );
-//		public $config = array( );
-
-
 		// the following are configurable externally
         public $menu_access_capability = '';
         public $menu_parent = '';
@@ -66,12 +61,11 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		/**
 		 * __construct function.
 		 *
-		 * @access public
 		 * @return void
 		 */	 
 		function __construct( $settings, $config ) {
 
-			$this->settings = $settings;
+			$this->register_tabbed_settings( $settings );
 			$this->register_config( $config );
 
 			// hook priority = 9 to load settings before the class-tgm-plugin-activation.php runs with the same init hook at priority level 10
@@ -81,14 +75,11 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 			add_action( 'admin_menu', array( $this, 'add_admin_menus' ) );
 
-			add_action( 'do_settings_sections', array( $this, 'hooks_section_callback' ) );
-
 		}
 
 		/**
 		 * init function.
 		 *
-		 * @access private
 		 * @return void
 		 */
 		public function init( ) {
@@ -101,7 +92,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		/**
 		 * Called during admin_menu, adds rendered using the plugin_options_page method.
 		 *
-		 * @access public
 		 * @return void
 		 */	 
 		public function add_admin_menus( ) {
@@ -112,20 +102,42 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 
         /**
-         * Add individual tabbed_settings to our collection of settings.
+         * Go through the tabbed_settings and limit based on current user capability.
          *
-         * If the required keys are not set or the tabbed_settings has already
-         * been registered, the plugin is not added.
-         *
-         * @since 2.0.0
-         *
-         * @param array $tabbed_settings Array of plugin arguments.
+         * @param void
          */
-        public function register_tabbed_settings( $settings ) {
+        private function register_tabbed_settings( $settings ) {
+		
+			$this->settings = $settings;
+			
+			foreach ( $this->settings as $tab_name => $registered_setting_page ) {
+			
+				// remove settings pages/tabs if user is lacking the 'access_capability'
+				if ( ( array_key_exists( 'access_capability', $registered_setting_page ) ) && _
+					 ( ! current_user_can( $registered_setting_page['access_capability'] ) ) ) {
+					 
+					unset( $this->settings[$tab_name] );
+					
+				} else {
+				
+					// now remove individual settings if user is lacking the 'access_capability'
+					foreach ( $this->settings[$tab_name]['settings'] as $settings_field_key => $settings_field_options ) {
 
-			foreach ( $settings as $tab_name => $registered_setting_page ) {
-				$this->settings[$tab_name] = $registered_setting_page;	
-			}	
+						if ( ( array_key_exists( 'access_capability', $settings_field_options ) ) && ( ! current_user_can( $settings_field_options['access_capability'] ) ) ) {
+							unset( $this->settings[$tab_name]['settings'][$settings_field_key] );
+						}
+					}			
+				}
+			}
+			
+			// If the 'default_tab_key' no longer exists due to the access_capability removal of settings
+			if ( ! array_key_exists( 'default_tab_key', ( array ) $this->settings ) ) {
+				$current_user_settings = reset( $this->settings );
+				if ( $current_user_settings ) {
+					$first_key = key( $current_user_settings );
+					$this->default_tab_key = $first_key;
+				}
+			}
         }
 
         /**
@@ -163,7 +175,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		/**
 		 * render_setting_page function.
 		 *
-		 * @access public
 		 * @return void
 		 */
 		public function render_setting_page( ){
@@ -172,14 +183,12 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 				if ( isset( $section['settings'] ) ) {
 					foreach ( $section['settings'] as $option ) {
-						
-						if ( isset( $option['std'] ) )
+						if ( isset( $option['std'] ) ) {
 							add_option( $option['name'], $option['std'] );
-						
+						}
 						$sanitize_callback = ( isset( $option['sanitize_callback'] ) ? $option['sanitize_callback'] : "" );
 						register_setting( $options_group, $option['name'], $sanitize_callback );
 						add_settings_section( $options_group, $section['title'], array( $this, 'hooks_section_callback' ), $options_group );
-						
 						$callback_type = ( isset( $option['type'] ) ? $option['type'] : "field_default_option" );
 						add_settings_field( $option['name'].'_setting-id', $option['label'], array( $this, $callback_type ), $options_group, $options_group, array( 'option' => $option ) );	
 					}
@@ -187,26 +196,23 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			}
 		}
 		
-
-
 		/**
 		 * Settings page rendering it checks for active tab and replaces key with the related
 		 * settings key. Uses the plugin_options_tabs method to render the tabs.
 		 *
-		 * @access public
 		 * @return void
-		 */		 
+		 */
 		public function plugin_options_page( ) {
 
 			$tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : $this->default_tab_key;
 			if ( isset( $_GET['settings-updated'] ) ) {		
 				do_action( 'tabbed_settings_after_update' );
 			}
-
+			
 			?>
 			<div class="wrap">
 				<?php $this->plugin_options_tabs( ); ?>
-				<form method="post" action="options.php">
+				<?php $this->get_form_action(); ?>		
 					<?php wp_nonce_field( 'update-options-nonce', 'update-options' ); ?>
 					<?php settings_fields( $tab ); ?>
 					<?php do_settings_sections( $tab ); ?>
@@ -221,7 +227,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * to the form.  This function uses section description based on the current section id being processed.
 		 *
 		 * @param section_passed.
-		 * @access public
 		 * @return void
 		 */	
 		public function hooks_section_callback( $section_passed ){
@@ -231,18 +236,17 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 				}
 			}
 		 }
-		
+		 
 		/**
 		 * field_checkbox_option 
 		 *
 		 * @param array of arguments to pass the option name to render the form field.
-		 * @access public
 		 * @return void
 		 */
 		public function field_checkbox_option( array $args  ) {
 			$option   = $args['option'];
 			$value = get_option( $option['name'] );
-			?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php echo esc_html( $option['cb_label'] ); ?></label><?php
+			?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php echo esc_html( $option['label'] ); ?></label><?php
 			if ( ! empty( $option['desc'] ) )
 			echo ' <p class="description">' .  $option['desc'] . '</p>';
 		}
@@ -251,7 +255,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * field_page_select_list_option 
 		 *
 		 * @param array of arguments to pass the option name to render the form field.
-		 * @access public
 		 * @return void
 		 */
 		public function field_page_select_list_option( array $args  ) {
@@ -266,7 +269,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 									'hierarchical'  => 0,
 									'sort_order'   	=> 'ASC',
 									'sort_column'  	=> 'post_title',
-									'show_option_none' => _x( "- None -", 'text for no selection', 'role-based-help-notes-text-domain' ), 
+									'show_option_none' => _x( "- None -", 'text for no page selected', 'user-upgrade-capability' ), 
 									'option_none_value' => '0', 
 									'selected' => get_option( $option['name'] ) 
 									) 
@@ -283,7 +286,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * field_plugin_checkbox_option 
 		 *
 		 * @param array of arguments to pass the option name to render the form field.
-		 * @access public
 		 * @return void
 		 */
 		public function field_plugin_checkbox_option( array $args  ) {
@@ -296,33 +298,31 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 
 			if ( is_plugin_active_for_network( $option['slug'] . '/' . $filename . '.php' ) ) {
 				?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" disabled="disabled" checked="checked"/> <?php
-				//unset in plugin settings to not always lock the plugin active via the network.
 				update_option( $option['name'], false );
 			} else {
 				?><label><input id="setting-<?php echo esc_html( $option['name'] ); ?>" name="<?php echo esc_html( $option['name'] ); ?>" type="checkbox" value="1" <?php checked( '1', $value ); ?> /> <?php 
 			}
 
 			if ( ! file_exists( $plugin_main_file ) ) {
-				echo esc_html__( 'Enable to prompt installation and force active.', 'role-based-help-notes-text-domain' ) . ' ( ';
-				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  _x( 'Install', 'Install the Plugin', 'role-based-help-notes-text-domain' ) . " </a> | " ;
+				echo esc_html__( 'Enable to prompt installation and force active.', 'user-upgrade-capability' ) . ' ( ';
+				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  _x( 'Install', 'Install the Plugin', 'user-upgrade-capability' ) . " </a> | " ;
 				
 			} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) &&  ! is_plugin_active_for_network( $option['slug'] . '/' . $option['slug'] . '.php' ) ) {
-				echo esc_html__( 'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
-				if ( ! $value ) echo '<a href="plugins.php?s=' . esc_html( $option['label'] )	 . '">' .  _x( 'Deactivate', 'deactivate the plugin', 'role-based-help-notes-text-domain' ) . "</a> | " ;	
+				echo esc_html__( 'Force Active', 'user-upgrade-capability' ) . ' ( ';
+				if ( ! $value ) echo '<a href="plugins.php?s=' . esc_html( $option['label'] )	 . '">' .  _x( 'Deactivate', 'deactivate the plugin', 'user-upgrade-capability' ) . "</a> | " ;	
 			} else {
-				echo esc_html__( 'Force Active', 'role-based-help-notes-text-domain' ) . ' ( ';
+				echo esc_html__( 'Force Active', 'user-upgrade-capability' ) . ' ( ';
 			}
 			echo ' <a href="http://wordpress.org/plugins/' . esc_html( $option['slug'] ) . '">' .  esc_html__( "wordpress.org", 'user-upgrade-capability' ) . " </a> )" ;		
 			?></label><?php
 			if ( ! empty( $option['desc'] ) )
 				echo ' <p class="description">' .  $option['desc']  . '</p>';
-		}
+		}	
 
 		/**
 		 * field_textarea_option 
 		 *
 		 * @param array of arguments to pass the option name to render the form field.
-		 * @access public
 		 * @return void
 		 */
 		public function field_textarea_option( array $args  ) {
@@ -345,7 +345,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * field_select_option 
 		 *
 		 * @param array of arguments to pass the option name to render the form field.
-		 * @access public
 		 * @return void
 		 */
 		public function field_select_option( array $args  ) {
@@ -361,10 +360,55 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		}
 		
 		/**
+		 * field_roles_checkbox 
+		 *
+		 * @param array of arguments to pass the option name to render the form field.
+		 * @return void
+		 */
+		public function field_roles_checkbox( array $args  ) {
+
+			$option   = $args['option'];
+
+			//  loop through the site roles and create a custom post for each
+			global $wp_roles;
+			
+			if ( ! isset( $wp_roles ) ) {
+				$wp_roles = new WP_Roles( );
+			}
+
+			$roles = $wp_roles->get_names( );
+			unset( $wp_roles );
+			
+			?><ul><?php 
+			asort( $roles );
+
+			
+			foreach( $roles as $role_key=>$role_name )
+			{
+				$id = sanitize_key( $role_key );
+				$value = ( array ) get_option( $option['name'] );
+
+				// Render the output  
+				?> 
+				<li><label>
+				<input type='checkbox'  
+					id="<?php echo esc_html( "exclude_enabled_{$id}" ) ; ?>" 
+					name="<?php echo esc_html( $option['name'] ); ?>[]"
+					value="<?php echo esc_attr( $role_key )	; ?>"<?php checked( in_array( $role_key, $value ) ); ?>
+				>
+				<?php echo esc_html( $role_name ) . " <br/>"; ?>	
+				</label></li>
+				<?php 
+			}?></ul><?php 
+			if ( ! empty( $option['desc'] ) )
+				echo ' <p class="description">' . $option['desc'] . '</p>';		
+		}
+		
+
+		/**
 		 * field_default_option 
 		 *
 		 * @param array of arguments to pass the option name to render the form field.
-		 * @access public
 		 * @return void
 		 */
 		public function field_default_option( array $args  ) {
@@ -381,7 +425,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 * walks through the object's tabs array and prints
 		 * them one by one.
 		 *
-		 * @access public
 		 * @return void
 		 */
 		public function plugin_options_tabs( ) {
@@ -397,18 +440,48 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			echo '</h2>';
 		}
 
+		/**
+		 * Echos the correct form action ( <form action="XXXXX" )
+		 * if the standard options are to be save in the database the following will be return:
+		 *"options.php"
+		 *
+		 * if the admin_post_ hook is used to run code and do something special then the settings option ['form_action']
+		 * provided will be used."options.php"
+		 *
+		 * @return void
+		 */
+		public function get_form_action( ) {
+
+
+			$current_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : $this->default_tab_key;
+
+			screen_icon( );
+			echo '<h2 class="nav-tab-wrapper">';
+			foreach ( $this->settings as $tab_key => $tab_options_array ) {
+				if ( $current_tab == $tab_key ) {
+					if ( isset( $tab_options_array['form_action'] ) ) {
+						$form_action = $tab_options_array['form_action'];
+						break;
+					} else {
+						$form_action = "options.php"; 						
+					}
+				} 
+			}		
+				
+			echo '<form method="post" action="' . $form_action . '">';
+
+		}
 
 		/**
 		 * selected_plugins function.
 		 *
-		 * @access public
 		 * @return array of plugins selected within the settings page for installation via the TGM_Plugin_Activation class
 		 */
 		public function selected_plugins( $plugin_extension_tab_name ) {
 
 			$plugins = array( );
 
-			if ( isset( $this->settings ) ) {
+			if ( isset( $this->settings ) && array_key_exists( $plugin_extension_tab_name, $this->settings ) ) {
 
 				$plugin_array = $this->settings[$plugin_extension_tab_name]['settings'];
 				
@@ -427,9 +500,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			
 			return $plugins;
 		}
-		
 	}
-	
 }
 
 ?>

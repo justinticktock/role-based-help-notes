@@ -34,7 +34,6 @@ Admin side Plugins..
 
 * [User Switching]( http://wordpress.org/plugins/user-switching/) great tool for admins to switch to test any users access/capability.
 * [Simple Page Ordering]( http://wordpress.org/plugins/simple-page-ordering/) for easing re-ordering of Help Notes.
-* [Email Post Changes]( http://wordpress.org/plugins/email-post-changes/) for emailing out changes to a Help Note as they occur.
 * [post_type_switcher]( http://wordpress.org/plugins/post-type-switcher/) plugin by [John James Jacoby]( http://profiles.wordpress.org/johnjamesjacoby/) & [Matthew Gerring]( http://profiles.wordpress.org/beatpanda/), useful to change the role associated with a Help Note after it has been created.
 
 Front End Plugins..

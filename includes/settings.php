@@ -60,18 +60,19 @@ class RBHN_Settings {
 		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
 		
 		$config = array(
-				'default_tab_key' => 'rbhn_general',					// Default settings tab, opened on first settings page open.
-				'menu_parent' => 'options-general.php',    		// menu options page slug name.
-				'menu_access_capability' => 'manage_options',    					// menu options page slug name.
-				'menu' => $role_based_help_notes->menu,    					// menu options page slug name.
-				'menu_title' => $role_based_help_notes->menu_title,    		// menu options page slug name.
-				'page_title' => $role_based_help_notes->page_title,    		// menu options page title.
+				'default_tab_key' => 'rbhn_general',						// Default settings tab, opened on first settings page open.
+				'menu_parent' => 'options-general.php',    					
+				'menu_access_capability' => 'promote_users',    			// menu capability make this the lowest of all 'access_capability' defined in the settings array.
+				'menu' => $role_based_help_notes->menu,    					
+				'menu_title' => $role_based_help_notes->menu_title,    		
+				'page_title' => $role_based_help_notes->page_title,    		
 				);
 				
 				
 		$settings = 	apply_filters( 'rbhn_settings', 
 									array(								
 										'rbhn_general' => array(
+											'access_capability' => 'edit_theme_options',
 											'title' 		=> __( 'General', 'role-based-help-notes-text-domain' ),
 											'description' 	=> __( 'Settings for general purpose.', 'role-based-help-notes-text-domain' ),
 											'settings' 		=> array(		
@@ -106,13 +107,6 @@ class RBHN_Settings {
 																		'type'      => 'field_page_select_list_option',
 																		),
 																	array(
-																		'name' 		=> 'rbhn_show_contents_page_shortcut',
-																		'std' 		=> '0',
-																		//'label' 	=> __( 'Contents Page Link', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> __( 'Add a button to the welcome page to go direct to the site contents page.', 'role-based-help-notes-text-domain' ),
-																		'type'      => 'field_checkbox_option',
-																		),
-																	array(
 																		'name' 		=> 'rbhn_make_clickable',
 																		'std' 		=> '0',
 																		'label' 	=> __( 'Click-able Links', 'role-based-help-notes-text-domain' ),
@@ -122,6 +116,7 @@ class RBHN_Settings {
 																),
 										),
 										'rbhn_roles' => array(
+											'access_capability' => 'edit_theme_options',
 											'title' 		=> __( 'Roles', 'role-based-help-notes-text-domain' ),
 											'description' 	=> __( 'Select the Roles that you wish to create Help Notes for.', 'role-based-help-notes-text-domain' ),
 											'settings' 		=> array(					
@@ -135,6 +130,7 @@ class RBHN_Settings {
 																	),
 										),
 										'rbhn_plugin_extension' => array(
+												'access_capability' => 'install_plugins',
 												'title' 		=> __( 'Plugin Suggestions', 'role-based-help-notes-text-domain' ),
 												'description' 	=> __( 'These settings are optional.  Selection of any suggested plugin here will prompt you through the installation.  The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall.', 'role-based-help-notes-text-domain' ),					
 												'settings' 		=> array(
@@ -255,20 +251,7 @@ class RBHN_Settings {
 										),
 									)
 								);
-/*
 
-// try wp_list_pluck
-// ref http://laserred.co/2013/08/top-ten-unknown-wordpress-functions/
-
-		if ( get_option( 'rbhn_contents_page' ) != 0 ) {
-			foreach( $settings as $key => $value ) {
-				if( $value['name'] === 'rbhn_show_contents_page_shortcut' ) {
-					unset( $settings[$key] );
-					break;
-				}
-			}
-		}
-*/
         if ( null == self::$instance ) {
             self::$instance = new Tabbed_Settings( $settings, $config );
         }

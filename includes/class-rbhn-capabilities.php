@@ -184,12 +184,14 @@ class RBHN_Capabilities {
 	public function rbhn_map_meta_cap( $caps, $cap, $user_id, $args ) {
 		
 		// option collection to collect active Help Note roles.  
-		$post_types_array = get_option( 'rbhn_post_types' );
-		
-		if ( ! empty( $post_types_array ) ) { 
+		$post_types_array = ( array ) ( get_option( 'rbhn_post_types' ) );	// collect available roles
+		$post_types_array = array_filter( $post_types_array );				// remove empty entries
+
+		// if get_option( 'rbhn_post_types' ) not empty
+		if ( ! empty( $post_types_array ) ) {
 			
 			$help_note_found = false;
-						
+	
 			foreach( $post_types_array as $active_role=>$active_posttype ) {
 				
 				$active_posttype_values = array_values ( $active_posttype );

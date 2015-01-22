@@ -32,7 +32,6 @@ function rbhn_clean_database( ) {
 		delete_option( 'rbhn_contents_page' );
 		delete_option( 'rbhn_install_date' );
 		delete_option( 'rbhn_make_clickable' );
-		delete_option( 'rbhn_show_contents_page_shortcut' );
 
 		// plugin specific database entries
 		delete_option( 'rbhn_user_role_editor' );
