@@ -65,8 +65,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 */	 
 		function __construct( $settings, $config ) {
 
-			$this->register_tabbed_settings( $settings );
 			$this->register_config( $config );
+			$this->register_tabbed_settings( $settings );
 
 			// hook priority = 9 to load settings before the class-tgm-plugin-activation.php runs with the same init hook at priority level 10
 			add_action( 'init', array( $this, 'init' ), 9 );
@@ -100,8 +100,30 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			
 		}
 
-
+		/**
+         * perform an AND function on for the current user to have all capabilities listed within the Array
+		 *		 
+		 * @param array() of capabilities to perform an AND function on for the current user.
+		 * @return true is the current user can do all capabilities held within the array passed.
+		 */	 
+		public function current_user_can_do_all( $capabilities ) {
+			
+			$capabilities = ( array ) $capabilities;  // convert to array
+			$user_has_all_caps = true;
+			
+			foreach ( $capabilities as $capability ) {
+				if ( ! current_user_can( $capability ) ) {
+					$user_has_all_caps = false;
+					break;
+				}
+			}
+			return $user_has_all_caps;
+			
+		}		
+		
+		
         /**
+		 *		 
          * Go through the tabbed_settings and limit based on current user capability.
          *
          * @param void
@@ -112,10 +134,11 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			
 			foreach ( $this->settings as $tab_name => $registered_setting_page ) {
 			
-				// remove settings pages/tabs if user is lacking the 'access_capability'
+				// remove form elements based on user capability
 				if ( ( array_key_exists( 'access_capability', $registered_setting_page ) ) && _
-					 ( ! current_user_can( $registered_setting_page['access_capability'] ) ) ) {
+					 ( ! $this->current_user_can_do_all( $registered_setting_page['access_capability'] ) ) ) {
 					 
+					// remove settings pages/tabs if user is lacking the 'access_capability'
 					unset( $this->settings[$tab_name] );
 					
 				} else {
@@ -123,18 +146,22 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 					// now remove individual settings if user is lacking the 'access_capability'
 					foreach ( $this->settings[$tab_name]['settings'] as $settings_field_key => $settings_field_options ) {
 
-						if ( ( array_key_exists( 'access_capability', $settings_field_options ) ) && ( ! current_user_can( $settings_field_options['access_capability'] ) ) ) {
+						if ( ( array_key_exists( 'access_capability', $settings_field_options ) ) && ( ! $this->current_user_can_do_all( $settings_field_options['access_capability'] ) ) ) {
 							unset( $this->settings[$tab_name]['settings'][$settings_field_key] );
 						}
 					}			
 				}
 			}
-			
+				
 			// If the 'default_tab_key' no longer exists due to the access_capability removal of settings
 			if ( ! array_key_exists( 'default_tab_key', ( array ) $this->settings ) ) {
-				$current_user_settings = reset( $this->settings );
-				if ( $current_user_settings ) {
+
+				$current_user_settings = array_filter( $this->settings );
+				
+				if ( ! empty( $current_user_settings ) ) {
+				
 					$first_key = key( $current_user_settings );
+				
 					$this->default_tab_key = $first_key;
 				}
 			}
@@ -269,7 +296,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 									'hierarchical'  => 0,
 									'sort_order'   	=> 'ASC',
 									'sort_column'  	=> 'post_title',
-									'show_option_none' => _x( "- None -", 'text for no page selected', 'user-upgrade-capability' ), 
+									'show_option_none' => _x( "- None -", 'text for no page selected', 'role-based-help-notes' ), 
 									'option_none_value' => '0', 
 									'selected' => get_option( $option['name'] ) 
 									) 
@@ -304,16 +331,16 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			}
 
 			if ( ! file_exists( $plugin_main_file ) ) {
-				echo esc_html__( 'Enable to prompt installation and force active.', 'user-upgrade-capability' ) . ' ( ';
-				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  _x( 'Install', 'Install the Plugin', 'user-upgrade-capability' ) . " </a> | " ;
+				echo esc_html__( 'Enable to prompt installation and force active.', 'role-based-help-notes' ) . ' ( ';
+				if ( $value ) echo '  <a href="' . add_query_arg( 'page', TGM_Plugin_Activation::$instance->menu, admin_url( 'themes.php' ) ) . '">' .  _x( 'Install', 'Install the Plugin', 'role-based-help-notes' ) . " </a> | " ;
 				
 			} elseif ( is_plugin_active( $option['slug'] . '/' . $option['slug'] . '.php' ) &&  ! is_plugin_active_for_network( $option['slug'] . '/' . $option['slug'] . '.php' ) ) {
-				echo esc_html__( 'Force Active', 'user-upgrade-capability' ) . ' ( ';
-				if ( ! $value ) echo '<a href="plugins.php?s=' . esc_html( $option['label'] )	 . '">' .  _x( 'Deactivate', 'deactivate the plugin', 'user-upgrade-capability' ) . "</a> | " ;	
+				echo esc_html__( 'Force Active', 'role-based-help-notes' ) . ' ( ';
+				if ( ! $value ) echo '<a href="plugins.php?s=' . esc_html( $option['label'] )	 . '">' .  _x( 'Deactivate', 'deactivate the plugin', 'role-based-help-notes' ) . "</a> | " ;	
 			} else {
-				echo esc_html__( 'Force Active', 'user-upgrade-capability' ) . ' ( ';
+				echo esc_html__( 'Force Active', 'role-based-help-notes' ) . ' ( ';
 			}
-			echo ' <a href="http://wordpress.org/plugins/' . esc_html( $option['slug'] ) . '">' .  esc_html__( "wordpress.org", 'user-upgrade-capability' ) . " </a> )" ;		
+			echo ' <a href="http://wordpress.org/plugins/' . esc_html( $option['slug'] ) . '">' .  esc_html__( "wordpress.org", 'role-based-help-notes' ) . " </a> )" ;		
 			?></label><?php
 			if ( ! empty( $option['desc'] ) )
 				echo ' <p class="description">' .  $option['desc']  . '</p>';
