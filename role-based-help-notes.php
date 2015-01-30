@@ -3,7 +3,7 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.3.1.1
+Version: 1.3.1.2
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 Text Domain: role-based-help-notes-text-domain
