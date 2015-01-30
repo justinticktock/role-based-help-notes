@@ -30,8 +30,6 @@ class RBHN_Capabilities {
 	 */
 	public static function rbhn_add_role_caps( ) {
 
-		$administrator      = get_role( 'administrator' );
-		
 		// option collection  
 		$post_types_array 	= get_option( 'rbhn_post_types' );		
 		$caps_options 		= ( array ) get_option( 'rbhn_caps_created' );  
