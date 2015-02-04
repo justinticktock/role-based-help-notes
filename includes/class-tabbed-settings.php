@@ -479,9 +479,8 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 */
 		public function get_form_action( ) {
 
-
 			$current_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : $this->default_tab_key;
-
+			$form_action = "options.php"; 
 			screen_icon( );
 			echo '<h2 class="nav-tab-wrapper">';
 			foreach ( $this->settings as $tab_key => $tab_options_array ) {
@@ -489,8 +488,6 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 					if ( isset( $tab_options_array['form_action'] ) ) {
 						$form_action = $tab_options_array['form_action'];
 						break;
-					} else {
-						$form_action = "options.php"; 						
 					}
 				} 
 			}		

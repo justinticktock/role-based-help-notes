@@ -25,10 +25,9 @@ add_action( 'tabbed_settings_after_update', 'rbhn_after_settings_update' );
 function rbhn_after_settings_update( ) {
 
 	$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
-	$role_based_help_notes->help_do_on_activation( );		// add the active capabilities
+	RBHN_Capabilities::rbhn_add_role_caps( );				// Add the selected role capabilities for use with the role help notes
 	RBHN_Capabilities::rbhn_clean_inactive_capabilties( );	// remove the inactive role capabilities
-	flush_rewrite_rules( );	
-
+	
 }
 
 /**
@@ -297,7 +296,14 @@ class RBHN_Settings_Additional_Methods {
 			$id = sanitize_key( $role_key );
 			
 			$post_type_name = $role_based_help_notes->clean_post_type_name( $role_key );
-			$role_active = $this->rbhn_role_active( $role_key, ( array ) $value )
+			$role_active = $this->rbhn_role_active( $role_key, ( array ) $value );
+			$help_note_count = '0';
+			if ( post_type_exists( $post_type_name ) ) {
+				$count_posts = wp_count_posts( $post_type_name );
+				if ( $count_posts->publish ) { 
+					$help_note_count = $count_posts->publish;
+				}
+			}
 
 			// Render the output  
 			?> 
@@ -307,7 +313,7 @@ class RBHN_Settings_Additional_Methods {
 				name="<?php echo esc_html( $option['name'] ); ?>[][<?php echo esc_html( $role_key ) ; ?>]"
 				value="<?php echo esc_attr( $post_type_name )	; ?>"<?php checked( $role_active ); ?>
 			>
-			<?php echo esc_html( $role_name ) . " <br/>"; ?>	
+			<?php echo esc_html( $role_name ) . ' (' . $help_note_count  . ') <br/>'; ?>	
 			</label></li>
 			<?php 
 		}?></ul><?php 
