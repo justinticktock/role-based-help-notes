@@ -124,7 +124,7 @@ $args = array(
 							) 
 			);
 						
-$post_types_array	= get_option( 'rbhn_post_types' );
+$post_types_array	= array_filter( ( array ) get_option( 'rbhn_post_types' ) );
 
 //  loop through the site roles and create a topics taxonomy for each
 global $wp_roles;
@@ -138,6 +138,7 @@ $roles = $wp_roles->get_names( );
 unset( $wp_roles );
 
 if ( ! empty( $post_types_array ) ) {
+
 	foreach( $post_types_array as $array ) {	
 		foreach( $array as $active_role=>$active_posttype ) {
 			if ( array_key_exists ( $active_role, $roles ) ) {

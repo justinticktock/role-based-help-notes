@@ -121,7 +121,7 @@ class RBHN_Settings {
 											'settings' 		=> array(					
 																	array(
 																		'name' 		=> 'rbhn_post_types',
-																		'std' 		=> true,
+																		'std' 		=> array(),
 																		'label' 	=> __( 'Help Notes', 'role-based-help-notes-text-domain' ),
 																		'desc'		=> '',
 																		'type'      => 'field_help_notes_post_types_option'

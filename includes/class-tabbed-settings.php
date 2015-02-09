@@ -240,7 +240,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			<div class="wrap">
 				<?php $this->plugin_options_tabs( ); ?>
 				<?php $this->get_form_action(); ?>		
-					<?php wp_nonce_field( 'update-options-nonce', 'update-options' ); ?>
+					<?php // wp_nonce_field( 'update-options-nonce', 'update-options' ); ?>
 					<?php settings_fields( $tab ); ?>
 					<?php do_settings_sections( $tab ); ?>
 					<?php submit_button( ); ?>
