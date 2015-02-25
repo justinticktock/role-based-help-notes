@@ -146,7 +146,21 @@ class RBHN_Settings {
 																			'required'              => false,
 																			'force_deactivation' 	=> false,
 																			'force_activation'      => true,												
-																			),									
+																			),
+																		array(
+																			'name' 		=> 'rbhn_email_users',
+																			'std' 		=> true,
+																			'label' 	=> 'Email Users',
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
+																			'desc'		=> __( 'This plugin allows users within a role to email all with the same role', 'role-based-help-notes-text-domain' ),
+																			'type'      => 'field_plugin_checkbox_option',
+																			// the following are for tgmpa_register activation of the plugin
+																			'plugin_dir'			=> HELP_PLUGIN_DIR,
+																			'slug'      			=> 'email-users', 
+																			'required'              => false,
+																			'force_deactivation' 	=> false,
+																			'force_activation'      => true,												
+																			),                                                                                                    
 																		array(
 																			'name' 		=> 'rbhn_menu_items_visibility_control',
 																			'filename'  => 'init',

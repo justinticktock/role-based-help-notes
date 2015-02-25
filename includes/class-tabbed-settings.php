@@ -3,7 +3,7 @@
  * Plugin tabbed settings option class for WordPress themes.
  *
  * @package   class-tabbed-settings.php
- * @version   1.1.6
+ * @version   1.1.7
  * @author    Justin Fletcher <justin@justinandco.com>
  * @copyright Copyright ( c ) 2014, Justin Fletcher
  * @license   http://opensource.org/licenses/gpl-2.0.php GPL v2 or later
@@ -239,9 +239,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			?>
 			<div class="wrap">
 				<?php $this->plugin_options_tabs( ); ?>
-				<?php $this->get_form_action(); ?>		
-					<?php // wp_nonce_field( 'update-options-nonce', 'update-options' ); ?>
-					<?php settings_fields( $tab ); ?>
+				<?php $this->get_form_action( $tab ); ?>		
 					<?php do_settings_sections( $tab ); ?>
 					<?php submit_button( ); ?>
 				</form>
@@ -477,7 +475,7 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 		 *
 		 * @return void
 		 */
-		public function get_form_action( ) {
+		public function get_form_action( $tab ) {
 
 			$current_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : $this->default_tab_key;
 			$form_action = "options.php"; 
@@ -493,7 +491,14 @@ if ( ! class_exists( 'Tabbed_Settings' ) ) {
 			}		
 				
 			echo '<form method="post" action="' . $form_action . '">';
-
+			
+			if ( $form_action == "options.php" ) {
+				// handle the standard settings API nonce
+					settings_fields( $tab );
+			} else {
+				// otherwise use an explicit nonce for using with wp_verify_nonce() authentication
+				wp_nonce_field( $tab, $tab . '_nonce' );
+			}
 		}
 
 		/**
