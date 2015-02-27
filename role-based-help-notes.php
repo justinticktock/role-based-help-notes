@@ -11,6 +11,7 @@ Domain Path: /languages/
 License: GPLv2 or later
 */
 
+                
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -104,7 +105,10 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	function includes( ) {
-
+            
+            // Load code for better compatibility with other plugins, register before the main settings
+            require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
+            
             // settings 
             require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings.php' );
 
@@ -116,9 +120,8 @@ class RBHN_Role_Based_Help_Notes {
             // Load the widgets functions file.
             require_once( HELP_MYPLUGINNAME_PATH . 'includes/widgets.php' );
 
-            // Load code for better compatibility with other plugins.
-            require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
-            	
+
+            
 	}
 
 
@@ -216,7 +219,19 @@ class RBHN_Role_Based_Help_Notes {
 		}
 			
 		load_plugin_textdomain( 'role-based-help-notes-text-domain', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-			
+                
+		// Add the HelpNotesExtra Email Methods to the Settings CLASS
+		if ( class_exists( 'RBHNE_Settings' ) ) {
+                    RBHN_Settings::get_instance( )->registerHandler( new RBHNE_Settings_Additional_Methods( ) );
+		}
+                
+                // Add the RBHN_Email_Users_Settings_Additional_Methods to the Settings CLASS
+                if ( class_exists( 'RBHN_Email_Users_Settings' ) ) {
+                    // Add the HelpNotes Email Group functionality
+                    RBHN_Settings::get_instance( )->registerHandler( new RBHN_Email_Users_Settings_Additional_Methods( ) );  
+
+                }                   
+   
 	}
 
 	/**
@@ -541,11 +556,9 @@ class RBHN_Role_Based_Help_Notes {
 		}
 		
 
-		// Add the HelpNotesExtra Email Methods to the Settings CLASS
-		if ( class_exists( 'RBHNE_Settings' ) ) {
-			RBHN_Settings::get_instance( )->registerHandler( new RBHNE_Settings_Additional_Methods( ) );
-		}
-		
+
+                
+
 	}
 
 	/**
@@ -965,5 +978,10 @@ function role_based_help_notes_flush_rewrites_deactivate( ) {
 	flush_rewrite_rules( );
 }
 register_deactivation_hook( __FILE__, 'role_based_help_notes_flush_rewrites_deactivate' );
+
+
+
+
+
 
 ?>

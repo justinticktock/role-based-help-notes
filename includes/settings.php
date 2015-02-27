@@ -59,7 +59,7 @@ class RBHN_Settings {
 		$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
 		
 		$config = array(
-				'default_tab_key' => 'rbhn_general',						// Default settings tab, opened on first settings page open.
+				'default_tab_key' => 'rbhn_general',					// Default settings tab, opened on first settings page open.
 				'menu_parent' => 'options-general.php',    					
 				'menu_access_capability' => 'promote_users',    			// menu capability make this the lowest of all 'access_capability' defined in the settings array.
 				'menu' => $role_based_help_notes->menu,    					
@@ -152,7 +152,7 @@ class RBHN_Settings {
 																			'std' 		=> true,
 																			'label' 	=> 'Email Users',
 																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'This plugin allows users within a role to email all with the same role', 'role-based-help-notes-text-domain' ),
+																			'desc'		=> __( 'This plugin allows users within a role to email all users with the same role.  After activating this plugin go to the "Email Groups" settings tab to enable individual roles.', 'role-based-help-notes-text-domain' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -264,6 +264,7 @@ class RBHN_Settings {
 										),
 									)
 								);
+
 
         if ( null == self::$instance ) {
             self::$instance = new Tabbed_Settings( $settings, $config );

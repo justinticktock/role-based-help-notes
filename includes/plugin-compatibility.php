@@ -27,17 +27,21 @@ function rbhn_bp_enable_root_profiles( $val, $user_id ) {
 }
 
 
+                
 /*
  * user-emails
  * Load code to limit availalable/editable roles to limit email users groups availability.
  */
-if ( 
-        ( is_plugin_active( 'email-users/email-users.php' ) || is_plugin_active_for_network( 'email-users/email-users.php' ) ) &&
-        ! ( is_plugin_active( 'role-excluder/role-excluder.php' ) || is_plugin_active_for_network( 'role-excluder/role-excluder.php' ) ) 
-    )
-    {
-    require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-excluder.php' );
-}
+
+if ( ( is_plugin_active( 'email-users/email-users.php' ) || is_plugin_active_for_network( 'email-users/email-users.php' ) ) &&
+        ! ( is_plugin_active( 'role-excluder/role-excluder.php' ) || is_plugin_active_for_network( 'role-excluder/role-excluder.php' ) ) ) {
+
+    // Load class for compatibilty with email-users plugin
+    require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-email-users-settings.php' );
+
+}             
+
+
 
 
 
