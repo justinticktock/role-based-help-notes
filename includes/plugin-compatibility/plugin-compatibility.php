@@ -9,43 +9,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-/*
- * BuddyPress 
- * replace the author slug with the BP user public profile if the BP_ENABLE_ROOT_PROFILES has been defined.
-  * @return bp_core_get_user_domain( ) for the current user
- */
-if ( defined( 'BP_ENABLE_ROOT_PROFILES' ) ) 
-	add_filter( 'rbhn_author_url', 'rbhn_bp_enable_root_profiles', 10, 2);
-
-/* 
- * @uses bp_core_get_user_domain( ) Returns the domain for the passed user: e.g. http://domain.com/members/andy/
- */
-function rbhn_bp_enable_root_profiles( $val, $user_id ) {
-
-	 return bp_core_get_user_domain( $user_id ) ;
-	
-}
+/* buddypress */
+if ( defined( 'BP_ENABLE_ROOT_PROFILES' ) ) {
+    // Load class for compatibilty with email-users plugin
+    require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility/buddypress/buddypress.php' );
+}        
 
 
-                
-/*
- * user-emails
+/* user-emails 
+ * 
  * Load code to limit availalable/editable roles to limit email users groups availability.
  */
 
-if ( ( is_plugin_active( 'email-users/email-users.php' ) || is_plugin_active_for_network( 'email-users/email-users.php' ) ) &&
-        ! ( is_plugin_active( 'role-excluder/role-excluder.php' ) || is_plugin_active_for_network( 'role-excluder/role-excluder.php' ) ) ) {
-
-    // Load class for compatibilty with email-users plugin
-    require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-email-users-settings.php' );
-
+if ( is_plugin_active( 'email-users/email-users.php' ) || is_plugin_active_for_network( 'email-users/email-users.php' ) ) {
+    require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility/email-users/class-rbhn-email-users-group-settings.php' );
 }             
 
 
-
-
-
-            
 /**
  * Function provided to check if the current visitor has available Help Notes
  * @return False if no help notes are available for the current user, otherwise and array of help_note post types available.

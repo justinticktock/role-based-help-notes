@@ -107,7 +107,7 @@ class RBHN_Role_Based_Help_Notes {
 	function includes( ) {
             
             // Load code for better compatibility with other plugins, register before the main settings
-            require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility.php' );
+            require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility/plugin-compatibility.php' );
             
             // settings 
             require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings.php' );

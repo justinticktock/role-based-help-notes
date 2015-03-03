@@ -280,5 +280,142 @@ class RBHN_Email_Users_Settings_Additional_Methods {
 
 
 
+/**
+ * RE_EXCLUDER class.
+ */
+class RBHN_EMAIL_GROUPS {
+
+	// Refers to a single instance of this class.
+    private static $instance = null;
+
+	
+    /**
+    * __construct function.
+    *
+    * @access public
+    * @return void
+    */
+    public function __construct() {
+
+           // block standard WP roles from the primary selections.
+           add_filter( 'editable_roles', array( $this, 'exclude_role_from_user' ) );
+
+    }
+
+    public function exclude_role_from_user( $editable_roles ) {
+           global $wp_roles;
+           
+           // drop out if not on the group emails page.
+            if	( ! is_admin() || ! ( isset( $_GET['page'] ) && ( $_GET['page'] == 'mailusers-send-to-group-page' ) ) )  {
+                return $editable_roles;
+            }	
+                        
+           if ( ! isset( $wp_roles ) ) {
+                   $wp_roles = new WP_Roles();
+           }
+
+           $roles_all = array_keys( $wp_roles->get_names( ) );
+
+           $current_user_assigned_roles = array( );
+           // loop through each role that is excluded
+           foreach ( $roles_all as $role ) {
+
+                   if ( $this->rbhn_current_user_has_role( $role ) ) {
+
+                       //build up the allows roles array
+                       // use the $excluded_roles array as a mask on $current_user_assigned_roles for this foreach loop (settings-tab)
+                       $current_user_assigned_roles[] = $role;
+
+                   }
+           }
+           
+            $role_excluder_roles_allowed = array();
+            
+            // now we have gathered all roles that are still allowed so now we will find the 
+            // inverse to get an array of roles to be excluded
+            if ( $roles_all != $current_user_assigned_roles ) {
+                
+                $role_excluder_enabled_roles = array( );
+                if ( is_plugin_active( 'role-excluder/role-excluder.php' ) || is_plugin_active_for_network( 'role-excluder/role-excluder.php' ) ) {
+                    // if the role-excluder plugin is active then collect the roles that it is catering for.
+                    $role_excluder_enabled_roles = array_filter( ( array ) get_option( 'role_excluder_enable_roles' ) );
+                    
+                    // here add in the roles that role-exluder is not masking out if the role 
+                    // is being handled by the role-excluder setttings and is allocated to the current user.
+                    // loop through each role that is excluded
+                    // and remove excluded roles 
+
+                    // find current users roles where role-excluder has been defined
+                    $addition_roles_allowed = array_intersect( $current_user_assigned_roles, $role_excluder_enabled_roles);
+                    foreach ( $addition_roles_allowed as $role_key ) {
+                        $role_excluder_enabled_roles = array_filter( ( array ) get_option( 'role_excluder_enable_roles' ) );
+                        // collect the roles to be excluded
+                        $role_excluder_masked_roles = (array) get_option( 'role_excluder_roles_' . $role_key );
+                        //build up the allows roles array
+                        // use the $excluded_roles array as a mask on $roles_allowed for this foreach loop (settings-tab)
+                        $role_excluder_roles_allowed = array_merge( $role_excluder_roles_allowed, array_diff( $roles_all, $role_excluder_masked_roles ) );                    
+                    }                    
+                }
+
+ 
+                // if role(s) exclusion are handled by the role-excluder plugin already then allow the unmasked roles for the current user too
+                $allowed_roles = array_merge( $current_user_assigned_roles, $role_excluder_roles_allowed );
+                
+                // find roles not allowed for the current user
+                $excluded_roles = array_diff( $roles_all, $allowed_roles );
+
+                // exclude roles from $editable_roles
+                foreach ( $excluded_roles as $role_key_exclude ) {
+                    unset ( $editable_roles[$role_key_exclude] );
+                }
+            }
+           return $editable_roles;
+    }
+
+
+    /**
+    * Checks if a particular user has a role. 
+    * Returns true if a match was found.
+    *
+    * @param string $role Role name.
+    * @param int $user_id (Optional ) The ID of a user. Defaults to the current user.
+    * @return bool
+    */
+    public function rbhn_current_user_has_role( $role, $user_id = null ) {
+
+           if ( is_numeric( $user_id ) ) {
+                   $user = get_userdata( $user_id );
+           } else {
+                   $user = wp_get_current_user( );
+           }
+           if ( empty( $user ) ) {
+                   return false;
+           }
+           return in_array( $role, ( array ) $user->roles );
+    }
+	
+	
+	/**
+     * Creates or returns an instance of this class.
+     *
+     * @return   A single instance of this class.
+     */
+    public static function get_instance() {
+ 
+        if ( null == self::$instance ) {
+            self::$instance = new self;
+        }
+ 
+        return self::$instance;
+ 
+    }		
+}
+
+/**
+ * Init URE_OVERRIDE class
+ */
+ 
+RBHN_EMAIL_GROUPS::get_instance();
+
 		
 ?>
