@@ -53,30 +53,34 @@ class RBHN_Role_Based_Help_Notes {
 
             $this->plugin_full_path = plugin_dir_path(__FILE__) . 'role-based-help-notes.php' ;
 
-            // Set the constants needed by the plugin.
-            add_action( 'plugins_loaded', array( $this, 'constants' ), 1 );
+            /* Set the constants needed by the plugin. */
+            add_action( 'after_setup_theme', array( $this, 'constants' ) );
+     
+            /* Load the resources */
+             add_action( 'after_setup_theme', array( $this, 'includes' ) );
 
-            /* Load the functions files. */
-            add_action( 'plugins_loaded', array( $this, 'includes' ), 2 );
+            /* Load the Help Notes during the permalinks re-creation */
+            add_action( 'generate_rewrite_rules',  array( $this, 'generate_rewrite_rules' ));
+            
+            /* Attached to set_current_user. Loads the plugin installer CLASS after themes are set-up to stop duplication of the CLASS. */
+            //add_action( 'set_current_user', array( $this, 'set_current_user' ) );
+            add_action( 'init', array( $this, 'set_current_user' ) );
 
-            // Attached to set_current_user. Loads the plugin installer CLASS after themes are set-up to stop duplication of the CLASS.
-            add_action( 'set_current_user', array( $this, 'set_current_user' ) );
-
-            // register admin side - Loads the textdomain, upgrade routine and menu item.
+            /* register admin side - Loads the textdomain, upgrade routine and menu item. */
             add_action( 'admin_init', array( $this, 'admin_init' ) );
             add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );  // increase priority to stop cpt's overwriting the menu.
 
-            // register the selected-active Help Note post types
+            /* register the selected-active Help Note post types */
             add_action( 'init', array( $this, 'init' ) );
 
-            // Load admin error messages	
+            /* Load admin error messages */
             add_action( 'admin_init', array( $this, 'deactivation_notice' ) );
             add_action( 'admin_notices', array( $this, 'action_admin_notices' ) );
 
-            // Add Contents Details to the Contents page if declared in settings ..
+            /* Add Contents Details to the Contents page if declared in settings .. */
             add_filter( 'the_content', array( $this, 'rbhn_add_post_content' ), 12 );
 
-            // Add the Help Note Custom Post Types to the author post listing
+            /* Add the Help Note Custom Post Types to the author post listing */
             add_filter( 'pre_get_posts', array( $this, 'rbhn_custom_post_author_archive' ) );
 
 
@@ -105,24 +109,22 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	function includes( ) {
-            
+            require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-taxonomy.php' ); 
+        
             // Load code for better compatibility with other plugins, register before the main settings
             require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility/plugin-compatibility.php' );
-            
+
             // settings 
             require_once( HELP_MYPLUGINNAME_PATH . 'includes/settings.php' );
-
-            require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-taxonomy.php' ); 		
-
+		
             // custom post type capabilities
             require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-capabilities.php' );  
 
             // Load the widgets functions file.
             require_once( HELP_MYPLUGINNAME_PATH . 'includes/widgets.php' );
-
-
             
 	}
+
 
 
 	/**
@@ -137,13 +139,13 @@ class RBHN_Role_Based_Help_Notes {
 		
 	}
         
-    /**
+        /**
 	 * Initialise the plugin menu. 
 	 *
 	 * @return void
 	 */
 	public function admin_menu( ) {
-		
+
 		if ( ! help_notes_available( ) )
 			return; 
 		
@@ -195,7 +197,7 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return void
 	 */
 	public function admin_init( ) {
-	
+
 		$this->action_init_store_user_meta( );
 	
 		$plugin_current_version = get_option( 'rbhn_plugin_version' );
@@ -514,7 +516,7 @@ class RBHN_Role_Based_Help_Notes {
 
 		// option collection  
 		$general_help_enabled 	= get_option( 'rbhn_general_enabled' );
-		$post_types_array 		= get_option( 'rbhn_post_types' );
+		$post_types_array 	= get_option( 'rbhn_post_types' );
 		
 		
 		if ( isset( $general_help_enabled ) && ! empty( $general_help_enabled ) ) {
@@ -542,23 +544,17 @@ class RBHN_Role_Based_Help_Notes {
 						// register Help Notes custom post type
 						// notes always created for correct permalink settings when saved even when a role is not given to the user saving the permalinks, 
 						// capabilities will be used to limit access to Notes on the front end.
-						if	( ( ! is_admin() && ( $this->help_notes_current_user_has_role( $active_role ) ) ) ||								// register help notes if on the front of site only if user has capability
-							( isset( $_GET['page'] ) && ( ( $_GET['page'] == 'notes-settings' ) || ( $_GET['page'] == $this->menu_page ) ) )   || // register if on the Help Notes Menu page or in Help Notes settings
-							( isset( $_GET['post_type'] ) && in_array( $_GET['post_type'], $this->enabled_help_notes() ) )  ||					// register if not on a Help Note page in admin
-							( $pagenow == 'options-permalink.php' )  ||																			// register if not on the permalink settings page
-							( $pagenow == 'post.php' ) ) {																						// register if on admin post pages
+						if	( ( ! is_admin() && ( $this->help_notes_current_user_has_role( $active_role ) ) ) ||                                                // register help notes if on the front of site only if user has capability
+							( isset( $_GET['page'] ) && ( ( $_GET['page'] == 'notes-settings' ) || ( $_GET['page'] == $this->menu_page ) ) )   ||               // register if on the Help Notes Menu page or in Help Notes settings
+							( isset( $_GET['post_type'] ) && in_array( $_GET['post_type'], $this->enabled_help_notes() ) )  ||                                  // register if not on a Help Note page in admin																				// register if not on the permalink settings page
+							( $pagenow == 'post.php' ) ) {																							// register if on admin post pages
 							
 							call_user_func_array( array( $this, 'help_register_posttype' ), array( $active_role, $roles[$active_role], $active_posttype ) ); 
-						}					
+						}
 					} 
 				}
 			}
 		}
-		
-
-
-                
-
 	}
 
 	/**
@@ -640,11 +636,13 @@ class RBHN_Role_Based_Help_Notes {
 	 * @return $content
 	 */	
 	public function rbhn_add_post_content( $content ) {
-
+                
 		if ( ( get_option( 'rbhn_contents_page' ) != "0" ) && is_page( get_option( 'rbhn_contents_page' ) ) && is_main_query( ) ) {
 
 			$active_role_notes = $this->active_help_notes( );
 			
+                        $rbhn_content = apply_filters( 'rbhn_contents_page_before_listing', '' );
+                        
 			foreach( $active_role_notes as $posttype_selected ) {
 
 				$posttype = get_post_type_object( $posttype_selected );			
@@ -667,17 +665,24 @@ class RBHN_Role_Based_Help_Notes {
 							'post_type'    => "$posttype_selected",
 							'post_status'  => ( current_user_can( 'read_private_posts' ) ? 'publish,private' : 'publish' ),
 						);
-					
-					
-				$content =  $content .	'<h2>' . $posttype_Name . '</h2>';	
-				$help_notes_listing = wp_list_pages( $args );
-				if ( $help_notes_listing != "" ) {
-					$content =  $content . '<p>' . $help_notes_listing . '</p>';
-				} else {
-					$content =  $content . '<p><li>' . _x( 'None yet', 'No help notes are currently available for this role.', 'role-based-help-notes-text-domain' )   . '</li></p></br>';
-				}
-			}
 			
+				$help_notes_listing = wp_list_pages( $args );
+ 
+                                
+				if ( $help_notes_listing != "" ) {      
+					$rbhn_section_content =   '<p>' . $help_notes_listing . '</p>' ;
+				} else {
+					$rbhn_section_content =   '<p><li>' . _x( 'None yet', 'No help notes are currently available for this role.', 'role-based-help-notes-text-domain' )   . '</li></p></br>';
+				}
+                                
+                                $rbhn_contents_page_role_listing_title = apply_filters( 'rbhn_contents_page_role_listing_title', $rbhn_content . '<h2>' . $posttype_Name . '</h2>', $rbhn_content, $posttype_Name );
+                                $rbhn_contents_page_role_listing = apply_filters( 'rbhn_contents_page_role_listing', $rbhn_section_content );
+                                $rbhn_content = $rbhn_content . $rbhn_contents_page_role_listing_title . $rbhn_contents_page_role_listing;
+                                            
+			}
+                        
+                        $content = $content . apply_filters( 'rbhn_contents_page_role_final_listing', $rbhn_content );
+
 		}
 
 		// if selected in settings turn valid url text strings into clickable text.
@@ -725,9 +730,7 @@ class RBHN_Role_Based_Help_Notes {
 		flush_rewrite_rules( );
 	}
 
-
-		
-	/**
+        /**
 	 * Returns current plugin version.
 	 *
 	 * @access public
@@ -737,6 +740,51 @@ class RBHN_Role_Based_Help_Notes {
 		$plugin_data = get_plugin_data( $this->plugin_full_path );	
 		$plugin_version = $plugin_data['Version'];
 		return filter_var( $plugin_version, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+	}
+        
+        
+	/**
+	 * Hooks into the 'generate_rewrite_rules' action to ensure Help Notes are registered whenever
+         * the permalinks are rewritten.  This way we can then register the Help Note custom posttype
+         * for the frontend or the help note admin pages only.  Which is helpful to keep private when
+         * on other admin settings pages etc where we don't want the helps notes to be present for other
+         * plugins to expose the contents of the notes.
+	 *
+	 * @access public
+	 * @return void
+	 */	
+	public function generate_rewrite_rules( &$args ) {
+            
+            //un-register action hook into  'generate_rewrite_rules' stops an infinite cycle.
+            remove_action( 'generate_rewrite_rules',  array( $this, 'generate_rewrite_rules' )); 
+            
+            /* register help note custom post types. */
+            $post_types_array 	= get_option( 'rbhn_post_types' );    
+
+            // Load roles if not set
+            if ( ! isset( $wp_roles ) )
+                    $wp_roles = new WP_Roles( );
+
+            $roles = $wp_roles->get_names( );
+
+            if ( ! empty( $post_types_array ) ) {
+                    foreach( $post_types_array as $array ) {	
+                            foreach( $array as $active_role=>$active_posttype ) {
+                                    if ( array_key_exists ( $active_role, $roles ) ) {
+                                            // register All Help Notes custom post type
+                                            call_user_func_array( array( $this, 'help_register_posttype' ), array( $active_role, $roles[$active_role], $active_posttype ) ); 
+                                    } 
+                            }
+                    }
+            }
+
+
+            /* Next recreate permalinks now that Help Notes are enforce as registered */
+            flush_rewrite_rules();
+            
+            /*  re-register this hook */
+            add_action( 'generate_rewrite_rules',  array( $this, 'generate_rewrite_rules' ));            
+
 	}
 	
 	/**

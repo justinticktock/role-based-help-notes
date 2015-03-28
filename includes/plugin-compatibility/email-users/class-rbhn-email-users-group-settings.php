@@ -44,14 +44,14 @@ class RBHN_Email_Users_Settings {
                                                     'rbhn_email_user_groups' => array( 
                                                             'access_capability' => 'promote_users',
                                                             'title' 		=> __( 'Email Groups', 'role-based-help-notes-text-domain' ),
-                                                            'description' 	=> __( 'Enable the roles to allow group email functionality.', 'role-based-help-notes-text-domain' ),
+                                                            'description' 	=> __( 'Allow group email functionality, this uses the "Email Users" Plugin.', 'role-based-help-notes-text-domain' ),
                                                             'form_action'       => admin_url( 'admin-post.php' ),
                                                             'settings' 		=> array(														
                                                                                         array(
                                                                                                 'name' 		=> 'rbhn_enable_email_users_roles',
                                                                                                 'std' 		=> array(),
                                                                                                 'label' 	=> __( 'Add User Role(s)', 'role-based-help-notes-text-domain' ),
-                                                                                                'desc'		=> __( 'Enable <strong>email_user_groups</strong> custom capability for individual roles, this will then be used by the <strong>email-users</strong> to enable group emailing.', 'role-based-help-notes-text-domain' ),
+                                                                                                'desc'		=> __( 'Enables the <strong>email_user_groups</strong> custom capability for individual roles, this will then be used by the <strong>email-users</strong> to enable group emailing.', 'role-based-help-notes-text-domain' ),
                                                                                                 'type'      => 'field_roles_for_group_email_checkbox',
                                                                                                 ),					
                                                                                         ),			
@@ -203,79 +203,7 @@ class RBHN_Email_Users_Settings_Additional_Methods {
 			if ( ! empty( $option['desc'] ) )
 				echo ' <p class="description">' . $option['desc'] . '</p>';		
 		}
-	/**
-	 * @param array of arguments to pass the option name to render the form field.
-	 * @access public
-	 * @return void
-	 */
-	public function field_editable_roles_checkbox( array $args  ) {
-
-        $redirect = urlencode( remove_query_arg( 'msg', $_SERVER['REQUEST_URI'] ) );
-        $redirect = urlencode( $_SERVER['REQUEST_URI'] );
-	 
-		$option   = $args['option'];
-		$roles = get_editable_roles( );
-
-		if ( isset( $_GET['user_id'] ) ) {
-			$user_id = $_GET['user_id'];
-			$user = new WP_User( $user_id );
-			$current_user_roles = (array) $user->roles;
-			
-			?><H2><?php
-
-			?><H2</br	><?php
-			esc_html_e( sprintf( __( 'Roles for %1$s :', 'role-based-help-notes-text-domain' ), $user->display_name ) );
-			?> </H2><?php
-			
-			?><ul><?php 
-			asort( $roles );
-
-			?>
-			
-			  
-				<input type="hidden" name="action" value="<?php echo $option['name']; ?>">
-		
-				<?php 
-					 
-				foreach( $roles as $role_key=>$_rolename )
-				{
-					$id = sanitize_key( $role_key );
-					$value = get_option( $option['name'] );
-
-					// Render the output  
-					?> 
-				
-
-					<input type='checkbox'  
-						id="<?php echo esc_html( "user_role_{$id}" ) ; ?>" 
-						name="<?php echo esc_html( $option['name'] ); ?>[]"
-						value="<?php echo esc_attr( $role_key )	; ?>"<?php checked( in_array( $role_key, $current_user_roles ) ); ?>
-					>
-					<input type="hidden" name="user_id" value="<?php echo $user_id; ?>">					
-					
-					<?php echo esc_html( $_rolename['name'] ); ?></label>	
-					<br/></li>
-					<?php 
-				}?></ul>
-				 <?php // submit_button( 'Send' ); ?>
-	 
-			<?php
-			
-		
-		if ( ! empty( $option['desc'] ) )
-			echo ' <p class="description">' . $option['desc'] . '</p>';			
-			
-		} else {  // no user_id
-		
-		echo '<a href="' . admin_url( 'users.php' ) . '">' . __( 'Select a users [Roles] option under their name.', 'role-based-help-notes-text-domain' ) . "</a>";
-		
-		}
-		
-
-	}
-		
-
-		
+	
 }
 
 
@@ -303,73 +231,55 @@ class RBHN_EMAIL_GROUPS {
     }
 
     public function exclude_role_from_user( $editable_roles ) {
-           global $wp_roles;
-           
-           // drop out if not on the group emails page.
-            if	( ! is_admin() || ! ( isset( $_GET['page'] ) && ( $_GET['page'] == 'mailusers-send-to-group-page' ) ) )  {
-                return $editable_roles;
-            }	
-                        
-           if ( ! isset( $wp_roles ) ) {
-                   $wp_roles = new WP_Roles();
-           }
+        
+        /* Drop out if visible roles are being handled by the role-excluder plugin
+         */
+        if ( is_plugin_active( 'role-excluder/role-excluder.php' ) || is_plugin_active_for_network( 'role-excluder/role-excluder.php' ) ) {
+            return $editable_roles;
+        }             
 
-           $roles_all = array_keys( $wp_roles->get_names( ) );
+        global $wp_roles;
 
-           $current_user_assigned_roles = array( );
-           // loop through each role that is excluded
-           foreach ( $roles_all as $role ) {
+        // drop out if not on the group emails page.
+         if	( ! is_admin() || ! ( isset( $_GET['page'] ) && ( $_GET['page'] == 'mailusers-send-to-group-page' ) ) )  {
+             return $editable_roles;
+         }	
 
-                   if ( $this->rbhn_current_user_has_role( $role ) ) {
+        if ( ! isset( $wp_roles ) ) {
+                $wp_roles = new WP_Roles();
+        }
 
-                       //build up the allows roles array
-                       // use the $excluded_roles array as a mask on $current_user_assigned_roles for this foreach loop (settings-tab)
-                       $current_user_assigned_roles[] = $role;
+        $roles_all = array_keys( $wp_roles->get_names( ) );
 
-                   }
-           }
-           
-            $role_excluder_roles_allowed = array();
-            
-            // now we have gathered all roles that are still allowed so now we will find the 
-            // inverse to get an array of roles to be excluded
-            if ( $roles_all != $current_user_assigned_roles ) {
-                
-                $role_excluder_enabled_roles = array( );
-                if ( is_plugin_active( 'role-excluder/role-excluder.php' ) || is_plugin_active_for_network( 'role-excluder/role-excluder.php' ) ) {
-                    // if the role-excluder plugin is active then collect the roles that it is catering for.
-                    $role_excluder_enabled_roles = array_filter( ( array ) get_option( 'role_excluder_enable_roles' ) );
-                    
-                    // here add in the roles that role-exluder is not masking out if the role 
-                    // is being handled by the role-excluder setttings and is allocated to the current user.
-                    // loop through each role that is excluded
-                    // and remove excluded roles 
+        $current_user_assigned_roles = array( );
+        // loop through each role that is excluded
+        foreach ( $roles_all as $role ) {
 
-                    // find current users roles where role-excluder has been defined
-                    $addition_roles_allowed = array_intersect( $current_user_assigned_roles, $role_excluder_enabled_roles);
-                    foreach ( $addition_roles_allowed as $role_key ) {
-                        $role_excluder_enabled_roles = array_filter( ( array ) get_option( 'role_excluder_enable_roles' ) );
-                        // collect the roles to be excluded
-                        $role_excluder_masked_roles = (array) get_option( 'role_excluder_roles_' . $role_key );
-                        //build up the allows roles array
-                        // use the $excluded_roles array as a mask on $roles_allowed for this foreach loop (settings-tab)
-                        $role_excluder_roles_allowed = array_merge( $role_excluder_roles_allowed, array_diff( $roles_all, $role_excluder_masked_roles ) );                    
-                    }                    
+                if ( $this->rbhn_current_user_has_role( $role ) ) {
+
+                    //build up the allows roles array
+                    // use the $excluded_roles array as a mask on $current_user_assigned_roles for this foreach loop (settings-tab)
+                    $current_user_assigned_roles[] = $role;
+
                 }
+        }
 
- 
-                // if role(s) exclusion are handled by the role-excluder plugin already then allow the unmasked roles for the current user too
-                $allowed_roles = array_merge( $current_user_assigned_roles, $role_excluder_roles_allowed );
-                
-                // find roles not allowed for the current user
-                $excluded_roles = array_diff( $roles_all, $allowed_roles );
+         $role_excluder_roles_allowed = array();
 
-                // exclude roles from $editable_roles
-                foreach ( $excluded_roles as $role_key_exclude ) {
-                    unset ( $editable_roles[$role_key_exclude] );
-                }
-            }
-           return $editable_roles;
+         // now we have gathered all roles that are still allowed so now we will find the 
+         // inverse to get an array of roles to be excluded
+         if ( $roles_all != $current_user_assigned_roles ) {
+
+
+             // find roles not allowed for the current user
+             $excluded_roles = array_diff( $roles_all, $current_user_assigned_roles );
+
+             // exclude roles from $editable_roles
+             foreach ( $excluded_roles as $role_key_exclude ) {
+                 unset ( $editable_roles[$role_key_exclude] );
+             }
+         }
+        return $editable_roles;
     }
 
 
