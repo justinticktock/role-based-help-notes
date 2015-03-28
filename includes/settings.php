@@ -173,7 +173,7 @@ class RBHN_Settings {
 																			'std' 		=> false,
 																			'label' 	=> 'Tabby Response Tabs',
 																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'Once enabled a new settings will be provided on the GENERAL settings tab to allow the contents page to change to tabs.', 'role-based-help-notes-text-domain' ),
+																			'desc'		=> __( 'Once enabled a new setting will be provided on the GENERAL settings tab to allow the contents page to change to tabs.', 'role-based-help-notes-text-domain' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,

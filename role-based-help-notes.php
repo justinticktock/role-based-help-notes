@@ -675,7 +675,7 @@ class RBHN_Role_Based_Help_Notes {
 					$rbhn_section_content =   '<p><li>' . _x( 'None yet', 'No help notes are currently available for this role.', 'role-based-help-notes-text-domain' )   . '</li></p></br>';
 				}
                                 
-                                $rbhn_contents_page_role_listing_title = apply_filters( 'rbhn_contents_page_role_listing_title', $rbhn_content . '<h2>' . $posttype_Name . '</h2>', $rbhn_content, $posttype_Name );
+                                $rbhn_contents_page_role_listing_title = apply_filters( 'rbhn_contents_page_role_listing_title', '<h2>' . $posttype_Name . '</h2>', $posttype_Name );
                                 $rbhn_contents_page_role_listing = apply_filters( 'rbhn_contents_page_role_listing', $rbhn_section_content );
                                 $rbhn_content = $rbhn_content . $rbhn_contents_page_role_listing_title . $rbhn_contents_page_role_listing;
                                             
