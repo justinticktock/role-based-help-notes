@@ -146,17 +146,9 @@ class RBHN_Role_Based_Help_Notes {
 	 */
 	public function admin_menu( ) {
 
-		if ( ! help_notes_available( ) )
-			return; 
-		
-		// check if no help notes are selected before adding the menu ...
-		//   Roles are selected in the settings.
-		//   OR the general Help Notes is selected in the settings.
-		//   OR there are help note posts created and viewable.
-		if ( array_filter( ( array ) get_option( 'rbhn_post_types' ) ) || get_option( 'rbhn_general_enabled' ) || help_notes_available( ) ) {
-				add_menu_page( _x( 'Help Notes', 'the help notes text to be displayed in the title tags of the page when the menu is selected', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'the help notes title in the admin menu',  'role-based-help-notes-text-domain' ), 'read', $this->menu_page, array( &$this, 'menu_page' ), 'dashicons-format-aside', '5.123123123' );
-		}
-		
+		if ( help_notes_available( ) ) {
+                    add_menu_page( _x( 'Help Notes', 'the help notes text to be displayed in the title tags of the page when the menu is selected', 'role-based-help-notes-text-domain' ), __( 'Help Notes', 'the help notes title in the admin menu',  'role-based-help-notes-text-domain' ), 'read', $this->menu_page, array( &$this, 'menu_page' ), 'dashicons-format-aside', '5.123123123' );
+                }
 	}
     
 	/**
