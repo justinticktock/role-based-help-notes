@@ -239,7 +239,7 @@ class RBHN_EMAIL_GROUPS {
         }             
 
         global $wp_roles;
-
+       
         // drop out if not on the group emails page.
          if	( ! is_admin() || ! ( isset( $_GET['page'] ) && ( $_GET['page'] == 'mailusers-send-to-group-page' ) ) )  {
              return $editable_roles;
@@ -251,28 +251,45 @@ class RBHN_EMAIL_GROUPS {
 
         $roles_all = array_keys( $wp_roles->get_names( ) );
 
+        
+        $roles_with_cap_email_user_groups = array();
         $current_user_assigned_roles = array( );
-        // loop through each role that is excluded
-        foreach ( $roles_all as $role ) {
+        
+        
+        /* Loop through each role object because we need to get the caps. */
+        foreach ( $wp_roles->role_objects as $key => $role ) {
+            
+            /* build up the allowed roles for the current user */
+            if ( $this->rbhn_current_user_has_role( $key ) ) {
+                $current_user_assigned_roles[] = $key;
+            }
+            
+            /* Roles without capabilities will cause an error, so we need to check if $role->capabilities is an array. */
+            if ( is_array( $role->capabilities ) ) {
 
-                if ( $this->rbhn_current_user_has_role( $role ) ) {
+                /* Loop through the role's capabilities to find roles with the 'email_user_groups' capabiltiy set. */
+                foreach ( $role->capabilities as $cap => $grant )
+                    if ( ( $cap == 'email_user_groups' ) && $grant ) {
+                         $roles_with_cap_email_user_groups[] = $key;
+                         break;
+                    }
+            }
+        }        
+        
+        //also limit to only the roles where the 'email_user_groups' capabiltiy is set 
+        //(this matches the Help Notes settings for enabled group emailing per role)
 
-                    //build up the allows roles array
-                    // use the $excluded_roles array as a mask on $current_user_assigned_roles for this foreach loop (settings-tab)
-                    $current_user_assigned_roles[] = $role;
+        $current_user_assigned_roles_which_are_enabled_for_group_emails = array_intersect( $roles_with_cap_email_user_groups, $current_user_assigned_roles ) ;
 
-                }
-        }
-
-         $role_excluder_roles_allowed = array();
+        $role_excluder_roles_allowed = array();
 
          // now we have gathered all roles that are still allowed so now we will find the 
          // inverse to get an array of roles to be excluded
-         if ( $roles_all != $current_user_assigned_roles ) {
+         if ( $roles_all != $current_user_assigned_roles_which_are_enabled_for_group_emails ) {
 
 
              // find roles not allowed for the current user
-             $excluded_roles = array_diff( $roles_all, $current_user_assigned_roles );
+             $excluded_roles = array_diff( $roles_all, $current_user_assigned_roles_which_are_enabled_for_group_emails );
 
              // exclude roles from $editable_roles
              foreach ( $excluded_roles as $role_key_exclude ) {
