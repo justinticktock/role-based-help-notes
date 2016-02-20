@@ -18,5 +18,3 @@ function rbhn_bp_enable_root_profiles( $val, $user_id ) {
 	 return bp_core_get_user_domain( $user_id ) ;
 	
 }
-
-?>

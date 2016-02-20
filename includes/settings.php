@@ -24,8 +24,7 @@ add_action( 'tabbed_settings_after_update', 'rbhn_after_settings_update' );
 
 function rbhn_after_settings_update( ) {
 
-	$role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
-	RBHN_Capabilities::rbhn_add_role_caps( );				// Add the selected role capabilities for use with the role help notes
+	RBHN_Capabilities::rbhn_add_role_caps( );		// Add the selected role capabilities for use with the role help notes
 	RBHN_Capabilities::rbhn_clean_inactive_capabilties( );	// remove the inactive role capabilities
 	
 }
@@ -72,108 +71,140 @@ class RBHN_Settings {
 									array(								
 										'rbhn_general' => array(
 											'access_capability' => 'edit_theme_options',
-											'title' 		=> __( 'General', 'role-based-help-notes-text-domain' ),
-											'description' 	=> __( 'Settings for general purpose.', 'role-based-help-notes-text-domain' ),
+											'title' 		=> __( 'General', 'role-based-help-notes' ),
+											'description' 	=> __( 'Settings for general purpose.', 'role-based-help-notes' ),
 											'settings' 		=> array(		
 																	array(
 																		'name' 		=> 'rbhn_general_enabled',
 																		'std' 		=> false,
-																		'label' 	=> __( 'General Help Notes', 'role-based-help-notes-text-domain' ),
-																		'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> __( "Enabling the 'General' option gives you global Help Notes, which are not limited to any one role, these will be accessible to all and follow the capabilities of the normal wordpress 'post' post type.", 'role-based-help-notes-text-domain' ),
-																		'type'      => 'field_checkbox_option'
+																		'label' 	=> __( 'General (Public) Help Notes', 'role-based-help-notes' ),
+																		'cb_label'      => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																		'desc'		=> __( "Enabling this option gives you global Help Notes, which are not limited to any one role, these will be available to the world to read and follow the capabilities of the normal wordpress 'post' post type.", 'role-based-help-notes' ),
+																		'type'          => 'field_checkbox_option'
 																		),
 																	array(
 																		'name' 		=> 'rbhn_widgets_enabled',
 																		'std' 		=> false,
-																		'label' 	=> _x( 'Widgets', 'settings title for enabling the widgets for help notes.', 'role-based-help-notes-text-domain' ),
-																		'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> __( "Enabling will allow you to place the Help Notes widgets into your sidebars.", 'role-based-help-notes-text-domain' ),
-																		'type'      => 'field_checkbox_option'
+																		'label' 	=> _x( 'Widgets', 'settings title for enabling the widgets for help notes.', 'role-based-help-notes' ),
+																		'cb_label'      => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																		'desc'		=> __( "Enabling will allow you to place the Help Notes widgets into your sidebars.", 'role-based-help-notes' ),
+																		'type'          => 'field_checkbox_option'
 																		),
 																	array(
 																		'name' 		=> 'rbhn_contents_page',
 																		'std' 		=> '0',
-																		'label' 	=> __( 'Contents Page', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> __( 'If you wish to create a contents page add a new page and select it here so that the Help Note Contents are displayed.', 'role-based-help-notes-text-domain' ),
-																		'type'      => 'field_page_select_list_option',
+																		'label' 	=> __( 'Contents Page', 'role-based-help-notes' ),
+																		'desc'		=> __( 'If you wish to create a contents page add a new page and select it here so that the Help Note Contents are displayed.', 'role-based-help-notes' ),
+																		'type'          => 'field_page_select_list_option',
+                                                                                                                                                'post_status'   => 'private,publish',
 																		),
 																	array(
 																		'name' 		=> 'rbhn_tabbed_contents_page',
 																		'std' 		=> '0',
-																		'label' 	=> __( 'Tabbed Contents Page', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> __( 'Enable to allow the Tabby Response Tabs to work on the contents page.', 'role-based-help-notes-text-domain' ),
-																		'type'      => 'field_checkbox_option',
+																		'label' 	=> __( 'Tabbed Contents Page', 'role-based-help-notes' ),
+																		'desc'		=> __( 'Enable to allow the Tabby Response Tabs to work on the contents page.', 'role-based-help-notes' ),
+																		'type'          => 'field_checkbox_option',
 																		),
 																	array(
 																		'name' 		=> 'rbhn_welcome_page',
 																		'std' 		=> '0',
-																		'label' 	=> __( 'Welcome Page', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> __( 'A welcome page has been created and used for your menu landing page, you can edit the page directly to customise or select "- None -" to deactivate.', 'role-based-help-notes-text-domain' ),
-																		'type'      => 'field_page_select_list_option',
+																		'label' 	=> __( 'Welcome Page', 'role-based-help-notes' ),
+																		'desc'		=> __( 'A welcome page has been created and used for your menu landing page, you can edit the page directly to customise.', 'role-based-help-notes' ),
+																		'type'          => 'field_page_select_list_option',
+                                                                                                                                                'post_status'   => 'private,publish',
 																		),
 																	array(
 																		'name' 		=> 'rbhn_make_clickable',
 																		'std' 		=> '0',
-																		'label' 	=> __( 'Click-able Links', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> __( 'Turn valid URLs into click able text.', 'role-based-help-notes-text-domain' ),
-																		'type'      => 'field_checkbox_option',
+																		'label' 	=> __( 'Click-able Links', 'role-based-help-notes' ),
+																		'desc'		=> __( 'Turn valid URLs into click able text.', 'role-based-help-notes' ),
+																		'type'          => 'field_checkbox_option',
 																		),	
 																),
 										),
 										'rbhn_roles' => array(
 											'access_capability' => 'edit_theme_options',
-											'title' 		=> __( 'Roles', 'role-based-help-notes-text-domain' ),
-											'description' 	=> __( 'Select the Roles that you wish to create Help Notes for.', 'role-based-help-notes-text-domain' ),
+											'title' 		=> __( 'Roles', 'role-based-help-notes' ),
+											'description' 	=> __( 'Select the Roles that you wish to create Help Notes for.', 'role-based-help-notes' ),
 											'settings' 		=> array(					
 																	array(
-																		'name' 		=> 'rbhn_post_types',
-																		'std' 		=> array(),
-																		'label' 	=> __( 'Help Notes', 'role-based-help-notes-text-domain' ),
-																		'desc'		=> '',
-																		'type'      => 'field_help_notes_post_types_option'
+																		'name'          => 'rbhn_post_types',
+																		'std'           => array(),
+																		'label'         => __( 'Help Notes', 'role-based-help-notes' ),
+																		'desc'          => '',
+																		'type'          => 'field_help_notes_post_types_option'
 																		),					
 																	),
 										),
 										'rbhn_plugin_extension' => array(
 												'access_capability' => 'install_plugins',
-												'title' 		=> __( 'Plugin Suggestions', 'role-based-help-notes-text-domain' ),
-												'description' 	=> __( 'These settings are optional.  Selection of any suggested plugin here will prompt you through the installation.  The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall.', 'role-based-help-notes-text-domain' ),					
+												'title' 		=> __( 'Plugin Suggestions', 'role-based-help-notes' ),
+												'description' 	=> __( 'These settings are optional.  Selection of any suggested plugin here will prompt you through the installation.  The plugin will be forced active while this is selected; deselecting will not remove the plugin, you will need to manually uninstall.', 'role-based-help-notes' ),					
 												'settings' 		=> array(
-																		array(
-																			'name' 		=> 'rbhn_email_users',
-																			'std' 		=> true,
-																			'label' 	=> 'Email Users',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'This plugin allows users within a role to email all users with the same role.  After activating this plugin go to the "Email Groups" settings tab to configure.', 'role-based-help-notes-text-domain' ),
-																			'type'      => 'field_plugin_checkbox_option',
-																			// the following are for tgmpa_register activation of the plugin
-																			'plugin_dir'			=> HELP_PLUGIN_DIR,
-																			'slug'      			=> 'email-users', 
-																			'required'              => false,
-																			'force_deactivation' 	=> false,
-																			'force_activation'      => true,												
-																			),  												
 																		array(
 																			'name' 		=> 'rbhn_user_role_editor',
 																			'std' 		=> true,
 																			'label' 	=> 'User Role Editor',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'This is a useful plugin for Administrators to set multiple WordPress roles to users', 'role-based-help-notes-text-domain' ),
-																			'type'      => 'field_plugin_checkbox_option',
+																			'cb_label'      => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( 'This is a useful plugin for Administrators to set multiple WordPress roles to users. </Br>'
+                                                                                                                                                                            . '<strong>Note:</strong> This plugin (or the like) must be active so that roles are not lossed '
+                                                                                                                                                                            . 'back to the one default role after a save from a user profile page.', 'role-based-help-notes' ),
+																			'type'          => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
 																			'slug'      			=> 'user-role-editor', 
 																			'required'              => false,
 																			'force_deactivation' 	=> false,
 																			'force_activation'      => true,												
-																			),                                                                                                  
+																			),
+																		array(
+																			'name' 		=> 'rbhn_role_includer',
+																			'std' 		=> true,
+																			'label' 	=> 'Role Includer',
+																			'cb_label'      => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( 'If you deligate role assigin to non-admins such as staff this adds a simple interface for allocating multiple roles to users.  If you wish to hide/mask-out roles with higher access levels ( such as "Administrator" ) then you can exclude higher roles by using the "Role Excluder" plugin available over at <a href="https://justinandco.com/plugins/downloads/role-excluder/">justinandco.com</a>.', 'role-based-help-notes' ),
+																			'type'          => 'field_plugin_checkbox_option',
+																			// the following are for tgmpa_register activation of the plugin
+																			'plugin_dir'		=> HELP_PLUGIN_DIR,
+																			'slug'      		=> 'role-includer', 
+																			'required'              => false,
+																			'force_deactivation' 	=> false,
+																			'force_activation'      => true,
+																			),                                                                                                         
+																		array(
+																			'name' 		=> 'rbhn_email_users',
+																			'std' 		=> true,
+																			'label' 	=> 'Email Users',
+																			'cb_label'      => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( 'This plugin allows users within a role to email all users with the same role.  After activating this plugin go to the "Email Options" & "Email Roles" settings tab to configure.  Role Based Help Notes also adds a widget to cater for better integration with this plugin.', 'role-based-help-notes' ),
+																			'type'          => 'field_plugin_checkbox_option',
+																			// the following are for tgmpa_register activation of the plugin
+																			'plugin_dir'			=> HELP_PLUGIN_DIR,
+																			'slug'      			=> 'email-users', 
+																			'required'              => false,
+																			'force_deactivation' 	=> false,
+																			'force_activation'      => true,												
+																			),  					
+																		array(
+																			'name' 		=> 'rbhn_email_post_changes_plugin',
+																			'std' 		=> false,
+																			'label' 	=> 'Email Post Changes',
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( 'Allows for emailing of the standard General Help notes only along with Post, Page and other custom post types you have.  To email all other Help note changes automatically, tighter control is necessary for security reasons, for this you can purchase and download the <a href="//justinandco.com/plugins/role-based-help-notes-extra/" target="_blank">role-based-help-notes-extra plugin</a>.', 'role-based-help-notes' ),
+																			'type'      => 'field_plugin_checkbox_option',
+																			// the following are for tgmpa_register activation of the plugin
+																			'plugin_dir'			=> HELP_PLUGIN_DIR,
+																			'slug'      			=> 'email-post-changes',
+																			'required'              => false,
+																			'force_deactivation' 	=> false,
+																			'force_activation'      => true,		
+																			),												                                                                                                
 																		array(
 																			'name' 		=> 'rbhn_tabby_responsive_tabs',
 																			'std' 		=> false,
 																			'label' 	=> 'Tabby Response Tabs',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'Once enabled a new setting will be provided on the GENERAL settings tab to allow the contents page to change to tabs.', 'role-based-help-notes-text-domain' ),
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( 'Once enabled a new setting will be provided on the GENERAL settings tab to allow the contents page to change to tabs.', 'role-based-help-notes' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -187,8 +218,8 @@ class RBHN_Settings {
 																			'filename'  => 'init',
 																			'std' 		=> false,
 																			'label' 	=> 'Menu Item Visibility Control',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'This is a useful plugin for Administrators to define Menus to be visible for users according to their allocated roles.', 'role-based-help-notes-text-domain' ),
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( 'This is a useful plugin for Administrators to define Menus to be visible for users according to their allocated roles.', 'role-based-help-notes' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -201,8 +232,8 @@ class RBHN_Settings {
 																			'name' 		=> 'rbhn_user_switching',
 																			'std' 		=> false,
 																			'label' 	=> 'User Switching',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'This is a useful plugin for Administrators to test the accessibility of users with different roles, you can simply switch to their account to check how the Help Notes appear for them.', 'role-based-help-notes-text-domain' ),
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( 'This is a useful plugin for Administrators to test the accessibility of users with different roles, you can simply switch to their account to check how the Help Notes appear for them.', 'role-based-help-notes' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -215,8 +246,8 @@ class RBHN_Settings {
 																			'name' 		=> 'rbhn_simple_page_ordering',
 																			'std' 		=> false,
 																			'label' 	=> 'Simple Page Ordering',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'Once installed go you can drag pages up/down within the admin side to re-order Help Notes.', 'role-based-help-notes-text-domain' ),
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( 'Once installed go you can drag pages up/down within the admin side to re-order Help Notes.', 'role-based-help-notes' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -229,8 +260,8 @@ class RBHN_Settings {
 																			'name' 		=> 'rbhn_simple_footnotes_plugin',
 																			'std' 		=> false,
 																			'label' 	=> 'Simple Footnotes',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( "Once installed go you can use the 'ref' shortcode for example... [ref]Add footnote text here[/ref] within your posts.", 'role-based-help-notes-text-domain' ),
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( "Once installed go you can use the 'ref' shortcode for example... [ref]Add footnote text here[/ref] within your posts.", 'role-based-help-notes' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -243,8 +274,8 @@ class RBHN_Settings {
 																			'name' 		=> 'rbhn_disable_comments_plugin',
 																			'std' 		=> false,
 																			'label' 	=> 'Disable Comments',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'Comments are of less value for Help Notes and this plugin will allow you to easily remove comments from use.', 'role-based-help-notes-text-domain' ),
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( 'Comments are of less value for Help Notes and this plugin will allow you to easily remove comments from use.', 'role-based-help-notes' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -254,25 +285,11 @@ class RBHN_Settings {
 																			'force_activation'      => true,		
 																			),					
 																		array(
-																			'name' 		=> 'rbhn_email_post_changes_plugin',
-																			'std' 		=> false,
-																			'label' 	=> 'Email Post Changes',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( 'Allows for emailing of the standard General Help notes only along with Post, Page and other custom post types you have.  To email all other Help note changes automatically, tighter control is necessary for security reasons, for this you can purchase and download the <a href="//justinandco.com/plugins/role-based-help-notes-extra/" target="_blank">role-based-help-notes-extra plugin</a>.', 'role-based-help-notes-text-domain' ),
-																			'type'      => 'field_plugin_checkbox_option',
-																			// the following are for tgmpa_register activation of the plugin
-																			'plugin_dir'			=> HELP_PLUGIN_DIR,
-																			'slug'      			=> 'email-post-changes',
-																			'required'              => false,
-																			'force_deactivation' 	=> false,
-																			'force_activation'      => true,		
-																			),					
-																		array(
 																			'name' 		=> 'rbhn_post_type_switcher_plugin',
 																			'std' 		=> false,
 																			'label' 	=> 'Post Type Switcher',
-																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes-text-domain' ),
-																			'desc'		=> __( "This plugin will allow users with two or more roles the ability to change the role assigned to a help note.  Once installed you will find a new selection/edit option in the 'Publish' area.", 'role-based-help-notes-text-domain' ),
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( "This plugin will allow users with two or more roles the ability to change the role assigned to a help note.  Once installed you will find a new selection/edit option in the 'Publish' area.", 'role-based-help-notes' ),
 																			'type'      => 'field_plugin_checkbox_option',
 																			// the following are for tgmpa_register activation of the plugin
 																			'plugin_dir'			=> HELP_PLUGIN_DIR,
@@ -281,6 +298,20 @@ class RBHN_Settings {
 																			'force_deactivation' 	=> false,
 																			'force_activation'      => true,		
 																			),					
+																		array(
+																			'name' 		=> 'rbhn_pixabay_images_plugin',
+																			'std' 		=> false,
+																			'label' 	=> 'Pixabay Images',
+																			'cb_label'  => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
+																			'desc'		=> __( "This plugin adds a quick and simple interface to find CCo Public Domain images for use in your Help Notes.", 'role-based-help-notes' ),
+																			'type'      => 'field_plugin_checkbox_option',
+																			// the following are for tgmpa_register activation of the plugin
+																			'plugin_dir'			=> HELP_PLUGIN_DIR,
+																			'slug'      			=> 'pixabay-images', 
+																			'required'              => false,
+																			'force_deactivation' 	=> false,
+																			'force_activation'      => true,		
+																			),						
 																		),
 										),
 									) );
@@ -352,8 +383,9 @@ class RBHN_Settings_Additional_Methods {
 			</label></li>
 			<?php 
 		}?></ul><?php 
-		if ( ! empty( $option['desc'] ) )
-			echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';		
+		if ( ! empty( $option['desc'] ) ) {
+			echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';	
+                }
 	}
 	
 
@@ -401,8 +433,9 @@ class RBHN_Settings_Additional_Methods {
 			</label></li>
 			<?php 
 		}?></ul><?php 
-		if ( ! empty( $option['desc'] ) )
-			echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';		
+		if ( ! empty( $option['desc'] ) ) {
+			echo ' <p class="description">' . esc_html( $option['desc'] ) . '</p>';
+                }
 	}
 	
 
@@ -415,7 +448,7 @@ class RBHN_Settings_Additional_Methods {
 	 */
 	public function rbhn_role_active( $role, $active_helpnote_roles ) {
 
-		foreach ( $active_helpnote_roles as $active_role=>$active_posttype ) {
+		foreach ( $active_helpnote_roles as $active_posttype ) {
 				if (! empty( $active_posttype["$role"] ) ) {
 					return true;
 				}
@@ -431,5 +464,3 @@ require_once( dirname( __FILE__ ) . '/class-tabbed-settings.php' );
 // Create new tabbed settings object for this plugin..
 // and Include additional functions that are required.
 RBHN_Settings::get_instance( )->registerHandler( new RBHN_Settings_Additional_Methods( ) );
-
-?>

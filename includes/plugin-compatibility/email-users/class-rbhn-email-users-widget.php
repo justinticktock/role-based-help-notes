@@ -15,8 +15,8 @@ class RBHN_Email_Users_Widget extends WP_Widget {
 	function __construct() {
 		parent::__construct(
 			'rbhn_email_users_widget', // Base ID
-			__('Help Note Email Users', 'role-based-help-notes-text-domain'), // Name
-			array( 'description' => __( 'Add user group email shortcut to sidebar', 'role-based-help-notes-text-domain' ), ) // Args
+			__('Help Note Email Users', 'role-based-help-notes'), // Name
+			array( 'description' => __( 'Add user group email shortcut to sidebar', 'role-based-help-notes' ), ) // Args
 		);
 	}
 
@@ -35,23 +35,23 @@ class RBHN_Email_Users_Widget extends WP_Widget {
             // drop out if not a single Help Note page or Help Hote Archive page.
             // or the General Help Note Type
             // or the group email functionality isn't enabled via the capabilties and the email-users plugin
-            $show_widget_help_notes = $role_based_help_notes->active_help_notes();
             $exclude_help_notes = array('h_general');
-            $show_widget_help_notes = array_diff($show_widget_help_notes, $exclude_help_notes);
+            $show_widget_help_notes = array_diff( $role_based_help_notes->active_help_notes( ), $exclude_help_notes );
 
-             if ( ! in_array( get_post_type(),  $show_widget_help_notes ) || is_archive()  )
+             if ( ! in_array( get_post_type( ),  $show_widget_help_notes ) || is_archive( ) ) {
                  return; 
+             }
 
-            $post_type = get_post_type();
+            $post_type = get_post_type( );
             $help_note_object = get_post_type_object( $post_type );
             $help_note_name = $help_note_object->labels->menu_name;
 
 
             // Find the users of the role based on the post type in use
-            $post_type = get_post_type();
             $help_note_role = $role_based_help_notes->help_notes_role( $post_type );
             
             /* only continue if the role has group email enabled */
+            global $wp_roles;
             if ( ! isset( $wp_roles ) ) {
                     $wp_roles = new WP_Roles();
             }   
@@ -66,11 +66,12 @@ class RBHN_Email_Users_Widget extends WP_Widget {
                     if ( is_array( $role->capabilities ) ) {
 
                         /* Loop through the role's capabilities to find roles with the 'email_user_groups' capabiltiy set. */
-                        foreach ( $role->capabilities as $cap => $grant )
+                        foreach ( $role->capabilities as $cap => $grant ) {
                             if ( ( $cap == 'email_user_groups' ) && $grant ) {
                                  $roles_with_cap_email_user_groups[] = $key;
                                  break 2;
                             }
+                        }
                     }                    
                 }
             }   
@@ -83,8 +84,7 @@ class RBHN_Email_Users_Widget extends WP_Widget {
                 }
                         
                 echo $args['before_title'] . $instance['title'] . "" . $args['after_title'];
-               // echo '<ul><a href="' . admin_url( 'admin.php?page=mailusers-send-to-group-page' ) . '">' .   sprintf( __( 'Email everyone with the %1$s role.', 'role-based-help-notes-text-domain' ), '<strong>' . $help_note_name .'</strong>') . " </a></ul>";
-                echo '<button class="readmorebtn" onclick="' . esc_attr('window.location="' . admin_url( 'admin.php?page=mailusers-send-to-group-page' ) . '"') . '">' . sprintf( __( 'Email the %1$s group.', 'role-based-help-notes-text-domain' ), '<strong>' . $help_note_name .'</strong>') . '</button></BR></BR>';
+                echo '<button class="readmorebtn" onclick="' . esc_attr('window.location="' . add_query_arg( array( 'helpnotetype' => $post_type ), admin_url( 'admin.php?page=mailusers-send-to-group-page' )) . '"') . '">' . sprintf( __( 'Email the %1$s group', 'role-based-help-notes' ), '<strong>' . $help_note_name .'</strong>') . '</button></BR></BR>';
                 echo $args['after_widget'];
            }
            
@@ -133,5 +133,3 @@ class RBHN_Email_Users_Widget extends WP_Widget {
 	}
 
 } // class RBHN_Email_Users_Widget
-
-?>

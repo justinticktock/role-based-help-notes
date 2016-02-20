@@ -15,8 +15,8 @@ class RBHN_Users_Widget extends WP_Widget {
 	function __construct() {
 		parent::__construct(
 			'rbhn_users_widget', // Base ID
-			__('Help Note Users', 'role-based-help-notes-text-domain'), // Name
-			array( 'description' => __( 'Add user listing to sidebar', 'role-based-help-notes-text-domain' ), ) // Args
+			__('Help Note Users', 'role-based-help-notes'), // Name
+			array( 'description' => __( 'Add user listing to sidebar', 'role-based-help-notes' ), ) // Args
 		);
 	}
 
@@ -38,67 +38,69 @@ class RBHN_Users_Widget extends WP_Widget {
        $exclude_help_notes = array('h_general');
        $show_widget_help_notes = array_diff($show_widget_help_notes, $exclude_help_notes);
        
-        if ( ! in_array( get_post_type(),  $show_widget_help_notes ) || is_archive()  )
-            return; 
+        if ( ! in_array( get_post_type(),  $show_widget_help_notes ) || is_archive()  ) {
+            return;
+        }
 
-		$post_type = get_post_type();
-		$help_note_object = get_post_type_object( $post_type );
-		$help_note_name = $help_note_object->labels->menu_name;
-		
-		if ( empty( $instance['title'] ) ) {
-			$title = sprintf( __( '%1$s Line-up', 'role-based-help-notes-text-domain'), $help_note_name);
-		} else {
-			$title = $instance['title'];
-		}
-		
-		echo $args['before_widget'];
-		if ( ! empty( $title ) )
-			echo $args['before_title'] . $title . $args['after_title'];
-        
-		// Find the users of the role based on the post type in use
-		$post_type = get_post_type();
-    	$help_note_role = $role_based_help_notes->help_notes_role($post_type);
-        $users = get_users( Array('role' => $help_note_role) );
+            $post_type = get_post_type();
+            $help_note_object = get_post_type_object( $post_type );
+            $help_note_name = $help_note_object->labels->menu_name;
 
-		/* If users were found. */
-		if ( !empty( $users ) ) {
-            
-			echo '<ul class="xoxo users">';
+            if ( empty( $instance['title'] ) ) {
+                    $title = sprintf( __( '%1$s Line-up', 'role-based-help-notes'), $help_note_name);
+            } else {
+                    $title = $instance['title'];
+            }
 
-			/* Loop through each available user, creating a list item with a link to the user's archive. */
-			foreach ( $users as $user ) {
+            echo $args['before_widget'];
+            if ( ! empty( $title ) ) {
+                    echo $args['before_title'] . $title . $args['after_title'];
+            }
 
-				$url_found = '';
-				$user_id = $user->ID;
+            // Find the users of the role based on the post type in use
+            $help_note_role = $role_based_help_notes->help_notes_role( $post_type );
+            $users = get_users( Array('role' => $help_note_role) );
 
-                $my_query = new WP_Query( array(
-                    'author'        => $user_id,
-                    'post_type'     => get_post_types( array('public' => true) ),
-                    'post_status'   => 'publish',
-					));
+            /* If users were found. */
+            if ( !empty( $users ) ) {
 
-				if ( $my_query->have_posts() ) {
-					$url_found = get_author_posts_url( $user_id, $user->user_nicename );
-				}
+                    echo '<ul class="xoxo users">';
 
-				$url = apply_filters( 'rbhn_author_url', $url_found , $user_id);	
+                    /* Loop through each available user, creating a list item with a link to the user's archive. */
+                    foreach ( $users as $user ) {
 
-				$class = "user-{$user->ID}";
-				if ( is_author( $user->ID ) )
-					$class .= ' current-user';
+                            $url_found = '';
+                            $user_id = $user->ID;
 
-				if ( ! empty($url) ) {
-					echo "<li class='{$class}'><a href='{$url}' title='" . esc_attr( $user->display_name ) . "'>{$user->display_name}</a></li>\n";
-				} else {
-					echo "<li class='{$class}'>{$user->display_name}</li>\n";		
-				}
-			}
+            $my_query = new WP_Query( array(
+                'author'        => $user_id,
+                'post_type'     => get_post_types( array('public' => true) ),
+                'post_status'   => 'publish',
+                                    ));
 
-			echo '</ul>';
-		}
+                            if ( $my_query->have_posts() ) {
+                                    $url_found = get_author_posts_url( $user_id, $user->user_nicename );
+                            }
 
-		echo $args['after_widget'];
-		wp_reset_postdata();
+                            $url = apply_filters( 'rbhn_author_url', $url_found , $user_id);	
+
+                            $class = "user-{$user->ID}";
+                            if ( is_author( $user->ID ) ) {
+                                    $class .= ' current-user';
+                            }
+
+                            if ( ! empty($url) ) {
+                                    echo "<li class='{$class}'><a href='{$url}' title='" . esc_attr( $user->display_name ) . "'>{$user->display_name}</a></li>\n";
+                            } else {
+                                    echo "<li class='{$class}'>{$user->display_name}</li>\n";		
+                            }
+                    }
+
+                    echo '</ul>';
+            }
+
+            echo $args['after_widget'];
+            wp_reset_postdata();
 	}
 
 	/**
@@ -120,7 +122,7 @@ class RBHN_Users_Widget extends WP_Widget {
 		<p>
 		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-		<?php echo __('Leave Blank for a dynamic title which includes the Role.', 'role-based-help-notes-text-domain'); ?></p>
+		<?php echo __('Leave Blank for a dynamic title which includes the Role.', 'role-based-help-notes'); ?></p>
 		<?php 
 	}
 
@@ -142,5 +144,3 @@ class RBHN_Users_Widget extends WP_Widget {
 	}
 
 } // class RBHN_Users_Widget
-
-?>

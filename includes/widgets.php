@@ -30,6 +30,10 @@ function rbhn_register_widgets( ) {
         require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-users-widget.php' );
         register_widget( 'rbhn_users_widget' );
         
+        /* Load & Register the contents page navigation widget file. */
+        require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-navigation-widget.php' );
+        register_widget( 'rbhn_contents_page_navigation_widget' );
+  
         /* Load & Register the tag cloud widget file. */
         require_once( HELP_MYPLUGINNAME_PATH . 'includes/class-rbhn-tag-cloud-widget.php' );
         register_widget( 'rbhn_tag_cloud_widget' );
@@ -38,5 +42,3 @@ function rbhn_register_widgets( ) {
 	
 	
 }
-
-?>
