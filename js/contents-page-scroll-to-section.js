@@ -29,6 +29,37 @@
             }            
             
     })
+    
+    
+  $('.dashicons-edit').hide();
+    
+    $(function() {
+        
+    //$('.rbhn-link').hover(function() { 
+    $("*[class*='page-item-']").hover(function() { 
+     // $(this).closest('.dashicons-edit').fadeIn(); 
+       //$('.dashicons-edit').stop(true, true).fadeIn(); 
+      $(this).find('.dashicons-edit').stop(true, true).fadeIn(); 
+      
+      // $(this).parent('.dashicons-edit').appendTo(this);
+      // $(this).closest('.dashicons-edit').appendTo(this);
+       //$(this).find('.dashicons-edit').appendTo(this);
+       $(this).find('.dashicons-edit').appendTo(this);
+       
+       
+    }, function() { 
+       // $(this).closest('.dashicons-edit').fadeOut(); 
+       // $('.dashicons-edit').stop(true, true).fadeOut(); 
+      $(this).find('.dashicons-edit').stop(true, true).fadeOut(); 
+    });
+    });
+
+
+
+
+   // $('#h_administrator').hover(function(){
+       // $('#h_administrator').fadeToggle();
+    //});
 
 
 })(jQuery);

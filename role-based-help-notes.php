@@ -1193,34 +1193,9 @@ class RBHN_EditLinks extends Walker_Page
 {
     function end_el( &$output, $page, $depth = 0, $args = array() )
     {	
- var_dump( $output );
             $edit_url  = admin_url( 'post.php?action=edit&post=' . $page->ID );
             $edit_link = "<a class='dashicons dashicons-edit' title='" . _x( "edit", 'the hover prompt for the edit icon on the Content page index.', 'role-based-help-notes' ). "' href='" . $edit_url . "' ></a> ";
-           //$permalink = " <a class='dashicons dashicons-arrow-right-alt' title='edit' href='" . get_permalink( $page->ID ) . "' target='_blank'></a> ";
-            $output    = str_replace( '<a href="' . get_permalink( $page->ID ), $edit_link . '<a  href="' . get_permalink( $page->ID ), $output ); // . '" target="_blank"', $output );
-       /*     return;
-            
-        $edit_url  = admin_url( 'post.php?action=edit&post=' . $page->ID );
-        $edit_link = "<a class='dashicons dashicons-edit' title='" . _x( "edit", 'the hover prompt for the edit icon on the Content page index.', 'role-based-help-notes' ). "' href='" . $edit_url . "' ></a> ";
-       // $output    = str_replace( '<a href="' . get_permalink( $page->ID ), '<a  href="' . get_permalink( $page->ID ) . '" target="_blank"', $output );   
-        $output .= $edit_link;
-        $output .= str_replace( '<a href="' . get_permalink( $page->ID ), $permalink . '<a  href="' . get_permalink( $page->ID ) . '" target="_blank"', $output );
-       */ 
-        // $output .= $indent . '<li class="' . $css_class . '"><a href="' . get_permalink($page->ID) . '">' . $link_before . apply_filters( 'the_title', '' ) . $link_after . get_the_post_thumbnail($page->ID, array(72,72)) .'</a>';
-        /*
-        if ( $args['my_post_id'] != $page->ID ) {
-            $edit_url  = admin_url( 'post.php?action=edit&post=' . $page->ID );
-//get_sample_permalink_html
-            $edit_link = "<a class='dashicons dashicons-edit' title='edit' href='" . esc_url( $edit_url ) . "' target='_blank'></a> ";
-            $output    = str_replace( '<a href="' . get_permalink( $page->ID ), $edit_link . '<a  href="' . get_permalink( $page->ID ) . '" target="_blank"', $output );   
-        } else {
-            // we are on the same post as currently being edited
-            $edit_url  = admin_url( 'post.php?action=edit&post=' . $page->ID );
-            $permalink = " <a class='dashicons dashicons-arrow-right-alt' title='edit' href='" . get_permalink( $page->ID ) . "' target='_blank'></a> ";
-            $output    = str_replace( '<a href="' . get_permalink( $page->ID ), $permalink . '<a  href="' . get_permalink( $page->ID ) . '" target="_blank"', $output );
-        }
-         * 
-         */
+            $output    = str_replace( '<a href="' . get_permalink( $page->ID ), $edit_link . "<a class='rbhn-link' " . ' href="' . get_permalink( $page->ID ), $output ); // . '" target="_blank"', $output );
     }
 }
 
