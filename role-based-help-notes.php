@@ -798,9 +798,12 @@ class RBHN_Role_Based_Help_Notes {
 
 
         if ( ( get_option( 'rbhn_contents_page' ) != "0" ) && is_page( get_option( 'rbhn_contents_page' ) ) && is_main_query( ) ) {
-            
+                        //echo wp_login_url( $redirect );
+
             if ( ! is_user_logged_in() ) {
-                $content = $content . '<h2>' . __('Please login to see the Help Note Contents!', 'role-based-help-notes' ) .'</h2>';
+   
+                $login_url = sprintf( _x('<strong><a href="%1$s">login', 'login link text shown on contents page if logged out', 'role-based-help-notes' ),  wp_login_url(get_permalink( $post->ID ))) .'</a></strong>';
+                $content = $content . '<h2>' . sprintf( __('Please %1$s  to see the Help Note Contents!', 'role-based-help-notes' ),  $login_url ) .'</h2>';
                 return $content;
             }
             $active_role_notes = $this->active_help_notes( );
