@@ -83,14 +83,6 @@ class RBHN_Settings {
 																		'type'          => 'field_checkbox_option'
 																		),
 																	array(
-																		'name' 		=> 'rbhn_widgets_enabled',
-																		'std' 		=> false,
-																		'label' 	=> _x( 'Widgets', 'settings title for enabling the widgets for help notes.', 'role-based-help-notes' ),
-																		'cb_label'      => _x( 'Enable', 'enable the setting option.', 'role-based-help-notes' ),
-																		'desc'		=> __( "Enabling will allow you to place the Help Notes widgets into your sidebars.", 'role-based-help-notes' ),
-																		'type'          => 'field_checkbox_option'
-																		),
-																	array(
 																		'name' 		=> 'rbhn_contents_page',
 																		'std' 		=> '0',
 																		'label' 	=> __( 'Contents Page', 'role-based-help-notes' ),

@@ -28,7 +28,6 @@ function rbhn_clean_database( ) {
     delete_option( 'rbhn_general_enabled' );
     delete_option( 'rbhn_post_types' );
     delete_option( 'rbhn_contents_page' );
-    delete_option( 'rbhn_widgets_enabled' );
     delete_option( 'rbhn_contents_page' );
     delete_option( 'rbhn_tabbed_contents_page' );
     delete_option( 'rbhn_welcome_page' );

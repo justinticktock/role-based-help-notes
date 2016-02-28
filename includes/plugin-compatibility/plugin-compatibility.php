@@ -155,18 +155,10 @@ if ( is_plugin_active( 'email-users/email-users.php' ) || is_plugin_active_for_n
     require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility/email-users/class-rbhn-email-users-group-settings.php' );
     require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility/email-users/email-users-custom.php' );
     
-    // option collection  
-    $option = get_option( 'rbhn_widgets_enabled' );  
+    /* Load the email users widget file. */
+    require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility/email-users/class-rbhn-email-users-widget.php' );
 
-    /* If the widgets are enabled. */    
-    if ( isset( $option ) && !empty( $option ) ) {
-
-        /* Load the email users widget file. */
-        require_once( HELP_MYPLUGINNAME_PATH . 'includes/plugin-compatibility/email-users/class-rbhn-email-users-widget.php' );
-        
-        /* Register the widget. */
-        register_widget( 'rbhn_email_users_widget' );
-
-    }
+    /* Register the widget. */
+    register_widget( 'rbhn_email_users_widget' );
 
 }
