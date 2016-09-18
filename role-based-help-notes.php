@@ -182,7 +182,13 @@ class RBHN_Role_Based_Help_Notes {
     public function admin_menu( ) {
 
             if ( help_notes_available( ) ) {
-                add_menu_page( _x( 'Help Notes', 'the help notes text to be displayed in the title tags of the page when the menu is selected', 'role-based-help-notes' ), __( 'Help Notes', 'the help notes title in the admin menu',  'role-based-help-notes' ), 'read', $this->menu_page, array( &$this, 'menu_page' ), 'dashicons-format-aside', '5.123123123' );
+                add_menu_page( _x( 'Help Notes', 
+                        'the help notes text to be displayed in the title tags of the page when the menu is selected', 'role-based-help-notes' ), 
+                        __( 'Help Notes', 'the help notes title in the admin menu',  'role-based-help-notes' ), 
+                        'read', 
+                        $this->menu_page, array( &$this, 'menu_page' ), 
+                        'dashicons-format-aside', 
+                        '5.123123123' );
             }
     }
 
@@ -764,14 +770,16 @@ class RBHN_Role_Based_Help_Notes {
 
         if ( $role_key == 'general' ) {
             $help_capabilitytype    = 'post';
-            $explicitly_mapped_caps	= array( );
+   //         $explicitly_mapped_caps	= array( );
         } else {
             $help_capabilitytype    = $post_type_name;
-            $explicitly_mapped_caps = array( 'create_posts' 	=> 'create_' . $help_capabilitytype . 's' );
+    //        $explicitly_mapped_caps = array( 'create_posts' 	=> 'create_' . $help_capabilitytype . 's' );
         };
 
         // Place the help notes under the main menu by default
         // However, if the focus is on a specific Help Note then add this to the main menu.
+        // focus needs to change as the 'create_posts' capability for adding new help notes trhough meta_map_caps 
+        // only works if the custom post type has been added as a top level menu
         $show_in_menu =   $this->menu_page ;
 
         if ( isset( $_GET['post_type'] ) && ( $post_type_name === $_GET['post_type'] ) ) {
@@ -788,7 +796,9 @@ class RBHN_Role_Based_Help_Notes {
             'menu_position'       => 5,
             'show_in_admin_bar'   => true,
             'capability_type'     => $help_capabilitytype,	
-            'capabilities'        => $explicitly_mapped_caps,
+    // Based on working with song-book plugin I don't think the following line helps...
+    // test and if confirmed remove the line above generating the $explicitly_mapped_caps variable
+    //        'capabilities'        => $explicitly_mapped_caps,
             'map_meta_cap'        => true,
             'hierarchical'        => true,
             'supports'            => array( 'title', 'editor', 'comments', 'thumbnail', 'page-attributes' , 'revisions', 'author', 'front-end-editor' ),
