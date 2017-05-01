@@ -359,6 +359,9 @@ class RBHN_Capabilities {
                 $role_based_help_notes = RBHN_Role_Based_Help_Notes::get_instance( );
                 $active_roles = array_filter( ( array ) $role_based_help_notes->active_help_notes( ) );  // Filter out any empty entries, if non active.	
 
+                // don't grant the up_load media for the general help notes as this is controlled by the standard posts type
+                $active_roles = array_diff($active_roles, ["h_general"]);
+                
 		if ( empty( $active_roles ) ) {
                     return $caps;
                 }

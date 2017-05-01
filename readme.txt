@@ -2,7 +2,13 @@
 Contributors: justinticktock
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress, intranet
 Requires at least: 3.5
+<<<<<<< .mine
 Tested up to: 4.6 	
+||||||| .r1360189
+Tested up to: 4.4.2
+=======
+Tested up to: 4.7	
+>>>>>>> .r1605838
 Stable tag: 1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -47,7 +53,14 @@ Front End Plugins..
 * [disable_comments]( https://wordpress.org/plugins/disable-comments/) by [solarissmoke]( https://profiles.wordpress.org/solarissmoke/) allows you to easily remove comments from 'Help Note' use.
 * [Menu Item Visibility Control]( https://wordpress.org/plugins/menu-items-visibility-control/) plugin by [shazdeh]( https://profiles.wordpress.org/shazdeh/) to add/hide 'Help Notes' to your menus.
 
-[Plugin site]( https://justinandco.com/plugins/role-based-help-notes/).  
+= Plugin site =
+
+[https://justinandco.com/plugins/role-based-help-notes/]https://justinandco.com/plugins/role-based-help-notes/
+
+= GitHub - Development =
+
+[https://github.com/justinticktock/role-based-help-notes](https://github.com/justinticktock/role-based-help-notes)
+
 
 == Installation ==
 
