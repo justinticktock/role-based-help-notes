@@ -822,8 +822,6 @@ class RBHN_Role_Based_Help_Notes {
 
         register_post_type( $post_type_name, $help_args );
     }
-
-    
     
     public function filter_comment_status( $open, $post_id ) {
         
@@ -836,7 +834,7 @@ class RBHN_Role_Based_Help_Notes {
     }
 
     public function remove_comments(){
-        add_filter( 'comments_array', array( $this, 'filter_existing_comments' ), 20, 2 );
+
         add_filter( 'comments_open', array( $this, 'filter_comment_status' ), 20, 2 );
         add_filter( 'pings_open', array( $this, 'filter_comment_status' ), 20, 2 );
  
