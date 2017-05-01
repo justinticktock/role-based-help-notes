@@ -66,8 +66,7 @@ class RBHN_Role_Based_Help_Notes {
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );  // increase priority to stop cpt's overwriting the menu.
 
         /* register the selected-active Help Note post types */
-        //add_action( 'init', array( $this, 'init' ) );
-        add_action( 'wp_loaded', array( $this, 'init' ) );
+        add_action( 'init', array( $this, 'init' ) );
 
         /* Load admin error messages */
         add_action( 'admin_init', array( $this, 'deactivation_notice' ) );
@@ -930,8 +929,6 @@ class RBHN_Role_Based_Help_Notes {
         // if selected in settings turn valid url text strings into clickable text.
         if ( get_option( 'rbhn_make_clickable' ) && $this->is_single_help_note() ) {
             $content = make_clickable( $content ) ; 
-//$content = "supports comments = " . post_type_supports( 'h_subscriber', "comments" ) . "hhh";
-
         }
 
         return $content;
