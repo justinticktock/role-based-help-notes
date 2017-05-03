@@ -4,7 +4,7 @@ if ( !class_exists( "RBHN_Pointers" ) )
 {
     class RBHN_Pointers
     {
-        function RBHN_Pointers() // Constructor
+        function __construct() // Constructor
         {
                 // This adds scripts for ANY admin screen
                 add_action( 'admin_enqueue_scripts', array( $this, 'RBHN_Pointers_admin_scripts' ) );

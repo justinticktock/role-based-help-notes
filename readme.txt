@@ -1,15 +1,9 @@
 === Plugin Name ===
-Contributors: justinticktock
+Contributors: justinticktock, keycapability
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress, intranet
 Requires at least: 3.5
-<<<<<<< .mine
-Tested up to: 4.6 	
-||||||| .r1360189
-Tested up to: 4.4.2
-=======
-Tested up to: 4.7	
->>>>>>> .r1605838
-Stable tag: 1.8
+Tested up to: 4.7.2
+Stable tag: 1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,7 +49,7 @@ Front End Plugins..
 
 = Plugin site =
 
-[https://justinandco.com/plugins/role-based-help-notes/]https://justinandco.com/plugins/role-based-help-notes/
+[https://justinandco.com/plugins/role-based-help-notes/](https://justinandco.com/plugins/role-based-help-notes/)
 
 = GitHub - Development =
 

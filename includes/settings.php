@@ -112,13 +112,6 @@ class RBHN_Settings {
 																		'desc'		=> __( 'Turn valid URLs into click able text.', 'role-based-help-notes' ),
 																		'type'          => 'field_checkbox_option',
 																		),	
-																	array(
-																		'name' 		=> 'rbhn_disable_comments',
-																		'std' 		=> '1',
-																		'label' 	=> __( 'Disable Comments', 'role-based-help-notes' ),
-																		'desc'		=> __( 'Remove Comments from Help Notes.  Comments not of real value with Help Notes so they are disabled by default.', 'role-based-help-notes' ),
-																		'type'          => 'field_checkbox_option',
-																		),
 																),
 										),
 										'rbhn_roles' => array(
