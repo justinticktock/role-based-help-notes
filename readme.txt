@@ -3,6 +3,7 @@ Contributors: justinticktock, keycapability
 Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collaboration, BuddyPress, intranet
 Requires at least: 3.5
 Tested up to: 4.9
+Requires PHP: 5.4
 Stable tag: 1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
