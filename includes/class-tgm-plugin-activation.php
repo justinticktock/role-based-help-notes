@@ -5,7 +5,7 @@
  * Please note that this is a drop-in library for a theme or plugin.
  * The authors of this library (Thomas, Gary and Juliette) are NOT responsible
  * for the support of your plugin or theme. Please contact the plugin
- * or theme author for support.
+ * or theme author for support.`
  *
  * @package   TGM-Plugin-Activation
  * @version   2.6.1

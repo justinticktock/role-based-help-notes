@@ -4,7 +4,6 @@ Tags: multisite, roles, user, help, notes, cms, documents, groups, teams, collab
 Requires at least: 3.5
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -58,7 +57,7 @@ Front End Plugins..
 
 
 == Installation ==
-
+()
 1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Goto the "Settings" Menu and "Help Notes" sub menu, select which roles are to have Help Notes.
@@ -75,6 +74,12 @@ You will need to use another plugin to manage roles and capabilities such as the
 = Is there a theme template I can modify in my child theme? =
 
 Yes ... [Answer]( https://wordpress.org/support/topic/is-there-a-theme-template-i-can-modify-in-my-child-theme?replies=3#post-4929519)
+
+=  I just can't seem to find a way to get SMTP working with this plugin, what can I do? =
+
+This has been seen a few times in the forum, one proven solution is:
+* use  [plugin wp-mail-smtp](https://wordpress.org/plugins/wp-mail-smtp/)
+* Do NOT network activate SMTP and you don't need to add anything extra to the wp-config file
 
 == Screenshots ==
 

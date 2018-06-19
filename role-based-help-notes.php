@@ -3,16 +3,20 @@
 Plugin Name: Role Based Help Notes
 Plugin URI: http://justinandco.com/plugins/role-based-help-notes/
 Description: The addition of Custom Post Type to cover site help notes
-Version: 1.9
+Version: 2.1
 Author: Justin Fletcher
 Author URI: http://justinandco.com
 Text Domain: role-based-help-notes
+Domain Path: /languages/
 License: GPLv2 or later
 */
+
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+
 
 /**
  * RBHN_Role_Based_Help_Notes class.
@@ -84,8 +88,7 @@ class RBHN_Role_Based_Help_Notes {
         /* Add java to the Help Notes Content Page to scroll to the relavanet section */   
         add_action( 'wp_enqueue_scripts', array( $this, 'scripts' ) );
 
-        /* Remove comments */
-        add_action( 'wp_loaded', array( $this, 'remove_comments' ) );
+
     }
 
     /**
@@ -179,13 +182,7 @@ class RBHN_Role_Based_Help_Notes {
     public function admin_menu( ) {
 
             if ( help_notes_available( ) ) {
-                add_menu_page( _x( 'Help Notes', 
-                        'the help notes text to be displayed in the title tags of the page when the menu is selected', 'role-based-help-notes' ), 
-                        __( 'Help Notes', 'the help notes title in the admin menu',  'role-based-help-notes' ), 
-                        'read', 
-                        $this->menu_page, array( &$this, 'menu_page' ), 
-                        'dashicons-format-aside', 
-                        '5.123123123' );
+                add_menu_page( _x( 'Help Notes', 'the help notes text to be displayed in the title tags of the page when the menu is selected', 'role-based-help-notes' ), __( 'Help Notes', 'the help notes title in the admin menu',  'role-based-help-notes' ), 'read', $this->menu_page, array( &$this, 'menu_page' ), 'dashicons-format-aside', '5.123123123' );
             }
     }
 
@@ -332,6 +329,7 @@ class RBHN_Role_Based_Help_Notes {
             }                   
 
     }
+
     
     /**
      * Initialise the plugin by handling upgrades and loading the text domain. 
@@ -677,7 +675,7 @@ class RBHN_Role_Based_Help_Notes {
      * @return void
      */
     public function init( ) {
-        
+
         // option collection  
         $general_help_enabled   = get_option( 'rbhn_general_enabled' );
         $post_types_array       = get_option( 'rbhn_post_types' );
@@ -708,6 +706,7 @@ class RBHN_Role_Based_Help_Notes {
                         // register Help Notes custom post type
                         // notes always created for correct permalink settings when saved even when a role is not given to the user saving the permalinks, 
                         // capabilities will be used to limit access to Notes on the front end.
+
                         if  ( ( ! is_admin() && ( $this->help_notes_current_user_has_role( $active_role ) ) ) ||                                                // register help notes if on the front of site only if user has capability
                             ( isset( $_GET['page'] ) && ( ( $_GET['page'] == 'notes-settings' ) || ( $_GET['page'] == $this->menu_page ) ) )   ||               // register if on the Help Notes Menu page or in Help Notes settings
                             ( isset( $_GET['post_type'] ) && in_array( $_GET['post_type'], $this->enabled_help_notes() ) )  ||                                  // register if on a Help Note page in admin				
@@ -718,17 +717,15 @@ class RBHN_Role_Based_Help_Notes {
                             ( $pagenow == 'revision.php' ) ||                                                                                                   // register if on the revisions page for help notes
                             ( $pagenow == 'upload.php' ) ||                                                                                                     // register if on the admin page listing the help notes with quick edit functionality
                             ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ||                                                                                        // if doing Ajax is true when uploading through drag-and-drop
-                            ( $pagenow == 'media-upload.php' )  ||                                                                                              // if uploading through other plugins 'media_upload_tabs'
-                            ( $pagenow == 'options-general.php' ) && ($_GET['page'] == 'disable_comments_settings' )                                            // if on the 'Disable Comments' plugin settings page.
+                            ( $pagenow == 'media-upload.php' )                                                                                                  // if uploading through other plugins 'media_upload_tabs'
                             ) { 		
 
                             call_user_func_array( array( $this, 'help_register_posttype' ), array( $active_role, $roles[$active_role], $active_posttype ) ); 
-//add_action( 'template_redirect', array( $this, 'remove_comment_template' ) );     
-                        }                      
+                        }
                     }
                 }
             }
-        }              
+        }
     }
 
     /**
@@ -767,34 +764,20 @@ class RBHN_Role_Based_Help_Notes {
 
         if ( $role_key == 'general' ) {
             $help_capabilitytype    = 'post';
-   //         $explicitly_mapped_caps	= array( );
+            $explicitly_mapped_caps	= array( );
         } else {
             $help_capabilitytype    = $post_type_name;
-    //        $explicitly_mapped_caps = array( 'create_posts' 	=> 'create_' . $help_capabilitytype . 's' );
+            $explicitly_mapped_caps = array( 'create_posts' 	=> 'create_' . $help_capabilitytype . 's' );
         };
 
         // Place the help notes under the main menu by default
         // However, if the focus is on a specific Help Note then add this to the main menu.
-        // focus needs to change as the 'create_posts' capability for adding new help notes trhough meta_map_caps 
-        // only works if the custom post type has been added as a top level menu
         $show_in_menu =   $this->menu_page ;
 
         if ( isset( $_GET['post_type'] ) && ( $post_type_name === $_GET['post_type'] ) ) {
             $show_in_menu =  true ;
         }
 
-        $help_note_supports =array(  'title', 
-                                    'editor', 
-                                   // 'comments', 
-                                    'thumbnail', 
-                                    'page-attributes', 
-                                    'revisions', 
-                                    'author', 
-                                    'front-end-editor' 
-                                );
-        
-        $help_note_supports = apply_filters( "network_admin_plugin_action_links_{$post_type_name}", $help_note_supports, $role_key, $role_name, $post_type_name );
-    
         $help_args = array(
             'labels'              => $help_labels,
             'public'              => true, 
@@ -805,12 +788,10 @@ class RBHN_Role_Based_Help_Notes {
             'menu_position'       => 5,
             'show_in_admin_bar'   => true,
             'capability_type'     => $help_capabilitytype,	
-    // Based on working with song-book plugin I don't think the following line helps...
-    // test and if confirmed remove the line above generating the $explicitly_mapped_caps variable
-    //        'capabilities'        => $explicitly_mapped_caps,
+            'capabilities'        => $explicitly_mapped_caps,
             'map_meta_cap'        => true,
             'hierarchical'        => true,
-            'supports'            => $help_note_supports,
+            'supports'            => array( 'title', 'editor', 'comments', 'thumbnail', 'page-attributes' , 'revisions', 'author', 'front-end-editor' ),
             'has_archive'         => true,
             'rewrite'             => true,
             'query_var'           => true,
@@ -820,42 +801,9 @@ class RBHN_Role_Based_Help_Notes {
         );
 
         register_post_type( $post_type_name, $help_args );
-    }
-    
-    public function filter_comment_status( $open, $post_id ) {
-        
-            $post = get_post( $post_id );
 
-            if ( in_array( $post->post_type, $this->enabled_help_notes() ) ) {
-                return false;
-            }       
-            return $open;
     }
 
-    public function remove_comments(){
-
-        add_filter( 'comments_open', array( $this, 'filter_comment_status' ), 20, 2 );
-        add_filter( 'pings_open', array( $this, 'filter_comment_status' ), 20, 2 );
- 
-    }
-
-    /*
-     * Replace the theme's comment template with a blank one.
-     */
-    public function remove_comment_template() {
-        if( is_singular() ) {
-            add_filter( 'comments_template', array( $this, 'dummy_comments_template' ), 20 );
-            // Remove comment-reply script for themes that include it indiscriminately
-            wp_deregister_script( 'comment-reply' );
-            // feed_links_extra inserts a comments RSS link
-            remove_action( 'wp_head', 'feed_links_extra', 3 );
-        }
-    }
-
-    public function dummy_comments_template() {
-        return dirname( __FILE__ ) . '/includes/comments-template.php';
-    }
-        
     /**
      * Returns the post content with the Help Notes index appended.
      *

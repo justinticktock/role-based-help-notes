@@ -96,7 +96,7 @@ function rbhn_capabilities_clean_up( ) {
 // remove capabilities on uninstall.
 function rbhn_role_caps_uninstall( $role_key ) {
 
-    $post_types_array = get_option( 'rbhn_post_types' );
+	$post_types_array = get_option( 'rbhn_post_types' );
 	
     if ( ! empty( $post_types_array ) ) {
         foreach( $post_types_array as $array ) {
